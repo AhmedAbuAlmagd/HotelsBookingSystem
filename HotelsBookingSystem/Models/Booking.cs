@@ -14,14 +14,16 @@ namespace HotelsBookingSystem.Models
         public int TotalPrice { get; set; }
 
         [ForeignKey("Hotel")]
-        public int? HotelId { get; set; }
-        public virtual Hotel? Hotel { get; set; }
+        public int HotelId { get; set; }
+        public virtual Hotel Hotel { get; set; }
         [ForeignKey("User")]
-        public string? UserId { get; set; }
-        public virtual ApplicationUser? User {get; set;}
-        public virtual Payment? Payment { get; set; }
+        public string UserId { get; set; }
+        public virtual ApplicationUser User {get; set;}
+        [ForeignKey("Room")]
+        public int RoomId { get; set; }
+        public virtual Room Room { get; set; }
+        public virtual Payment Payment { get; set; }
         public virtual List<BookingService>? BookingServices { get; set; } = new List<BookingService>();
-        public List<BookingRoom> BookingRooms { get; set; } = new List<BookingRoom>();
 
     }
 }

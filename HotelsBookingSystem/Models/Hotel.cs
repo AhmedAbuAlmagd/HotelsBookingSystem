@@ -13,7 +13,6 @@ namespace HotelsBookingSystem.Models
         public string Address { get; set; }
         public string? Latitude { get; set; }
         public string? Longitude { get; set; }
-        
         public virtual List<HotelImage>? HotelImages { get; set; } = new List<HotelImage>();
         public virtual List<Room> Rooms { get; set; } = new List<Room>();
         public virtual List<Review>? Reviews { get; set; } = new List<Review>();
