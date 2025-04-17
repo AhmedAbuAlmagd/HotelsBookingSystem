@@ -1,0 +1,114 @@
+﻿
+    .register-wrapper
+    {
+        background-image: url('../images/background.jpg');
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    
+    .register-container {
+        width: 100%;
+        max-width: 800px;
+    }
+    
+    .register-form {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(8px);
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .register-form h2 {
+        color: #2e4d59;
+        font-size: 1.8rem;
+        margin-bottom: 1.8rem;
+        text-align: center;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .input-group {
+        margin-bottom: 1rem;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #2e4d59;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #dde9ed;
+            font-size: 16px;
+        }
+
+    .input-group input:focus {
+        outline: none;
+        border-color: #9c7bb8;
+        box-shadow: 0 0 0 3px rgba(156, 123, 184, 0.2);
+    }
+
+    .register-btn {
+        width: 100%;
+        padding: 1rem;
+        background-color: #2e4d59;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1.5rem;
+    }
+
+    .register-btn:hover {
+        background-color: #2e4d70;
+    }
+    
+    .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #5a4a6e;
+    }
+
+    .login-link a {
+        color: #2e4d59;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    .text-danger {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+    
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+   
+    
