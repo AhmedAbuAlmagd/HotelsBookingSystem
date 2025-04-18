@@ -17,5 +17,16 @@ namespace HotelsBookingSystem.Controllers
             IPagedList<Room> rooms = roomRepository.GetAll(page, pageSize);
             return View(rooms);
         }
+
+
+        public IActionResult Detail(int id) { 
+            
+            Room room = roomRepository.GetById(id);
+            if (room == null) {
+                return NotFound();
+            }
+           return View(room);
+        
+        }
     }
 }

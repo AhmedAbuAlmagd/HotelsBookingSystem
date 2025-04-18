@@ -11,6 +11,7 @@ namespace HotelsBookingSystem.Models
         {
 
         }
+       
         public virtual DbSet<Booking> Bookings { get; set; }
         public virtual DbSet<BookingService> BookingServices { get; set; }
         public virtual DbSet<Hotel> Hotels { get; set; }

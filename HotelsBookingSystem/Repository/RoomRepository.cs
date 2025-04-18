@@ -1,4 +1,5 @@
-﻿using HotelsBookingSystem.Models;
+﻿using System.Linq;
+using HotelsBookingSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using PagedList;
 
@@ -14,15 +15,20 @@ namespace HotelsBookingSystem.Repository
         }
         IPagedList<Room> IRoomRepository.GetAll(int page, int pageSize)
         {
-            var rooms = con.Rooms.ToList();
-            return rooms.ToPagedList(page, pageSize);
+            var rooms = con.Rooms.Include(r => r.Hotel)
+                .Include(r => r.RoomImages)
+                .OrderBy(r => r.Id)   
+                .ToPagedList(page, pageSize); ;
+            return rooms;
 
         }
 
         Room IRoomRepository.GetById(int id)
         {
 
-            var room = con.Rooms.Find(id);
+            //var room = con.Rooms.Find(id);
+            var room = con.Rooms.Include(r => r.Hotel)
+                .Include(r => r.RoomImages).FirstOrDefault(r => r.Id == id);
             if (room != null)
             {
                 return room;
