@@ -1,4 +1,5 @@
 using HotelsBookingSystem.Models;
+using HotelsBookingSystem.Repository;
 using HotelsBookingSystem.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<HotelsContext>();
 
 builder.Services.AddScoped<IAccountService, AccountService>();
-
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 var app = builder.Build();
 
