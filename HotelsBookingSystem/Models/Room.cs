@@ -1,4 +1,6 @@
-﻿namespace HotelsBookingSystem.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HotelsBookingSystem.Models
 {
     public class Room
     {
@@ -9,5 +11,8 @@
         public int PricePerNight {  get; set; }
         public virtual Booking? Booking { get; set; }
         public virtual List<RoomImage>? RoomImages { get; set; } = new List<RoomImage>();
+        [ForeignKey("Hotel")]
+        public int HotelId { get; set; }                
+        public virtual Hotel Hotel { get; set; }
     }
 }
