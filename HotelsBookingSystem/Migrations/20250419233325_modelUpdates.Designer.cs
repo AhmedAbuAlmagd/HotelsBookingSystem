@@ -4,6 +4,7 @@ using HotelsBookingSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelsBookingSystem.Migrations
 {
     [DbContext(typeof(HotelsContext))]
-    partial class HotelsContextModelSnapshot : ModelSnapshot
+    [Migration("20250419233325_modelUpdates")]
+    partial class modelUpdates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasIndex("ServicesId");
 
-                    b.ToTable("CartItemService", (string)null);
+                    b.ToTable("CartItemService");
                 });
 
             modelBuilder.Entity("HotelImage", b =>
@@ -62,7 +65,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("HotelImages", (string)null);
+                    b.ToTable("HotelImages");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.ApplicationUser", b =>
@@ -228,7 +231,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bookings", (string)null);
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.BookingRoom", b =>
@@ -243,7 +246,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasIndex("BookingId");
 
-                    b.ToTable("BookingRoom", (string)null);
+                    b.ToTable("BookingRoom");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.BookingService", b =>
@@ -258,7 +261,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasIndex("ServiceID");
 
-                    b.ToTable("BookingServices", (string)null);
+                    b.ToTable("BookingServices");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.Cart", b =>
@@ -281,7 +284,7 @@ namespace HotelsBookingSystem.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Cart", (string)null);
+                    b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.CartItem", b =>
@@ -310,7 +313,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("CartItem", (string)null);
+                    b.ToTable("CartItem");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.Hotel", b =>
@@ -351,7 +354,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Hotels", (string)null);
+                    b.ToTable("Hotels");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.Payment", b =>
@@ -385,7 +388,7 @@ namespace HotelsBookingSystem.Migrations
                     b.HasIndex("BookingID")
                         .IsUnique();
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.Review", b =>
@@ -414,7 +417,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.Room", b =>
@@ -451,7 +454,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("Rooms", (string)null);
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.Service", b =>
@@ -474,7 +477,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Services", (string)null);
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -661,7 +664,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("RoomImages", (string)null);
+                    b.ToTable("RoomImages");
                 });
 
             modelBuilder.Entity("CartItemService", b =>

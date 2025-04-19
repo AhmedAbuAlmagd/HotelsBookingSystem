@@ -7,5 +7,7 @@
         public string? Description { get; set; }
         public int? Price { get; set; }
         public List<BookingService>? BookingServices { get; set; } = new List<BookingService>();
+        public virtual List<CartItem>? CartItems { get; set; } = new List<CartItem>();
+
     }
 }
