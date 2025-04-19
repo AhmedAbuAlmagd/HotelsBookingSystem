@@ -10,27 +10,34 @@
 
 
 
-<form method="post" asp-action="FilterRooms" asp-controller="Room">
+<form method="get" asp-action="FilterRooms" asp-controller="Room">
     <div class="row mb-3">
-
         <div class="col-md-2">
-            <input type="text" name="type" class="form-control" placeholder="Room Type" />
+            <input type="text" name="type" class="form-control" placeholder="Room Type"
+                   value="@ViewData["CurrentType"]" />
         </div>
 
         <div class="col-md-2">
-            <input type="number" name="minPrice" class="form-control" placeholder="Min Price" />
+            <input type="number" name="minPrice" class="form-control" placeholder="Min Price"
+                   value="@ViewData["CurrentMinPrice"]" />
         </div>
 
         <div class="col-md-2">
-            <input type="number" name="maxPrice" class="form-control" placeholder="Max Price" />
+            <input type="number" name="maxPrice" class="form-control" placeholder="Max Price"
+                   value="@ViewData["CurrentMaxPrice"]" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <select name="hotelId" class="form-select">
                 <option value="">-- Select Hotel --</option>
+                <option value="0">All</option>
+
                 @foreach (var hotel in Model.FirstOrDefault()?.hotels ?? new List<Hotel>())
                 {
-                    <option value="@hotel.Id">@hotel.Name</option>
+                    <option value="@hotel.Id"
+                            selected="@(hotel.Id.ToString() == ViewData["CurrentHotelId"]?.ToString())">
+                        @hotel.Name
+                    </option>
                 }
             </select>
         </div>
@@ -38,9 +45,14 @@
         <div class="col-md-2">
             <select name="city" class="form-select">
                 <option value="">-- Select City --</option>
+                <option value="0">All</option>
+
                 @foreach (var hotel in Model.FirstOrDefault()?.hotels ?? new List<Hotel>())
                 {
-                    <option value="@hotel.Id">@hotel.City</option>
+                    <option value="@hotel.City"
+                            selected="@(hotel.City == ViewData["CurrentCity"]?.ToString())">
+                        @hotel.City
+                    </option>
                 }
             </select>
         </div>
@@ -48,9 +60,12 @@
         <div class="col-md-1">
             <button type="submit" class="btn btn-primary">Filter</button>
         </div>
-
+        <div class="col-md-1">
+            <a href="/Room/Index" class="btn btn-secondary">Clear</a>
+        </div>
     </div>
 </form>
+
 @if (ViewBag.Message != null)
 {
     <div class="alert alert-warning text-center">
@@ -73,6 +88,7 @@
             {
                 <div class="alert alert-warning">
                     <strong>No rooms found matching your criteria.</strong>
+
                 </div>
             }
             else
