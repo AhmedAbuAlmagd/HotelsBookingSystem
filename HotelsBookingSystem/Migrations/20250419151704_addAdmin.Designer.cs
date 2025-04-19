@@ -4,6 +4,7 @@ using HotelsBookingSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelsBookingSystem.Migrations
 {
     [DbContext(typeof(HotelsContext))]
-    partial class HotelsContextModelSnapshot : ModelSnapshot
+    [Migration("20250419151704_addAdmin")]
+    partial class addAdmin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,26 +151,6 @@ namespace HotelsBookingSystem.Migrations
                             SecurityStamp = "STATIC-SECURITY-STAMP-001",
                             TwoFactorEnabled = false,
                             UserName = "admin@site.com"
-                        },
-                        new
-                        {
-                            Id = "USER-USER-001",
-                            AccessFailedCount = 0,
-                            City = "Alexandria",
-                            ConcurrencyStamp = "STATIC-CONCURRENCY-STAMP-002",
-                            Country = "Egypt",
-                            Email = "user@site.com",
-                            EmailConfirmed = true,
-                            FullName = "Normal User",
-                            LockoutEnabled = false,
-                            NationalId = "98765432109876",
-                            NormalizedEmail = "USER@SITE.COM",
-                            NormalizedUserName = "USER@SITE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELyWnA3L8xp5Hrs6WnKF/jGfxKmtgxJyDrE/5cKoAAu34yOBFoySgbzAWe3pqdH3BA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "STATIC-SECURITY-STAMP-002",
-                            TwoFactorEnabled = false,
-                            UserName = "user@site.com"
                         });
                 });
 
@@ -427,12 +410,6 @@ namespace HotelsBookingSystem.Migrations
                             Id = "ADMIN-ROLE-001",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "USER-ROLE-001",
-                            Name = "User",
-                            NormalizedName = "USER"
                         });
                 });
 
@@ -527,11 +504,6 @@ namespace HotelsBookingSystem.Migrations
                         {
                             UserId = "ADMIN-USER-001",
                             RoleId = "ADMIN-ROLE-001"
-                        },
-                        new
-                        {
-                            UserId = "USER-USER-001",
-                            RoleId = "USER-ROLE-001"
                         });
                 });
 
