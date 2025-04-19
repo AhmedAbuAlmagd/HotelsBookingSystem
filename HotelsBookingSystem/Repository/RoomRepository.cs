@@ -19,8 +19,7 @@ namespace HotelsBookingSystem.Repository
                 .Include(r => r.RoomImages)
                 .OrderBy(r => r.Id)   
                 .ToPagedList(page, pageSize); ;
-            return rooms;
-
+            return rooms;   
         }
 
         Room IRoomRepository.GetById(int id)
