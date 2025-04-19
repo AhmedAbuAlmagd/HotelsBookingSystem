@@ -19,10 +19,8 @@ namespace HotelsBookingSystem.Models
         [ForeignKey("User")]
         public string UserId { get; set; }
         public virtual ApplicationUser User {get; set;}
-        [ForeignKey("Room")]
-        public int RoomId { get; set; }
-        public virtual Room Room { get; set; }
         public virtual Payment Payment { get; set; }
+        public virtual List<BookingRoom>? BookingRooms { get; set; } = new List<BookingRoom>();
         public virtual List<BookingService>? BookingServices { get; set; } = new List<BookingService>();
 
     }
