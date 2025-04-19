@@ -1,7 +1,9 @@
 ﻿using System.Linq;
 using HotelsBookingSystem.Models;
 using Microsoft.EntityFrameworkCore;
-using PagedList;
+ 
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace HotelsBookingSystem.Repository
 {
@@ -13,14 +15,19 @@ namespace HotelsBookingSystem.Repository
         {
             con = context;
         }
-        IPagedList<Room> IRoomRepository.GetAll(int page, int pageSize)
+        public IPagedList<Room> GetAll(int page, int pageSize)
         {
-            var rooms = con.Rooms.Include(r => r.Hotel)
-                .Include(r => r.RoomImages)
-                .OrderBy(r => r.Id)   
-                .ToPagedList(page, pageSize); ;
-            return rooms;   
+            var rooms = con.Rooms
+                .Where(r => r.Status == "available")   
+                .Include(r => r.Hotel)                 
+                .Include(r => r.RoomImages)           
+                .OrderBy(r => r.Id)                  
+                .ToPagedList(page, pageSize);        
+
+            return rooms;
         }
+
+        
 
         Room IRoomRepository.GetById(int id)
         {
@@ -66,15 +73,16 @@ namespace HotelsBookingSystem.Repository
         {
            con.Rooms.Update(room);
         }
-        public IEnumerable<Room> FilterRooms(string? type, int? minPrice, int? maxPrice, int? hotelId, string? city)
+        public IPagedList<Room> FilterRooms(string type, int? minPrice, int? maxPrice,
+                                   int? hotelId, string city, int pageNumber, int pageSize)
         {
-            var query = con.Rooms
+            var query = con.Rooms.Where(r=>r.Status == "available") 
                 .Include(r => r.RoomImages)
                 .Include(r => r.Hotel)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(type))
-                query = query.Where(r => r.Type == type);
+                query = query.Where(r => r.Type.Contains(type));
 
             if (minPrice.HasValue)
                 query = query.Where(r => r.PricePerNight >= minPrice.Value);
@@ -88,8 +96,31 @@ namespace HotelsBookingSystem.Repository
             if (!string.IsNullOrEmpty(city))
                 query = query.Where(r => r.Hotel.City.Contains(city));
 
-            return query.ToList();
+            return query.OrderBy(r => r.Id).ToPagedList(pageNumber, pageSize);
         }
 
+
+        public List<Hotel> GetAllhotels()
+        {
+           var hotels= con.Hotels.Where(h=>h.Status=="available")
+                .Include(h => h.Rooms)
+                .Include(h => h.HotelImages)
+                .Include(h => h.Reviews)
+                .Include(h => h.Bookings)
+                .ToList();
+            return hotels;
+        }
+
+        public List<Room> GetAllroom()
+        {
+            var rooms = con.Rooms
+               .Where(r => r.Status == "available")
+               .Include(r => r.Hotel)
+               .Include(r => r.RoomImages)
+              .ToList();
+
+
+            return rooms;
+        }
     }
 }
