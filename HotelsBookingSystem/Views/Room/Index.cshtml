@@ -66,12 +66,12 @@
     </div>
 </form>
 
-@if (ViewBag.Message != null)
-{
-    <div class="alert alert-warning text-center">
-        @ViewBag.Message
-    </div>
-}
+@* @if (ViewBag.Message != null) *@
+@* { *@
+@*     <div class="alert alert-warning text-center"> *@
+@*         @ViewBag.Message *@
+@*     </div> *@
+@* } *@
 
 <!-- Room Start -->
 
@@ -119,6 +119,11 @@
                                         <small class="fa fa-star text-primary"></small>
                                     </div>
                                 </div>
+                                @* <div class="d-flex mb-3"> *@
+                                @*     <small class="border-end me-3 pe-3"><i class="fa fa-bed text-primary me-2"></i>@Model. Bed</small> *@
+                                @*     <small class="border-end me-3 pe-3"><i class="fa fa-bath text-primary me-2"></i>2 Bath</small> *@
+                                @*     <small><i class="fa fa-wifi text-primary me-2"></i>Wifi</small> *@
+                                @* </div> *@
                                 <div class="d-flex mb-3">
                                     <div><p>@i.hotel.Name</p></div>
                                 </div>
