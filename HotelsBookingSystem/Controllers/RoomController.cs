@@ -30,7 +30,9 @@ namespace HotelsBookingSystem.Controllers
                 PricePerNight = r.PricePerNight,
                 RoomImages = r.RoomImages.Select(img => img.ImageUrl).ToList(),
                 hotel = r.Hotel,
-                hotels = roomRepository.GetAllhotels()
+                hotels = roomRepository.GetAllhotels(),
+                RoomNumber = r.RoomNumber,
+                NumberOfBeds = r.NumberOfBeds,
             }).ToPagedList(page, PageSize);
 
             return View(roomViewModels);
@@ -53,13 +55,13 @@ namespace HotelsBookingSystem.Controllers
         #region filter
 
         public IActionResult FilterRooms(
-     int page = 1,
-     string type = null,
-     int? minPrice = null,
-     int? maxPrice = null,
-     int? hotelId = null,
-     string city = null)
-        {
+             int page = 1,
+             string type = null,
+             int? minPrice = null,
+             int? maxPrice = null,
+             int? hotelId = null,
+             string city = null)
+                {
             int PageSize = 3;
             List<Hotel> hotellist = roomRepository.GetAllhotels();
 
@@ -108,6 +110,8 @@ namespace HotelsBookingSystem.Controllers
                 RoomImages = r.RoomImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
                 hotel = r.Hotel,
                 hotels = hotellist,
+                RoomNumber = r.RoomNumber,
+                NumberOfBeds = r.NumberOfBeds,
             }).ToPagedList(page, PageSize);
 
             return View("Index", roomViewModels);
