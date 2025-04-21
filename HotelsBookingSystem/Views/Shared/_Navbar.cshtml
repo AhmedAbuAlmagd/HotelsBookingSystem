@@ -50,9 +50,19 @@
                                 </div>
                                 <a href="contact.html" class="nav-item nav-link">Contact</a>
                             </div>
-                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">
-                        LogIn <i class="fa fa-arrow-right ms-3"></i>
-                    </a>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Account" asp-action="Logout" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">
+                            Logout <i class="bi bi-box-arrow-right"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">
+                            LogIn <i class="fa fa-arrow-right ms-3"></i>
+                        </a>
+                    }
                         </div>
                     </nav>
                 </div>

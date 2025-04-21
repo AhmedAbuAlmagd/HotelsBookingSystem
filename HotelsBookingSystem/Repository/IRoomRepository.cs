@@ -8,7 +8,7 @@ namespace HotelsBookingSystem.Repository
     {
 
         IPagedList<Room> GetAll(int page, int pageSize);
-        List<Room> GetAllroom( );
+        List<Room> GetAllroom();
         Room GetById(int id);
         void Add(Room room);
         void Update(Room room);

@@ -1,4 +1,6 @@
-﻿namespace HotelsBookingSystem.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HotelsBookingSystem.Models
 {
     public class Service
     {
@@ -7,7 +9,9 @@
         public string? Description { get; set; }
         public int? Price { get; set; }
         public List<BookingService>? BookingServices { get; set; } = new List<BookingService>();
-        public virtual List<CartItem>? CartItems { get; set; } = new List<CartItem>();
+        [ForeignKey("CartItem")]
+        public int? cartItemId { get; set; }
+        public virtual CartItem? CartItem { get; set; } 
 
     }
 }
