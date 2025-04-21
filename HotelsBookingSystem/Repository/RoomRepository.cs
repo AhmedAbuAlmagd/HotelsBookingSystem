@@ -28,17 +28,17 @@ namespace HotelsBookingSystem.Repository
             return rooms;
         }
 
-        public List<Room> GetAllroom()
-        {
-            var rooms = _context.Rooms
-               .Where(r => r.Status == "available")
-               .Include(r => r.Hotel)
-               .Include(r => r.RoomImages)
-              .ToList();
+        //public List<Room> GetAllroom()
+        //{
+        //    var rooms = _context.Rooms
+        //       .Where(r => r.Status == "available")
+        //       .Include(r => r.Hotel)
+        //       .Include(r => r.RoomImages)
+        //      .ToList();
 
 
-            return rooms;
-        }
+        //    return rooms;
+        //}
 
         Room IRoomRepository.GetById(int id)
         {
@@ -121,16 +121,36 @@ namespace HotelsBookingSystem.Repository
             return hotels;
         }
 
-        //public List<Room> GetAllroom()
-        //{
-        //    var rooms = _context.Rooms
-        //       .Where(r => r.Status == "available")
-        //       .Include(r => r.Hotel)
-        //       .Include(r => r.RoomImages)
-        //      .ToList();
+        public List<Room> GetAvailablerooms()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Room>> GetAllRoomsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetTotalRoomsCountAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Room>> GetTopRoomsAsync(int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Room> GetAllroom()
+        {
+            var rooms = _context.Rooms
+               .Where(r => r.Status == "available")
+               .Include(r => r.Hotel)
+               .Include(r => r.RoomImages)
+              .ToList();
 
 
-        //    return rooms;
-        //}
+            return rooms;
+        }
     }
 }
