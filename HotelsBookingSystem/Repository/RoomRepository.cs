@@ -30,7 +30,7 @@ namespace HotelsBookingSystem.Repository
 
         public List<Room> GetAllroom()
         {
-            var rooms = con.Rooms
+            var rooms = _context.Rooms
                .Where(r => r.Status == "available")
                .Include(r => r.Hotel)
                .Include(r => r.RoomImages)
@@ -121,16 +121,16 @@ namespace HotelsBookingSystem.Repository
             return hotels;
         }
 
-        public List<Room> GetAllroom()
-        {
-            var rooms = con.Rooms
-               .Where(r => r.Status == "available")
-               .Include(r => r.Hotel)
-               .Include(r => r.RoomImages)
-              .ToList();
+        //public List<Room> GetAllroom()
+        //{
+        //    var rooms = _context.Rooms
+        //       .Where(r => r.Status == "available")
+        //       .Include(r => r.Hotel)
+        //       .Include(r => r.RoomImages)
+        //      .ToList();
 
 
-            return rooms;
-        }
+        //    return rooms;
+        //}
     }
 }
