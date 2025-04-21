@@ -1,5 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Index";
+﻿@model HotelsBookingSystem.ViewModels.AdminViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
 <!DOCTYPE html>
@@ -21,28 +23,28 @@
             <div class="card metric-card">
                 <div class="icon hotels">🏨</div>
                 <div>
-                    <div class="metric-value">24</div>
+                    <div class="metric-value">@Model.TotalHotels</div>
                     <div class="metric-label">Total Hotels</div>
                 </div>
             </div>
             <div class="card metric-card">
                 <div class="icon rooms">🛏️</div>
                 <div>
-                    <div class="metric-value">992</div>
+                    <div class="metric-value">@Model.TotalRooms</div>
                     <div class="metric-label">Total Rooms</div>
                 </div>
             </div>
             <div class="card metric-card">
                 <div class="icon clients">👥</div>
                 <div>
-                    <div class="metric-value">2,342</div>
+                    <div class="metric-value">@Model.ActiveClients</div>
                     <div class="metric-label">Active Clients</div>
                 </div>
             </div>
             <div class="card metric-card">
                 <div class="icon bookings">📅</div>
                 <div>
-                    <div class="metric-value">8,461</div>
+                    <div class="metric-value">@Model.TotalBookings</div>
                     <div class="metric-label">Total Bookings</div>
                 </div>
             </div>
@@ -61,7 +63,6 @@
             <table class="recent-bookings">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Client</th>
                         <th>Hotel</th>
                         <th>Room</th>
@@ -72,83 +73,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>#BK8921</td>
-                        <td>James Sukardi</td>
-                        <td>Grand Royal Hotel</td>
-                        <td>Queen Bed A-12324</td>
-                        <td>Apr 22, 2025</td>
-                        <td>Apr 25, 2025</td>
-                        <td><span class="status confirmed">Confirmed</span></td>
-                        <td>
-                            <div class="actions">
-                                <button class="action-btn view">View</button>
-                                <button class="action-btn edit">Edit</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#BK8922</td>
-                        <td>Angela Moss</td>
-                        <td>Luxury Heights</td>
-                        <td>Deluxe Room B-1324</td>
-                        <td>Apr 16, 2025</td>
-                        <td>Apr 18, 2025</td>
-                        <td><span class="status confirmed">Confirmed</span></td>
-                        <td>
-                            <div class="actions">
-                                <button class="action-btn view">View</button>
-                                <button class="action-btn edit">Edit</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#BK8923</td>
-                        <td>JGeovanny</td>
-                        <td>Ocean View Resort</td>
-                        <td>King Big C-2445</td>
-                        <td>Apr 23, 2025</td>
-                        <td>Apr 30, 2025</td>
-                        <td><span class="status pending">Pending</span></td>
-                        <td>
-                            <div class="actions">
-                                <button class="action-btn view">View</button>
-                                <button class="action-btn edit">Edit</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#BK8924</td>
-                        <td>Kusnaidi Anderson</td>
-                        <td>City Center Hotel</td>
-                        <td>Standard Room D-5122</td>
-                        <td>Apr 20, 2025</td>
-                        <td>Apr 21, 2025</td>
-                        <td><span class="status cancelled">Cancelled</span></td>
-                        <td>
-                            <div class="actions">
-                                <button class="action-btn view">View</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#BK8925</td>
-                        <td>Maria Rodriguez</td>
-                        <td>Grand Royal Hotel</td>
-                        <td>Suite S-1001</td>
-                        <td>Apr 25, 2025</td>
-                        <td>Apr 28, 2025</td>
-                        <td><span class="status confirmed">Confirmed</span></td>
-                        <td>
-                            <div class="actions">
-                                <button class="action-btn view">View</button>
-                                <button class="action-btn edit">Edit</button>
-                            </div>
-                        </td>
-                    </tr>
+                    @foreach (var booking in Model.RecentBookings)
+                    {
+                        <tr>
+                            <td>@booking.ClientName</td>
+                            <td>@booking.HotelName</td>
+                            <td>@booking.MainRoomDisplay</td>
+                            <td>@booking.CheckInDate</td>
+                            <td>@booking.CheckOutDate</td>
+                            <td>
+                                <span class="status @(booking.Status.ToLower())">
+                                    @booking.Status
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button class="action-btn view">View</button>
+                                    @if (booking.Status.ToLower() != "cancelled")
+                                    {
+                                        <button class="action-btn edit">Edit</button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
+
 
         <div class="dashboard-row">
             <div class="card">
@@ -162,71 +114,19 @@
                 </div>
 
                 <div class="hotel-list">
-                    <div class="hotel-item">
-                        <img src="/api/placeholder/60/60" alt="Hotel" class="hotel-image">
-                        <div class="hotel-details">
-                            <div class="hotel-name">Grand Royal Hotel</div>
-                            <div class="hotel-info">New York, USA • 120 rooms</div>
+                    @foreach(var hotel in Model.Hotels)
+                    {
+                        <div class="hotel-item">
+                            <img src="@hotel.ImageUrl" alt="Hotel" class="hotel-image">
+                            <div class="hotel-details">
+                                <div class="hotel-name">@hotel.Name</div>
+                                <div class="hotel-info">@hotel.Location • @hotel.RoomCount rooms</div>
+                            </div>
+                            <div>
+                                <span class="status-indicator active"></span> @hotel.Status
+                            </div>
                         </div>
-                        <div>
-                            <span class="status-indicator active"></span> Active
-                        </div>
-                    </div>
-
-                    <div class="hotel-item">
-                        <img src="/api/placeholder/60/60" alt="Hotel" class="hotel-image">
-                        <div class="hotel-details">
-                            <div class="hotel-name">Luxury Heights</div>
-                            <div class="hotel-info">Los Angeles, USA • 85 rooms</div>
-                        </div>
-                        <div>
-                            <span class="status-indicator active"></span> Active
-                        </div>
-                    </div>
-
-                    <div class="hotel-item">
-                        <img src="/api/placeholder/60/60" alt="Hotel" class="hotel-image">
-                        <div class="hotel-details">
-                            <div class="hotel-name">Ocean View Resort</div>
-                            <div class="hotel-info">Miami, USA • 200 rooms</div>
-                        </div>
-                        <div>
-                            <span class="status-indicator active"></span> Active
-                        </div>
-                    </div>
-
-                    <div class="hotel-item">
-                        <img src="/api/placeholder/60/60" alt="Hotel" class="hotel-image">
-                        <div class="hotel-details">
-                            <div class="hotel-name">City Center Hotel</div>
-                            <div class="hotel-info">Chicago, USA • 75 rooms</div>
-                        </div>
-                        <div>
-                            <span class="status-indicator active"></span> Active
-                        </div>
-                    </div>
-
-                    <div class="hotel-item">
-                        <img src="/api/placeholder/60/60" alt="Hotel" class="hotel-image">
-                        <div class="hotel-details">
-                            <div class="hotel-name">Mountain Lodge</div>
-                            <div class="hotel-info">Denver, USA • 50 rooms</div>
-                        </div>
-                        <div>
-                            <span class="status-indicator inactive"></span> Inactive
-                        </div>
-                    </div>
-
-                    <div class="hotel-item">
-                        <img src="/api/placeholder/60/60" alt="Hotel" class="hotel-image">
-                        <div class="hotel-details">
-                            <div class="hotel-name">Riverside Inn</div>
-                            <div class="hotel-info">Portland, USA • 60 rooms</div>
-                        </div>
-                        <div>
-                            <span class="status-indicator active"></span> Active
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
 
@@ -241,71 +141,20 @@
                 </div>
 
                 <div class="room-list">
-                    <div class="room-item">
-                        <img src="/api/placeholder/60/60" alt="Room" class="room-image">
-                        <div class="room-details">
-                            <div class="room-name">Queen Bed A-12324</div>
-                            <div class="room-info">Grand Royal Hotel • $175/night</div>
-                        </div>
-                        <div>
-                            <span class="badge booked">Booked</span>
-                        </div>
-                    </div>
+                    @foreach(var room in Model.Rooms)
+                    {
+                        <div class="room-item">
+                            <img src="@room.ImageUrl" alt="Room" class="room-image">
+                            <div class="room-details">
+                                <div class="room-name">@room.Type</div>
+                                <div class="room-info">@room.HotelName • @room.PricePerNight/night</div>
+                            </div>
 
-                    <div class="room-item">
-                        <img src="/api/placeholder/60/60" alt="Room" class="room-image">
-                        <div class="room-details">
-                            <div class="room-name">Deluxe Room B-1324</div>
-                            <div class="room-info">Luxury Heights • $225/night</div>
+                            <div>
+                                <span class="badge booked">@room.Status</span>
+                            </div>
                         </div>
-                        <div>
-                            <span class="badge booked">Booked</span>
-                        </div>
-                    </div>
-
-                    <div class="room-item">
-                        <img src="/api/placeholder/60/60" alt="Room" class="room-image">
-                        <div class="room-details">
-                            <div class="room-name">King Big C-2445</div>
-                            <div class="room-info">Ocean View Resort • $280/night</div>
-                        </div>
-                        <div>
-                            <span class="badge booked">Booked</span>
-                        </div>
-                    </div>
-
-                    <div class="room-item">
-                        <img src="/api/placeholder/60/60" alt="Room" class="room-image">
-                        <div class="room-details">
-                            <div class="room-name">Standard Room D-5122</div>
-                            <div class="room-info">City Center Hotel • $145/night</div>
-                        </div>
-                        <div>
-                            <span class="badge available">Available</span>
-                        </div>
-                    </div>
-
-                    <div class="room-item">
-                        <img src="/api/placeholder/60/60" alt="Room" class="room-image">
-                        <div class="room-details">
-                            <div class="room-name">Suite S-1001</div>
-                            <div class="room-info">Grand Royal Hotel • $450/night</div>
-                        </div>
-                        <div>
-                            <span class="badge booked">Booked</span>
-                        </div>
-                    </div>
-
-                    <div class="room-item">
-                        <img src="/api/placeholder/60/60" alt="Room" class="room-image">
-                        <div class="room-details">
-                            <div class="room-name">Villa V-101</div>
-                            <div class="room-info">Ocean View Resort • $650/night</div>
-                        </div>
-                        <div>
-                            <span class="badge maintenance">Maintenance</span>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
@@ -321,60 +170,18 @@
             </div>
 
             <div class="client-list">
-                <div class="client-item">
-                    <img src="/api/placeholder/60/60" alt="Client" class="client-image">
-                    <div class="client-details">
-                        <div class="client-name">James Sukardi</div>
-                        <div class="client-info">Premium Member • 12 bookings</div>
+                @foreach(var client in Model.Clients)
+                {
+                    <div class="client-item">
+                        <div class="client-details">
+                            <div class="client-name">@client.Name</div>
+                            <div class="client-info">@client.Country , @client.City • @client.BookingCount bookings</div>
+                        </div>
+                        <div>
+                            <button class="action-btn view">View Details</button>
+                        </div>
                     </div>
-                    <div>
-                        <button class="action-btn view">View Profile</button>
-                    </div>
-                </div>
-
-                <div class="client-item">
-                    <img src="/api/placeholder/60/60" alt="Client" class="client-image">
-                    <div class="client-details">
-                        <div class="client-name">Angela Moss</div>
-                        <div class="client-info">Regular Member • 5 bookings</div>
-                    </div>
-                    <div>
-                        <button class="action-btn view">View Profile</button>
-                    </div>
-                </div>
-
-                <div class="client-item">
-                    <img src="/api/placeholder/60/60" alt="Client" class="client-image">
-                    <div class="client-details">
-                        <div class="client-name">JGeovanny</div>
-                        <div class="client-info">Gold Member • 18 bookings</div>
-                    </div>
-                    <div>
-                        <button class="action-btn view">View Profile</button>
-                    </div>
-                </div>
-
-                <div class="client-item">
-                    <img src="/api/placeholder/60/60" alt="Client" class="client-image">
-                    <div class="client-details">
-                        <div class="client-name">Kusnaidi Anderson</div>
-                        <div class="client-info">Regular Member • 3 bookings</div>
-                    </div>
-                    <div>
-                        <button class="action-btn view">View Profile</button>
-                    </div>
-                </div>
-
-                <div class="client-item" >
-                    <img src="/api/placeholder/60/60" alt="Client" class="client-image">
-                    <div class="client-details">
-                        <div class="client-name">Maria Rodriguez</div>
-                        <div class="client-info">Premium Member • 9 bookings</div>
-                    </div>
-                    <div>
-                        <button class="action-btn view">View Profile</button>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>

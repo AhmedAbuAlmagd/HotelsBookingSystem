@@ -16,6 +16,7 @@ namespace HotelsBookingSystem.Services
             this.signInManager = signInManager;
         }
 
+
         public async Task<LoginResult> LoginAsync(LoginViewModel vm)
         {
             var user = await userManager.FindByNameAsync(vm.UserName);
@@ -54,7 +55,7 @@ namespace HotelsBookingSystem.Services
             if (result.Succeeded)
             {
                 await signInManager.SignInAsync(user, isPersistent: false);
-                //await userManager.AddToRoleAsync(user, "User");
+                await userManager.AddToRoleAsync(user, "User");
                 return (true, Enumerable.Empty<string>());
             }
 
