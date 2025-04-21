@@ -27,7 +27,17 @@ namespace HotelsBookingSystem.Repository
             return rooms;
         }
 
-        
+        public List<Room> GetAllroom()
+        {
+            var rooms = con.Rooms
+               .Where(r => r.Status == "available")
+               .Include(r => r.Hotel)
+               .Include(r => r.RoomImages)
+              .ToList();
+
+
+            return rooms;
+        }
 
         Room IRoomRepository.GetById(int id)
         {
@@ -111,16 +121,6 @@ namespace HotelsBookingSystem.Repository
             return hotels;
         }
 
-        public List<Room> GetAllroom()
-        {
-            var rooms = con.Rooms
-               .Where(r => r.Status == "available")
-               .Include(r => r.Hotel)
-               .Include(r => r.RoomImages)
-              .ToList();
-
-
-            return rooms;
-        }
+       
     }
 }
