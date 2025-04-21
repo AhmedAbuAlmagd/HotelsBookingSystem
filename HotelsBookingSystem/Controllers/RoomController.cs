@@ -33,7 +33,7 @@ namespace HotelsBookingSystem.Controllers
                 hotels = roomRepository.GetAllhotels(),
                 RoomNumber = r.RoomNumber,
                 NumberOfBeds = r.NumberOfBeds,
-                typslist = roomRepository.GetAllroom().Select(r => r.Type).Distinct().ToList(),
+                typslist = roomRepository.GetAvailablerooms().Select(r => r.Type).Distinct().ToList(),
             }).ToPagedList(page, PageSize);
 
             return View(roomViewModels);
@@ -119,7 +119,7 @@ namespace HotelsBookingSystem.Controllers
                 hotels = hotellist,
                 RoomNumber = r.RoomNumber,
                 NumberOfBeds = r.NumberOfBeds,
-                typslist = roomRepository.GetAllroom().Select(r => r.Type).Distinct().ToList(),
+                typslist = roomRepository.GetAvailablerooms().Select(r => r.Type).Distinct().ToList(),
             }).ToPagedList(page, PageSize);
 
             return View("Index", roomViewModels);
