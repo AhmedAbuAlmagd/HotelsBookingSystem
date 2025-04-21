@@ -1,0 +1,222 @@
+﻿@model HotelsBookingSystem.ViewModels.AdminViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Hotel Booking System Dashboard</title>
+    <link href="~/css/AdminDashboard.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1 class="title">Multi-Hotel Booking System</h1>
+            <div>April 21, 2025</div>
+        </div>
+
+        <div class="stats-cards">
+            <div class="card metric-card">
+                <div class="icon hotels">🏨</div>
+                <div>
+                    <div class="metric-value">@Model.TotalHotels</div>
+                    <div class="metric-label">Total Hotels</div>
+                </div>
+            </div>
+            <div class="card metric-card">
+                <div class="icon rooms">🛏️</div>
+                <div>
+                    <div class="metric-value">@Model.TotalRooms</div>
+                    <div class="metric-label">Total Rooms</div>
+                </div>
+            </div>
+            <div class="card metric-card">
+                <div class="icon clients">👥</div>
+                <div>
+                    <div class="metric-value">@Model.ActiveClients</div>
+                    <div class="metric-label">Active Clients</div>
+                </div>
+            </div>
+            <div class="card metric-card">
+                <div class="icon bookings">📅</div>
+                <div>
+                    <div class="metric-value">@Model.TotalBookings</div>
+                    <div class="metric-label">Total Bookings</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card full-width" >
+            <div class="card-header">
+                <div class="card-title">Recent Bookings</div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search bookings...">
+                <button class="filter-btn">Filter</button>
+            </div>
+
+            <table class="recent-bookings">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Hotel</th>
+                        <th>Room</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model.RecentBookings)
+                    {
+                        <tr>
+                            <td>@booking.ClientName</td>
+                            <td>@booking.HotelName</td>
+                            <td>@booking.MainRoomDisplay</td>
+                            <td>@booking.CheckInDate</td>
+                            <td>@booking.CheckOutDate</td>
+                            <td>
+                                <span class="status @(booking.Status.ToLower())">
+                                    @booking.Status
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <button class="action-btn view">View</button>
+                                    @if (booking.Status.ToLower() != "cancelled")
+                                    {
+                                        <button class="action-btn edit">Edit</button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="dashboard-row">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Hotels</div>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Search hotels...">
+                    <button class="filter-btn">Filter</button>
+                </div>
+
+                <div class="hotel-list">
+                    @foreach(var hotel in Model.Hotels)
+                    {
+                        <div class="hotel-item">
+                            <img src="@hotel.ImageUrl" alt="Hotel" class="hotel-image">
+                            <div class="hotel-details">
+                                <div class="hotel-name">@hotel.Name</div>
+                                <div class="hotel-info">@hotel.Location • @hotel.RoomCount rooms</div>
+                            </div>
+                            <div>
+                                <span class="status-indicator active"></span> @hotel.Status
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Rooms</div>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Search rooms...">
+                    <button class="filter-btn">Filter</button>
+                </div>
+
+                <div class="room-list">
+                    @foreach(var room in Model.Rooms)
+                    {
+                        <div class="room-item">
+                            <img src="@room.ImageUrl" alt="Room" class="room-image">
+                            <div class="room-details">
+                                <div class="room-name">@room.Type</div>
+                                <div class="room-info">@room.HotelName • @room.PricePerNight/night</div>
+                            </div>
+
+                            <div>
+                                <span class="badge booked">@room.Status</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="card full-width" style="z-index : 10">
+            <div class="card-header">
+                <div class="card-title">Clients</div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search clients...">
+                <button class="filter-btn">Filter</button>
+            </div>
+
+            <div class="client-list">
+                @foreach(var client in Model.Clients)
+                {
+                    <div class="client-item">
+                        <div class="client-details">
+                            <div class="client-name">@client.Name</div>
+                            <div class="client-info">@client.Country , @client.City • @client.BookingCount bookings</div>
+                        </div>
+                        <div>
+                            <button class="action-btn view">View Details</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // This would be where interactive functionality would be added
+        // For a real application, this would include search, filter, and other interactions
+
+        document.addEventListener('DOMContentLoaded', function() {
+          // Add event listeners for the UI components
+          const filterButtons = document.querySelectorAll('.filter-btn');
+          const actionButtons = document.querySelectorAll('.action-btn');
+          const searchInputs = document.querySelectorAll('.search-input');
+
+          filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+              console.log('Filter button clicked');
+              // Filtering logic would go here
+            });
+          });
+
+          actionButtons.forEach(button => {
+            button.addEventListener('click', function() {
+              console.log('Action button clicked:', this.textContent);
+              // Action handling logic would go here
+            });
+          });
+
+          searchInputs.forEach(input => {
+            input.addEventListener('input', function() {
+              console.log('Search input:', this.value);
+              // Search logic would go here
+            });
+          });
+        });
+    </script>
+</body>
+</html>

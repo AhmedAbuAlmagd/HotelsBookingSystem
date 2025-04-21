@@ -1,4 +1,5 @@
 ﻿using HotelsBookingSystem.Models;
+using HotelsBookingSystem.Models.Results;
 using HotelsBookingSystem.Services;
 using HotelsBookingSystem.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -56,8 +57,9 @@ namespace HotelsBookingSystem.Controllers
                 var result = await accountService.LoginAsync(userVm);
                 if (result.Succeeded)
                 {
-                    Response.Cookies.Append("id", result.User.Id); 
-                    return RedirectToAction("Index", "Home");
+                    Response.Cookies.Append("id", result.User.Id);
+                    return result.IsAdmin ? RedirectToAction("Dashboard", "Admin")
+                                          : RedirectToAction("Index", "Home");
                 }
 
                 ModelState.AddModelError("", result.ErrorMessage);
@@ -66,6 +68,10 @@ namespace HotelsBookingSystem.Controllers
             return View(userVm);
         }
 
-
+        public async Task<IActionResult> LogoutAsync ()
+        {
+            await accountService.LogoutAsync();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
