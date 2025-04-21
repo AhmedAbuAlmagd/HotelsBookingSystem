@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using HotelsBookingSystem.Models;
+using HotelsBookingSystem.Models.Context;
 using Microsoft.EntityFrameworkCore;
- 
+
 using X.PagedList;
 using X.PagedList.Extensions;
 
@@ -9,15 +10,15 @@ namespace HotelsBookingSystem.Repository
 {
     public class RoomRepository : IRoomRepository
     {
-        private readonly HotelsContext con;
+        private readonly HotelsContext _context;
 
         public RoomRepository(HotelsContext context)
         {
-            con = context;
+            _context = context;
         }
         public IPagedList<Room> GetAll(int page, int pageSize)
         {
-            var rooms = con.Rooms
+            var rooms = _context.Rooms
                 .Where(r => r.Status == "available")   
                 .Include(r => r.Hotel)                 
                 .Include(r => r.RoomImages)           
@@ -43,7 +44,7 @@ namespace HotelsBookingSystem.Repository
         {
 
             //var room = con.Rooms.Find(id);
-            var room = con.Rooms.Include(r => r.Hotel)
+            var room = _context.Rooms.Include(r => r.Hotel)
                 .Include(r => r.RoomImages).FirstOrDefault(r => r.Id == id);
             if (room != null)
             {
@@ -57,16 +58,15 @@ namespace HotelsBookingSystem.Repository
         void IRoomRepository.Add(Room room)
         {
 
-            con.Rooms.Add(room);
-            
+            _context.Rooms.Add(room); 
         }
 
         void IRoomRepository.Delete(int id)
         {
-            var room = con.Rooms.Find(id);
+            var room = _context.Rooms.Find(id);
             if (room != null)
             {
-                con.Rooms.Remove(room);
+                _context.Rooms.Remove(room);
             }
             else
             {
@@ -76,17 +76,17 @@ namespace HotelsBookingSystem.Repository
 
         void IRoomRepository.SaveChanges()
         {
-           con.SaveChanges();
+            _context.SaveChanges();
         }
 
         public void Update(Room room)
         {
-           con.Rooms.Update(room);
+            _context.Rooms.Update(room);
         }
         public IPagedList<Room> FilterRooms(string type, int? minPrice, int? maxPrice,
                                    int? hotelId, string city, int pageNumber, int pageSize)
         {
-            var query = con.Rooms.Where(r=>r.Status == "available") 
+            var query = _context.Rooms.Where(r=>r.Status == "available") 
                 .Include(r => r.RoomImages)
                 .Include(r => r.Hotel)
                 .AsQueryable();
@@ -112,7 +112,7 @@ namespace HotelsBookingSystem.Repository
 
         public List<Hotel> GetAllhotels()
         {
-           var hotels= con.Hotels.Where(h=>h.Status=="available")
+           var hotels= _context.Hotels.Where(h=>h.Status=="available")
                 .Include(h => h.Rooms)
                 .Include(h => h.HotelImages)
                 .Include(h => h.Reviews)
@@ -121,6 +121,16 @@ namespace HotelsBookingSystem.Repository
             return hotels;
         }
 
-       
+        public List<Room> GetAllroom()
+        {
+            var rooms = con.Rooms
+               .Where(r => r.Status == "available")
+               .Include(r => r.Hotel)
+               .Include(r => r.RoomImages)
+              .ToList();
+
+
+            return rooms;
+        }
     }
 }

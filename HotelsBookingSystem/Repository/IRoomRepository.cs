@@ -8,7 +8,7 @@ namespace HotelsBookingSystem.Repository
     {
 
         IPagedList<Room> GetAll(int page, int pageSize);
-        List<Room> GetAllroom( );
+        List<Room> GetAvailablerooms();
         Room GetById(int id);
         void Add(Room room);
         void Update(Room room);
@@ -19,6 +19,10 @@ namespace HotelsBookingSystem.Repository
         List<Hotel> GetAllhotels();
        
 
+        // For Admin
+        Task<List<Room>> GetAllRoomsAsync();
+        Task<int> GetTotalRoomsCountAsync();
+        Task<List<Room>> GetTopRoomsAsync(int count);
 
     }
 }
