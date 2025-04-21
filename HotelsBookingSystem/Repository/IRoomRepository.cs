@@ -17,6 +17,7 @@ namespace HotelsBookingSystem.Repository
         IPagedList<Room> FilterRooms(string type, int? minPrice, int? maxPrice,
                                    int? hotelId, string city, int pageNumber, int pageSize);
         List<Hotel> GetAllhotels();
+       
 
 
     }

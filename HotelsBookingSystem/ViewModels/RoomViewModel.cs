@@ -15,6 +15,7 @@ namespace HotelsBookingSystem.ViewModels
         public List<Hotel> hotels { get; set; }
         public int? RoomNumber { get; set; }
         public int? NumberOfBeds { get; set; }
+        public List<string> typslist { get; set; }
 
 
 
