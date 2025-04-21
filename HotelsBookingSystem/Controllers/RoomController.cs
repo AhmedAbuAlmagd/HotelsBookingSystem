@@ -19,7 +19,7 @@ namespace HotelsBookingSystem.Controllers
         public IActionResult Index(int page = 1)
         {
             int PageSize = 3;
-            var rooms = roomRepository.GetAllroom();
+            var rooms = roomRepository.GetAvailablerooms();
 
             var roomViewModels = rooms.Select(r => new RoomViewModel
             {
