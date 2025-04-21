@@ -1,4 +1,5 @@
 using HotelsBookingSystem.Models;
+using HotelsBookingSystem.Models.Context;
 using HotelsBookingSystem.Repository;
 using HotelsBookingSystem.Services;
 using Microsoft.AspNetCore.Identity;

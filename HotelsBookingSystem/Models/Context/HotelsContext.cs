@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 
-namespace HotelsBookingSystem.Models
+namespace HotelsBookingSystem.Models.Context
 {
     public class HotelsContext : IdentityDbContext<ApplicationUser>
     {
@@ -11,7 +11,7 @@ namespace HotelsBookingSystem.Models
         {
 
         }
-       
+
         public virtual DbSet<Booking> Bookings { get; set; }
         public virtual DbSet<BookingService> BookingServices { get; set; }
         public virtual DbSet<Hotel> Hotels { get; set; }
@@ -21,6 +21,10 @@ namespace HotelsBookingSystem.Models
         public virtual DbSet<Room> Rooms { get; set; }
         public virtual DbSet<RoomImage> RoomImages { get; set; }
         public virtual DbSet<Service> Services { get; set; }
+        public virtual DbSet<Cart> Carts { get; set; }
+        public virtual DbSet<CartItem> CartItems { get; set; }
+        public virtual DbSet<BookingRoom> BookingRooms { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using HotelsBookingSystem.Models;
+using HotelsBookingSystem.Models.Context;
 using Microsoft.EntityFrameworkCore;
- 
+
 using X.PagedList;
 using X.PagedList.Extensions;
 
