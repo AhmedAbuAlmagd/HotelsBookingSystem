@@ -1,6 +1,6 @@
 ﻿using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Models.Context;
-using HotelsBookingSystem.ViewModels.AdminViewModels;
+using HotelsBookingSystem.ViewModels.AdminViewModels.Dashboard;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 namespace HotelsBookingSystem.Repository
@@ -97,7 +97,7 @@ namespace HotelsBookingSystem.Repository
 
         int IRepository<Hotel>.SaveChanges()
         {
-          return  con.SaveChanges();
+          return  con.SaveChanges();    
         }
     }
 }

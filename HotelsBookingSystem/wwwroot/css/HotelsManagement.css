@@ -1,0 +1,346 @@
+﻿.add-hotel-btn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+    .add-hotel-btn i {
+        margin-right: 5px;
+    }
+
+    .add-hotel-btn:hover {
+        background-color: #095a41;
+    }
+
+.filters-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+    .filters-section .search-bar {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+.filter-select {
+    padding: 10px 15px;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.view-options {
+    display: flex;
+    gap: 10px;
+}
+
+.view-btn {
+    background-color: white;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+    .view-btn.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+/* Hotel Cards Grid View */
+.hotels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.hotel-card {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .hotel-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+.hotel-card-header {
+    position: relative;
+}
+
+.hotel-card-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+}
+
+    .status-badge.active {
+        background-color: var(--primary);
+    }
+
+    .status-badge.inactive {
+        background-color: var(--gray);
+    }
+
+    .status-badge.maintenance {
+        background-color: var(--warning);
+    }
+
+.hotel-card-body {
+    padding: 15px;
+}
+
+.hotel-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--dark);
+}
+
+.hotel-card-info {
+    margin-bottom: 10px;
+}
+
+    .hotel-card-info p {
+        margin: 5px 0;
+        color: var(--gray);
+        font-size: 14px;
+    }
+
+    .hotel-card-info i {
+        width: 20px;
+        text-align: center;
+        margin-right: 5px;
+    }
+
+.hotel-card-description {
+    font-size: 14px;
+    color: var(--dark);
+    margin-bottom: 15px;
+    line-height: 1.4;
+    height: 60px;
+    overflow: hidden;
+}
+
+.hotel-card-footer {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid var(--light-gray);
+    gap: 10px;
+}
+
+    .hotel-card-footer .action-btn {
+        flex: 1;
+        padding: 8px 0;
+        font-size: 14px;
+    }
+
+/* Hotels List View */
+.hotels-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+    .hotels-list .hotel-card {
+        display: flex;
+        height: 150px;
+    }
+
+    .hotels-list .hotel-card-header {
+        width: 200px;
+        flex-shrink: 0;
+    }
+
+    .hotels-list .hotel-card-image {
+        height: 100%;
+    }
+
+    .hotels-list .hotel-card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hotels-list .hotel-card-footer {
+        width: 200px;
+        flex-direction: column;
+        border-top: none;
+        border-left: 1px solid var(--light-gray);
+        justify-content: center;
+    }
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 50px auto;
+    border-radius: 10px;
+    width: 70%;
+    max-width: 800px;
+    animation: modalFadeIn 0.3s;
+}
+
+.delete-modal {
+    max-width: 500px;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+    .modal-header h2 {
+        font-size: 20px;
+        color: var(--dark);
+        margin: 0;
+    }
+
+.close-modal {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--gray);
+    cursor: pointer;
+}
+
+    .close-modal:hover {
+        color: var(--dark);
+    }
+
+.modal-body {
+    padding: 20px;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group.half {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--dark);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+}
+
+.save-btn {
+    background-color: var(--primary);
+    color: white;
+}
+
+    .save-btn:hover {
+        background-color: #095a41;
+    }
+
+.cancel-btn {
+    background-color: var(--light-gray);
+    color: var(--dark);
+}
+
+    .cancel-btn:hover {
+        background-color: #d1d3d4;
+    }
+
+.delete-btn {
+    background-color: var(--secondary);
+    color: white;
+}
+
+    .delete-btn:hover {
+        background-color: #c42634;
+    }
