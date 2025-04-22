@@ -158,7 +158,7 @@ namespace HotelsBookingSystem.Controllers
                 hotels = hotellist,
                 RoomNumber = r.RoomNumber,
                 NumberOfBeds = r.NumberOfBeds,
-                typslist = roomRepository.GetAvailablerooms().Select(r => r.Type).Distinct().ToList(),
+                typslist = roomRepository.GetAllroom().Select(r => r.Type).Distinct().ToList(),
             }).ToPagedList(page, PageSize);
            // ViewData["forMap"] = roomRepository.GetAllhotels();
 

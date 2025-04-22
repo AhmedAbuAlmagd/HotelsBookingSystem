@@ -6,17 +6,17 @@ namespace HotelsBookingSystem.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly IDashboardService _dashboardService;
+        private readonly IAdminService _adminService;
 
-        public AdminController(IDashboardService dashboardService)
+        public AdminController(IAdminService adminService)
         {
-            _dashboardService = dashboardService;
+            _adminService = adminService;
         }
 
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Dashboard()
         {
-            var dashboardData = await _dashboardService.GetDashboardDataAsync();
+            var dashboardData = await _adminService.GetDashboardDataAsync();
             return View(dashboardData);
         }
         

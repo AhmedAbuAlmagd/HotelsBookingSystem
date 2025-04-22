@@ -23,7 +23,7 @@ builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IAdminService, DashboardService>();
 
 var app = builder.Build();
 

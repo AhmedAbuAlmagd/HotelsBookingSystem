@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelsBookingSystem.Services
 {
-    public class DashboardService : IDashboardService
+    public class DashboardService : IAdminService
     {
         private readonly IHotelRepository _hotelRepository;
         private readonly IRoomRepository _roomRepository;

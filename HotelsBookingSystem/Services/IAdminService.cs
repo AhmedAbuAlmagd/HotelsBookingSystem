@@ -2,7 +2,7 @@
 
 namespace HotelsBookingSystem.Services
 {
-    public interface IDashboardService
+    public interface IAdminService
     {
         Task<DashboardViewModel> GetDashboardDataAsync();
 
