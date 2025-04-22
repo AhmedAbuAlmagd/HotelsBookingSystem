@@ -18,7 +18,7 @@ namespace HotelsBookingSystem.Repository
                                    int? hotelId, string city, int pageNumber, int pageSize);
         List<Hotel> GetAllhotels();
        
-
+        List<Room> GetAllroom();
         // For Admin
         Task<List<Room>> GetAllRoomsAsync();
         Task<int> GetTotalRoomsCountAsync();

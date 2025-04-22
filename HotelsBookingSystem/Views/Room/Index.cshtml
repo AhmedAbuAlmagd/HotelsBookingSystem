@@ -6,47 +6,52 @@
 @{
     ViewData["Title"] = "Index";
 }
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
 
 <div class="container my-5">
 
     <form method="get" asp-action="FilterRooms" asp-controller="Room">
         <div class="row mb-3">
             <div class="col-md-2">
-                 
+
                 <select name="type" class="form-select">
                     <option value="">-- Select Type --</option>
                     <option value="All" selected="@(ViewData["CurrentType"]?.ToString() == "All")">All</option>
 
-                    @foreach (var type in Model.FirstOrDefault()?.typslist??new List<string>())
+                    @foreach (var type in Model.FirstOrDefault()?.typslist ?? new List<string>())
                     {
-                        <option value="@type"
-                                selected="@(type == ViewData["CurrentType"]?.ToString())">
-                            @type
-                        </option>
+                        <option value="@type" selected="@(type == ViewData["CurrentType"]?.ToString())">@type</option>
                     }
                 </select>
+
             </div>
 
             <div class="col-md-2">
                 <input type="number" name="minPrice" class="form-control" placeholder="Min Price"
-                       value="@ViewData["CurrentMinPrice"]" />
+                       value="@ViewData["CurrentMinPrice"]" min="1" />
+                <span class="text-danger" data-valmsg-for="minPrice" data-valmsg-replace="true"></span>
             </div>
 
             <div class="col-md-2">
                 <input type="number" name="maxPrice" class="form-control" placeholder="Max Price"
-                       value="@ViewData["CurrentMaxPrice"]" />
+                       value="@ViewData["CurrentMaxPrice"]" min="1" />
+                <span class="text-danger" data-valmsg-for="maxPrice" data-valmsg-replace="true"></span>
             </div>
 
             <div class="col-md-2">
                 <select name="hotelId" class="form-select">
                     <option value="">-- Select Hotel --</option>
-                    <option value="All" selected="@(ViewData["CurrentHotelId"]?.ToString() == "All")">All</option>
+                  <option value="0" selected="@(ViewData["CurrentHotelId"]?.ToString() == "All")">All</option>  
 
                     @foreach (var hotel in Model.FirstOrDefault()?.hotels ?? new List<Hotel>())
                     {
-                        <option value="@hotel.Id"
-                                selected="@(hotel.Id.ToString() == ViewData["CurrentHotelId"]?.ToString())">
+
+                        <option value="@hotel.Id"selected="@(hotel.Id.ToString() == ViewData["CurrentHotelId"]?.ToString())">
                             @hotel.Name
                         </option>
                     }
@@ -56,7 +61,7 @@
             <div class="col-md-2">
                 <select name="city" class="form-select">
                     <option value="">-- Select City --</option>
-                    <option value="All" selected="@(ViewData["CurrentCity"]?.ToString() == "All")">All</option>
+                  <option value="All" selected="@(ViewData["CurrentCity"]?.ToString() == "All")">All</option>  
 
                     @foreach (var hotel in Model.FirstOrDefault()?.hotels ?? new List<Hotel>())
                     {
@@ -83,6 +88,9 @@
             @ViewBag.FilterError
     </div>
 }
+
+
+   
 
 
     <!-- Room Start -->
@@ -131,14 +139,24 @@
                                             <small class="fa fa-star text-primary"></small>
                                         </div>
                                     </div>
-                                     <div class="d-flex mb-3">  
-                                       <small class="border-end me-3 pe-3"><i class="fa fa-bed text-primary me-2"></i> @Model.FirstOrDefault()?.NumberOfBeds</small> 
-                                     
-                                     <small><i class="fa fa-wifi text-primary me-2"></i>Wifi</small>  
-                                      </div> 
+                                     <div class="d-flex mb-3">
+                                        <small class="border-end pe-3 me-3">
+                                            <i class="fa fa-bed text-primary me-2"></i> @i.NumberOfBeds
+                                        </small>
+
+                                        <small class="border-end pe-3 me-3">
+                                            <i class="fa fa-wifi text-primary me-2"></i> Wifi
+                                        </small>
+
+                                        <small>
+                                            <i class="fa  fa-arrow-down-9-1 text-primary me-2"></i> @i.RoomNumber
+                                        </small>
+
+                                    </div> 
                                     <div class="d-flex mb-3">
-                                        <div><p>@i.hotel.Name</p></div>
+                                        <div><p>@i.hotel.Name </p></div>
                                     </div>
+
                                     <p class="text-body mb-3">@i.Description</p>
                                     <div class="d-flex justify-content-between">
                                         <a class="btn btn-sm btn-primary rounded py-2 px-4" href="/Room/Detail/@i.Id">View Detail</a>
@@ -155,7 +173,7 @@
             </div>
         </div>
     </div>
-
+    <div class=" my-5 w-75 m-auto " id="map" style="height: 300px;"></div>
     <div class="pagination-container my-5 pb-5">
         <ul class="pagination justify-content-center my-5">
             @if (Model.HasPreviousPage)
@@ -195,5 +213,39 @@
 
 </div>
 
+ 
 
+<script>
+    var map = L.map('map').setView([30.0444, 31.2357], 6); // Centered on Egypt
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    var bounds = [];
+
+    @foreach (var h in Model)
+    {
+        if (h.hotel != null &&
+            !string.IsNullOrEmpty(h.hotel.Latitude) &&
+            !string.IsNullOrEmpty(h.hotel.Longitude))
+        {
+         
+            <text>
+                        var lat = parseFloat('@h.hotel.Latitude'.replace(',', '.'));
+                        var lng = parseFloat('@h.hotel.Longitude'.replace(',', '.'));
+
+                        if (!isNaN(lat) && !isNaN(lng)) {
+                            var marker = L.marker([lat, lng]).addTo(map)
+                                .bindPopup(`@h.hotel.Name \n @h.hotel.Phone`);
+                            bounds.push([lat, lng]);
+                        }
+            </text>
+        }
+    }
+
+    if (bounds.length > 0) {
+        map.fitBounds(bounds);
+    }
+</script>
 <partial name="_ValidationScriptsPartial" /> 
