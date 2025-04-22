@@ -1,17 +1,22 @@
 ﻿using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Repository;
+using HotelsBookingSystem.Services;
 using HotelsBookingSystem.ViewModels;
+using HotelsBookingSystem.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelsBookingSystem.Controllers
 {
     public class HotelController : Controller
     {
-        public readonly IHotelRepository hotelRepository;
-        public HotelController(IHotelRepository hotelRepository)
+        private readonly IHotelRepository hotelRepository;
+        private readonly IHotelService _hotelService;
+        public HotelController(IHotelRepository hotelRepository ,IHotelService hotelService)
         {
             this.hotelRepository = hotelRepository;
+            _hotelService = hotelService;
         }
+
 
         public IActionResult AddHolelForm()
         {
@@ -82,5 +87,37 @@ namespace HotelsBookingSystem.Controllers
             return View("ViewRooms", hotelView);
         }
 
+        public IActionResult HotelsManagement()
+        {
+            var hotels = _hotelService.GetAllHotels();
+            var viewModel = new HotelsManagementViewModel { Hotels = hotels };
+            return View(viewModel);
+        }
+
+
+        [HttpPost]
+        public IActionResult Update(int id ,HotelFormViewModel hotel)
+        {
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success = true });
+            }
+
+            _hotelService.UpdateHotel(id, hotel);
+            var hotels = _hotelService.GetAllHotels();
+            var viewModel = new HotelsManagementViewModel { Hotels = hotels };
+            return RedirectToAction(nameof(HotelsManagement),viewModel);
+        }
+
+
+        public IActionResult GetHotel(int id)
+        {
+            var hotel = _hotelService.GetHotelDetails(id);
+            if (hotel == null)
+                return NotFound();
+
+            return Json(hotel);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using HotelsBookingSystem.ViewModels.AdminViewModels;
+﻿using HotelsBookingSystem.ViewModels.AdminViewModels.Dashboard;
 
 namespace HotelsBookingSystem.Services
 {

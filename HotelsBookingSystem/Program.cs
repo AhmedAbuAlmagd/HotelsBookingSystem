@@ -25,6 +25,7 @@ builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IAdminService, DashboardService>();
+builder.Services.AddScoped<IHotelService, HotelService>();
 
 var app = builder.Build();
 
