@@ -1,5 +1,8 @@
 ﻿using HotelsBookingSystem.Models;
+using HotelsBookingSystem.Models.Context;
+using HotelsBookingSystem.ViewModels.AdminViewModels;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList;
 namespace HotelsBookingSystem.Repository
 {
     public class HotelRepostory : IHotelRepository
@@ -44,13 +47,7 @@ namespace HotelsBookingSystem.Repository
             con.Remove(hotel);
         }
 
-        public List<Hotel> GetAllhotels()
-        {
-
-            List<Hotel> hotels = con.Hotels.Include(h=>h.Rooms).Include(h=>h.HotelImages).ToList();
-            return hotels;
-
-        }
+    
       public  Hotel GetById(int id)
         {
         
@@ -67,6 +64,40 @@ namespace HotelsBookingSystem.Repository
         public void Update(Hotel hotel)
         {
           con.Update(hotel);
+     
+        }
+        public async Task<int> GetTotalHotelsCountAsync()
+        {
+            return await con.Hotels.CountAsync();
+        }
+
+        public async Task<List<HotelViewModel>> GetTopHotelsAsync(int count = 6)
+        {
+            return await con.Hotels
+                .Include(h => h.Rooms)
+                .Include(h => h.HotelImages)
+                .OrderBy(h => h.Name)
+                .Take(count)
+                .Select(h => new HotelViewModel
+                {
+                    Name = h.Name,
+                    Location = h.Address,
+                    RoomCount = h.Rooms.Count,
+                    ImageUrl = h.HotelImages.FirstOrDefault(x => x.IsPrimary == true).ImageUrl,
+                    Status = h.Status
+                })
+                .ToListAsync();
+        }
+
+        public IPagedList<Hotel> GetAll(int page, int pageSize)
+        {
+            throw new NotImplementedException();
+
+        }
+
+        int IRepository<Hotel>.SaveChanges()
+        {
+          return  con.SaveChanges();
         }
     }
 }

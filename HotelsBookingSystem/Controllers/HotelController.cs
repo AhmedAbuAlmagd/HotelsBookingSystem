@@ -45,7 +45,7 @@ namespace HotelsBookingSystem.Controllers
         //}
         public IActionResult Index()
         {
-            var hotels = hotelRepository.GetAllhotels(); 
+            var hotels = hotelRepository.GetHotelsWithRoomsAndImages(); 
             var hotelViews = hotels.Select(h => new HotelModelView
             {
                 Id = h.Id,
