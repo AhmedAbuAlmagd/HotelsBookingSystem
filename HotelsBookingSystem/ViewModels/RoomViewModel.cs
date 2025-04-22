@@ -13,7 +13,12 @@ namespace HotelsBookingSystem.ViewModels
        public List<string> citys { get; set; }
         public List<string> RoomImages { get; set; }
         public List<Hotel> hotels { get; set; }
-       
+        public int? RoomNumber { get; set; }
+        public int? NumberOfBeds { get; set; }
+        public List<string> typslist { get; set; }
+
+
+
 
     }
 }
