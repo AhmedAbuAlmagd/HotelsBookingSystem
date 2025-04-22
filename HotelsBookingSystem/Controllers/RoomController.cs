@@ -51,6 +51,58 @@ namespace HotelsBookingSystem.Controllers
         #endregion
 
         #region filter
+        public IActionResult AvailableRooms(DateTime checkIn, DateTime checkOut, int adults, int children, int page = 1)
+        {
+            int pageSize = 3;
+
+
+            var allRooms = roomRepository.GetAllroom();
+
+            // var availableRooms = allRooms.Where(room => !room.BookingRooms.Any(b => b.booking.CheckIn.HasValue && b.booking.CheckOut.HasValue && !(b.booking.CheckOut.Value.Date <= checkIn.Date || b.booking.CheckIn.Value.Date >= checkOut.Date)));
+            var availableRooms = allRooms
+     .Where(room => !room.BookingRooms
+         .Any(b =>
+             b.booking.CheckIn.HasValue && b.booking.CheckOut.HasValue &&
+             b.booking.CheckIn.Value <= checkOut &&
+             b.booking.CheckOut.Value >= checkIn)); // المقارنة مع الوقت بالكامل
+
+
+            // var availableRooms = allRooms
+            // .Where(room => !room.BookingRooms
+            //  .Any(b => b.booking.CheckIn < checkOut && b.booking.CheckOut > checkIn));
+
+            //      var availableRooms = allRooms
+            //        .Where(room =>
+            //           !room.BookingRooms.Any(br =>
+            //        br.booking.CheckIn < checkOut && br.booking.CheckOut > checkIn
+            //    )
+            //)
+            //.ToList();
+            //      var availableRooms = allRooms 
+            //.Where(room =>
+            //              !room.BookingRooms.Any(br =>
+            //        br.booking.CheckIn <= checkOut && br.booking.CheckOut >= checkIn
+            //    )
+            //)
+            //.ToList();
+
+            //var availableRooms = allRooms.(x => x.BookingRooms.Where(y => y.booking.CheckIn == checkIn && y.booking.CheckOut == checkOut));
+
+
+            var roomViewModels = availableRooms.Select(r => new RoomViewModel
+            {
+                Id = r.Id,
+                Description = r.Description,
+                Type = r.Type,
+                Status = r.Status,
+                PricePerNight = r.PricePerNight,
+                RoomImages = r.RoomImages?.Select(img => img.ImageUrl).ToList(),
+                hotel = r.Hotel,
+                hotels = roomRepository.GetAllhotels()
+            }).ToPagedList(page, pageSize);
+
+            return View("Index", roomViewModels); 
+        }
 
         public IActionResult FilterRooms(
      int page = 1,

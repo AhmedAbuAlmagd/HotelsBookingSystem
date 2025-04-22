@@ -110,17 +110,18 @@ namespace HotelsBookingSystem.Repository
                 .ToList();
             return hotels;
         }
-
         public List<Room> GetAllroom()
         {
             var rooms = con.Rooms
-               .Where(r => r.Status == "available")
-               .Include(r => r.Hotel)
-               .Include(r => r.RoomImages)
-              .ToList();
-
+                .Where(r => r.Status == "available")
+                .Include(r => r.Hotel)
+                .Include(r => r.RoomImages)
+                .Include(r => r.BookingRooms)
+                    .ThenInclude(r => r.booking) 
+                .ToList();
 
             return rooms;
         }
+
     }
 }

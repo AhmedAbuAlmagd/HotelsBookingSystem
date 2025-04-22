@@ -54,6 +54,7 @@
         </div>
         <!-- Carousel End -->
         <!-- Booking Start -->
+    <form method="get" asp-action="AvailableRooms" asp-controller="Room">
         <div class="container-fluid booking pb-5 wow fadeIn" data-wow-delay="0.1s">
             <div class="container">
                 <div class="bg-white shadow" style="padding: 35px;">
@@ -62,40 +63,44 @@
                             <div class="row g-2">
                                 <div class="col-md-3">
                                     <div class="date" id="date1" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input"
-                                               placeholder="Check in" data-target="#date1" data-toggle="datetimepicker" />
+                                        @* <input type="text" name="checkIn" class="form-control datetimepicker-input" *@
+                                        @*        placeholder="Check in" data-target="#date1" data-toggle="datetimepicker" /> *@
+                                        <input type="date" name="checkIn" class="form-control" required />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="date" id="date2" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" placeholder="Check out" data-target="#date2" data-toggle="datetimepicker" />
+                                        @* <input name="checkOut" type="text" class="form-control datetimepicker-input" *@
+                                        @*        placeholder="Check out" data-target="#date2" data-toggle="datetimepicker" /> *@
+                                        <input type="date" name="checkOut" class="form-control" required />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <select class="form-select">
-                                        <option selected>Adult</option>
+                                    <select name="adults" class="form-select" required>
                                         <option value="1">Adult 1</option>
                                         <option value="2">Adult 2</option>
                                         <option value="3">Adult 3</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <select class="form-select">
-                                        <option selected>Child</option>
+
+                                    <select name="children" class="form-select" required>
+                                        <option value="0">No Children</option>
                                         <option value="1">Child 1</option>
                                         <option value="2">Child 2</option>
-                                        <option value="3">Child 3</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-primary w-100">Submit</button>
+                            <button class="btn btn-primary w-100">Book Now</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </form>
+
         <!-- Booking End -->
         <!-- About Start -->
         <div class="container-xxl py-5">
@@ -107,25 +112,26 @@
                         <p class="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet</p>
                         <div class="row g-3 pb-4">
                             <div class="col-sm-4 wow fadeIn" data-wow-delay="0.1s">
-                                <div class="border rounded p-1">
+                                <div class="border rounded p-1"><!--numer of Rooms -->
                                     <div class="border rounded text-center p-4">
                                         <i class="fa fa-hotel fa-2x text-primary mb-2"></i>
                                         <h2 class="mb-1" data-toggle="counter-up">1234</h2>
                                         <p class="mb-0">Rooms</p>
                                     </div>
                                 </div>
-                            </div>
+                            </div>  <!--numer of hotels -->
                             <div class="col-sm-4 wow fadeIn" data-wow-delay="0.3s">
                                 <div class="border rounded p-1">
                                     <div class="border rounded text-center p-4">
                                         <i class="fa fa-users-cog fa-2x text-primary mb-2"></i>
                                         <h2 class="mb-1" data-toggle="counter-up">1234</h2>
-                                        <p class="mb-0">Staffs</p>
+                                        <p class="mb-0">Hotels</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-4 wow fadeIn" data-wow-delay="0.5s">
-                                <div class="border rounded p-1">
+                            <div class="border rounded p-1">
+                                <!--numer of Clients -->
                                     <div class="border rounded text-center p-4">
                                         <i class="fa fa-users fa-2x text-primary mb-2"></i>
                                         <h2 class="mb-1" data-toggle="counter-up">1234</h2>
