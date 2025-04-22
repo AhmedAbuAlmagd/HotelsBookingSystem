@@ -1,0 +1,91 @@
+﻿
+@model List<HotelsBookingSystem.ViewModels.HotelModelView>
+<div class="container mt-4">
+    @foreach (var hotel in Model)
+    {
+        <div class="card mb-5 shadow">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">@hotel.Name</h2>
+                <p class="mb-0">@hotel.Address, @hotel.City</p>
+            </div>
+
+            <div class="card-body">
+                <p class="card-text">@hotel.Description</p>
+
+              
+                <h3 class="mt-4">Hotel Images</h3>
+                <div id="hotelCarousel-@hotel.Id" class="carousel slide mb-4" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @for (int i = 0; i < hotel.HotelImages.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@hotel.HotelImages[i]" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="Hotel Image">
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#hotelCarousel-@hotel.Id" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#hotelCarousel-@hotel.Id" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+              @*   <!-- Rooms Section -->
+                <h3 class="mt-4">Available Rooms</h3>
+                <div class="row">
+                    @foreach (var room in hotel.hotelRooms)
+                    {
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-secondary text-white">
+                                    <h4 class="mb-0">@room.Type</h4>
+                                </div>
+
+                                <!-- Room Images Carousel -->
+                                <div id="roomCarousel-@room.Id" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        @for (int i = 0; i < room.RoomImages.Count; i++)
+                                        {
+                                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                                <img src="@room.RoomImages[i].ImageUrl" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Room Image">
+                                            </div>
+                                        }
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel-@room.Id" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel-@room.Id" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
+
+                                <div class="card-body">
+                                    <p class="card-text"><strong>Room ID:</strong> @room.Id</p>
+                                    <!-- Add more room details as needed -->
+                        </div>    *@     
+                            <a asp-action="ViewRooms" asp-route-hotelId="@hotel.Id" class="btn btn-outline-primary mt-3">View Rooms</a>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+     
+        document.querySelectorAll('.carousel').forEach(carousel => {
+            new bootstrap.Carousel(carousel, {
+                interval: 3000, 
+                pause: 'hover'
+        });
+    </script>
+}
