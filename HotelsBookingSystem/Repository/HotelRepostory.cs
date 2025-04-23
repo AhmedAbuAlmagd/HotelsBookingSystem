@@ -2,6 +2,7 @@
 using HotelsBookingSystem.Models.Context;
 using HotelsBookingSystem.ViewModels;
 using HotelsBookingSystem.ViewModels.AdminViewModels;
+using HotelsBookingSystem.ViewModels.AdminViewModels.Dashboard;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 namespace HotelsBookingSystem.Repository
@@ -48,13 +49,7 @@ namespace HotelsBookingSystem.Repository
             con.Remove(hotel);
         }
 
-        public List<Hotel> GetAllhotels()
-        {
-
-            List<Hotel> hotels = con.Hotels.Include(h=>h.Rooms).Include(h=>h.HotelImages).ToList();
-            return hotels;
-
-        }
+    
       public  Hotel GetById(int id)
         {
         
@@ -71,44 +66,85 @@ namespace HotelsBookingSystem.Repository
                                  .ToListAsync();
         }
 
-        public  void SaveChanges()
-        {
-           con.SaveChanges();
-        }
 
         public void Update(Hotel hotel)
         {
           con.Update(hotel);
+     
         }
 
-        public Task<int> GetTotalHotelsCountAsync()
+        public async Task<int> GetTotalHotelsCountAsync()
         {
-            throw new NotImplementedException();
+            return await con.Hotels.CountAsync();
         }
 
-        public Task<List<HotelViewModel>> GetTopHotelsAsync(int count = 6)
+
+        public async Task<List<HotelViewModel>> GetTopHotelsAsync(int count = 6)
         {
-            throw new NotImplementedException();
+            return await con.Hotels
+                .Include(h => h.Rooms)
+                .Include(h => h.HotelImages)
+                .OrderBy(h => h.Name)
+                .Take(count)
+                .Select(h => new HotelViewModel
+                {
+                    Name = h.Name,
+                    Location = h.Address,
+                    RoomCount = h.Rooms.Count,
+                    ImageUrl = h.HotelImages.FirstOrDefault(x => x.IsPrimary == true).ImageUrl,
+                    Status = h.Status
+                })
+                .ToListAsync();
         }
 
         public IPagedList<Hotel> GetAll(int page, int pageSize)
         {
             throw new NotImplementedException();
+
         }
 
         int IRepository<Hotel>.SaveChanges()
         {
-            throw new NotImplementedException();
+          return  con.SaveChanges();    
         }
 
-        public Task<List<HotelViewModel>> GetTopRatedHotelsAsync(int count = 4)
+
+
+       
+        public async Task<List<HotelViewModel>> GetTopRatedHotelsAsync(int count = 4)
         {
-            throw new NotImplementedException();
+            return await con.Hotels
+                .Include(h => h.Rooms)
+                .Include(h => h.HotelImages)
+                .Include(h => h.Reviews) 
+                .OrderByDescending(h => h.Reviews.Average(r => (double?)r.Rating) ?? 0)
+                .Take(count)
+                .Select(h => new HotelViewModel
+                {
+                    Name = h.Name,
+                    Location = h.Address,
+                    RoomCount = h.Rooms.Count,
+                    ImageUrl = h.HotelImages.FirstOrDefault(x => x.IsPrimary == true).ImageUrl,
+                    Status = h.Status,
+                    Rating = h.Reviews.Any() ? h.Reviews.Average(r => r.Rating ?? 0) : 0 
+                })
+                .ToListAsync();
+        }
+        public async Task<List<ReviewViewModel>> GetRecentReviewsAsync(int count = 5)
+        {
+            return await con.Reviews
+                .Include(r => r.Hotel)
+                .Include(r => r.User)
+                .OrderByDescending(r => r.Id)
+                .Take(count)
+                .Select(r => new ReviewViewModel
+                {
+                    Comment = r.Comment,
+                    HotelName = r.Hotel != null ? r.Hotel.Name : "Unknown",
+                    UserName = r.User != null ? r.User.UserName : "Anonymous"
+                })
+                .ToListAsync();
         }
 
-        public Task<List<ReviewViewModel>> GetRecentReviewsAsync(int count = 5)
-        {
-            throw new NotImplementedException();
-        }
-    }
+  }
 }

@@ -1,5 +1,8 @@
 ﻿
 @model List<HotelsBookingSystem.ViewModels.HotelModelView>
+@{
+    Layout = "_Layout";
+}
 <div class="container mt-4">
     @foreach (var hotel in Model)
     {
@@ -79,7 +82,7 @@
     }
 </div>
 
-@section Scripts {
+
     <script>
      
         document.querySelectorAll('.carousel').forEach(carousel => {
@@ -88,4 +91,3 @@
                 pause: 'hover'
         });
     </script>
-}

@@ -1,6 +1,6 @@
 ﻿using HotelsBookingSystem.Models.Context;
 using HotelsBookingSystem.Repository;
-using HotelsBookingSystem.ViewModels.AdminViewModels;
+using HotelsBookingSystem.ViewModels.AdminViewModels.Dashboard;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

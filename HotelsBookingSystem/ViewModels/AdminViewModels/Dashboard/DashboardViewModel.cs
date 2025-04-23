@@ -1,4 +1,4 @@
-﻿namespace HotelsBookingSystem.ViewModels.AdminViewModels
+﻿namespace HotelsBookingSystem.ViewModels.AdminViewModels.Dashboard
 {
     public class DashboardViewModel
     {
@@ -12,4 +12,3 @@
         public List<ClientViewModel> Clients { get; set; }
     }
 }
-    

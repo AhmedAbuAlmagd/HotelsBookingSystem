@@ -1,4 +1,4 @@
-﻿namespace HotelsBookingSystem.ViewModels.AdminViewModels
+﻿namespace HotelsBookingSystem.ViewModels.AdminViewModels.Dashboard
 {
     public class BookingViewModel
     {
