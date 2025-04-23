@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using HotelsBookingSystem.ViewModels.AdminViewModels;
 
 using X.PagedList;
+using HotelsBookingSystem.ViewModels;
 
 namespace HotelsBookingSystem.Repository 
 {
@@ -11,7 +12,10 @@ namespace HotelsBookingSystem.Repository
 
         List<Hotel> GetAllhotels();
         List<Hotel> GetHotelsWithRoomsAndImages();
-         Hotel GetHotelWithRoomsAndImages(int id);
+        Task<List<HotelViewModel>> GetTopRatedHotelsAsync(int count = 4);
+        Task<List<ReviewViewModel>> GetRecentReviewsAsync(int count = 5);
+
+        Hotel GetHotelWithRoomsAndImages(int id);
         Hotel GetById(int id);
 //         void Add(Hotel hotel);
 //         void Update(Hotel hotel);
