@@ -1,5 +1,7 @@
 ﻿using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Models.Context;
+using HotelsBookingSystem.ViewModels;
+using HotelsBookingSystem.ViewModels.AdminViewModels;
 using HotelsBookingSystem.ViewModels.AdminViewModels.Dashboard;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
@@ -55,21 +57,27 @@ namespace HotelsBookingSystem.Repository
             return hotel;
         
         }
-
-       public  void SaveChanges()
+        public async Task<List<Review>> GetReviewsByHotelIdAsync(int hotelId)
         {
-           con.SaveChanges();
+            return await con.Reviews
+                                 .Where(r => r.HotelId == hotelId)
+                                 .Include(r => r.User)
+                                 .Include(r => r.Hotel)
+                                 .ToListAsync();
         }
+
 
         public void Update(Hotel hotel)
         {
           con.Update(hotel);
      
         }
+
         public async Task<int> GetTotalHotelsCountAsync()
         {
             return await con.Hotels.CountAsync();
         }
+
 
         public async Task<List<HotelViewModel>> GetTopHotelsAsync(int count = 6)
         {
@@ -99,5 +107,44 @@ namespace HotelsBookingSystem.Repository
         {
           return  con.SaveChanges();    
         }
-    }
+
+
+
+       
+        public async Task<List<HotelViewModel>> GetTopRatedHotelsAsync(int count = 4)
+        {
+            return await con.Hotels
+                .Include(h => h.Rooms)
+                .Include(h => h.HotelImages)
+                .Include(h => h.Reviews) 
+                .OrderByDescending(h => h.Reviews.Average(r => (double?)r.Rating) ?? 0)
+                .Take(count)
+                .Select(h => new HotelViewModel
+                {
+                    Name = h.Name,
+                    Location = h.Address,
+                    RoomCount = h.Rooms.Count,
+                    ImageUrl = h.HotelImages.FirstOrDefault(x => x.IsPrimary == true).ImageUrl,
+                    Status = h.Status,
+                    Rating = h.Reviews.Any() ? h.Reviews.Average(r => r.Rating ?? 0) : 0 
+                })
+                .ToListAsync();
+        }
+        public async Task<List<ReviewViewModel>> GetRecentReviewsAsync(int count = 5)
+        {
+            return await con.Reviews
+                .Include(r => r.Hotel)
+                .Include(r => r.User)
+                .OrderByDescending(r => r.Id)
+                .Take(count)
+                .Select(r => new ReviewViewModel
+                {
+                    Comment = r.Comment,
+                    HotelName = r.Hotel != null ? r.Hotel.Name : "Unknown",
+                    UserName = r.User != null ? r.User.UserName : "Anonymous"
+                })
+                .ToListAsync();
+        }
+
+  }
 }
