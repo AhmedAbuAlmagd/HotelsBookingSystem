@@ -1,6 +1,7 @@
 ﻿using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Repository;
 using HotelsBookingSystem.ViewModels.AdminViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelsBookingSystem.Services
 {
@@ -17,6 +18,24 @@ namespace HotelsBookingSystem.Services
         public List<HotelViewModel> GetAllHotels()
         {
             var hotels = _hotelRepository.GetHotelsWithRoomsAndImages();
+            return hotels.Select(h => MapToViewModel(h)).ToList();
+        }
+
+        public int GetTotalHotelsCount()
+        {
+            return _hotelRepository.GetHotelsWithRoomsAndImages().Count();
+        }
+        public List<HotelViewModel> GetHotelsPaged(int pageNumber, int pageSize)
+        {
+            if (pageNumber < 1) 
+                pageNumber = 1;
+
+            var hotels = _hotelRepository.GetHotelsWithRoomsAndImages()
+                .OrderBy(h => h.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             return hotels.Select(h => MapToViewModel(h)).ToList();
         }
         public HotelViewModel MapToViewModel(Hotel hotel)
@@ -47,6 +66,8 @@ namespace HotelsBookingSystem.Services
                 Name = hotel.Name,
                 Location = hotel.Address,
                 Description = hotel.Description,
+                Phone = hotel.Phone,
+                City = hotel.City,
                 ImageUrl = hotel.HotelImages.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
                 //Rating = hotel.Rating,
                 Status = hotel.Status,
@@ -68,6 +89,8 @@ namespace HotelsBookingSystem.Services
                 Description = model.Description,
                 //Rating = model.Rating,
                 Status = model.Status,
+                City = model.City ,
+                Phone = model.Phone,
                 Longitude = model.Longitude.ToString(),
                 Latitude = model.Latitude.ToString()
             };
@@ -91,12 +114,20 @@ namespace HotelsBookingSystem.Services
             hotel.Name = model.Name;
             hotel.Address = model.Location;
             hotel.Description = model.Description;
+            hotel.City = model.City;
+            hotel.Phone = model.Phone;
             //hotel.Rating = model.Rating;
             hotel.Status = model.Status;
             hotel.Longitude = model.Longitude.ToString();
             hotel.Latitude = model.Latitude.ToString();
 
             _hotelRepository.Update(hotel);
+            _hotelRepository.SaveChanges();
+        }
+        
+        public void DeleteHotel(int id)
+        {
+            _hotelRepository.Delete(id);
             _hotelRepository.SaveChanges();
         }
       

@@ -344,3 +344,133 @@ textarea.form-control {
     .delete-btn:hover {
         background-color: #c42634;
     }
+
+
+
+.field-validation-valid {
+    display: none;
+}
+
+.field-validation-error {
+    color: #dc3545;
+    font-size: 0.875em;
+}
+
+.input-validation-error {
+    border-color: #dc3545;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay effect */
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 90%;
+    margin: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 24px;
+        color: #333;
+    }
+
+.close-modal {
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+
+    .close-modal:hover {
+        color: #000;
+    }
+
+.hotel-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.hotel-info p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.hotel-info i {
+    margin-right: 8px;
+    color: #007bff;
+}
+
+.hotel-description {
+    margin: 20px 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .modal-header h2 {
+        font-size: 20px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+   
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+    .pagination a {
+        margin: 0 5px;
+        padding: 8px 16px;
+        text-decoration: none;
+        color: #007bff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }

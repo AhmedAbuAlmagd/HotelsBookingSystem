@@ -1,4 +1,5 @@
 ﻿using HotelsBookingSystem.ViewModels.AdminViewModels.Dashboard;
+using System.ComponentModel.DataAnnotations;
 
 namespace HotelsBookingSystem.ViewModels.AdminViewModels
 {
@@ -8,6 +9,9 @@ namespace HotelsBookingSystem.ViewModels.AdminViewModels
         public string Name { get; set; }
         public string Location { get; set; }
         public string Description { get; set; }
+        [Phone]
+        public string Phone { get; set; }
+        public string City { get; set; }
         public string ImageUrl { get; set; }
         //public int Rating { get; set; }   
         public string Status { get; set; }
