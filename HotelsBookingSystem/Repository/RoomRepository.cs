@@ -21,7 +21,7 @@ namespace HotelsBookingSystem.Repository
             var rooms = _context.Rooms
                 .Where(r => r.Status == "available")   
                 .Include(r => r.Hotel)                 
-                .Include(r => r.RoomImages)           
+                .Include(r => r.RoomImages)       
                 .OrderBy(r => r.Id)                  
                 .ToPagedList(page, pageSize);        
 
@@ -121,24 +121,29 @@ namespace HotelsBookingSystem.Repository
             return hotels;
         }
 
-        public List<Room> GetAvailablerooms()
+
+
+
+
+        public async Task<List<Room>> GetAllRoomsAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Rooms
+                .Include(r => r.Hotel)
+                .ToListAsync();
+        }
+        public async Task<int> GetTotalRoomsCountAsync()
+        {
+            return await _context.Rooms.CountAsync();
         }
 
-        public Task<List<Room>> GetAllRoomsAsync()
+        public async Task<List<Room>> GetTopRoomsAsync(int count)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> GetTotalRoomsCountAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Room>> GetTopRoomsAsync(int count)
-        {
-            throw new NotImplementedException();
+            return await _context.Rooms
+                .Include(r=>r.RoomImages)
+                .Include(r => r.Hotel)
+                .OrderBy(r => r.Hotel.Name)
+                .Take(count)
+                .ToListAsync();
         }
 
         public List<Room> GetAllroom()
@@ -147,9 +152,9 @@ namespace HotelsBookingSystem.Repository
                .Where(r => r.Status == "available")
                .Include(r => r.Hotel)
                .Include(r => r.RoomImages)
+               .Include(r => r.BookingRooms)
+               .ThenInclude(r => r.booking)     
               .ToList();
-
-
             return rooms;
         }
     }

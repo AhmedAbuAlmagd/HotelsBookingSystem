@@ -1,0 +1,474 @@
+﻿@model HotelsBookingSystem.ViewModels.AdminViewModels.HotelsManagementViewModel
+
+@{
+    ViewData["Title"] = "Hotels Management";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotels Management</title>
+    <link href="~/css/AdminDashboard.css" rel="stylesheet" />
+    <link href="~/css/HotelsManagement.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header Section -->
+        <div class="header">
+            <h1 class="title">Hotels Management</h1>
+            <div>
+                <button id="addHotelBtn" class="add-hotel-btn">
+                    <i class="fa fa-plus"></i> Add New Hotel
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="search-bar">
+                <input type="text" id="hotelSearch" class="search-input" placeholder="Search hotels...">
+                <select id="statusFilter" class="filter-select">
+                    <option value="all">All Statuses</option>
+                    <option value="active">Available</option>
+                    <option value="inactive">Full</option>
+                    <option value="maintenance">Maintenance</option>
+                </select>
+                <button class="filter-btn">Apply Filters</button>
+            </div>
+        </div>
+
+        <!-- Hotels Grid -->
+        <div class="hotels-grid" id="hotelsContainer">
+            @foreach (var hotel in Model.Hotels)
+            {
+                <div class="hotel-card" data-id="@hotel.Id" data-status="@hotel.Status.ToLower()">
+                    <div class="hotel-card-header">
+                        <img src="@hotel.ImageUrl" alt="@hotel.Name" class="hotel-card-image">
+                        <span class="status-badge @hotel.Status.ToLower()">@hotel.Status</span>
+                    </div>
+                    <div class="hotel-card-body">
+                        <h3 class="hotel-card-title">@hotel.Name</h3>
+                        <div class="hotel-card-info">
+                            <p><i class="fa fa-map-marker"></i> @hotel.Location</p>
+                            <p><i class="fa fa-bed"></i> @hotel.RoomCount rooms</p>
+                            <p><i class="fa fa-star"></i> 5 stars</p>
+                        </div>
+                        <div class="hotel-card-description">
+                            @(hotel.Description?.Length > 100 ? hotel.Description.Substring(0, 100) + "..." : hotel.Description)
+                        </div>
+                    </div>
+                    <div class="hotel-card-footer">
+                        <button class="action-btn view" data-id="@hotel.Id">View Details</button>
+                        <button class="action-btn edit" data-id="@hotel.Id">Edit</button>
+                        <button class="action-btn delete" data-id="@hotel.Id">Delete</button>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="pagination">
+            @if (Model.CurrentPage > 1)
+            {
+                <a href="@Url.Action("HotelsManagement", new { page = Model.CurrentPage - 1 })">Previous</a>
+            }
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <a href="@Url.Action("HotelsManagement", new { page = i })" class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <a href="@Url.Action("HotelsManagement", new { page = Model.CurrentPage + 1 })">Next</a>
+            }
+        </div>
+
+       <!-- Hotel Details Modal -->
+        <div id="hotelDetailsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="detailsModalTitle">Hotel Details</h2>
+                    <span class="close-modal">×</span>
+                </div>
+                <div id="hotelDetailsContent" class="modal-body">
+                </div>
+            </div>
+        </div>
+
+        <!-- Add/Edit Hotel Modal -->
+        <div id="hotelFormModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="formModalTitle">Add New Hotel</h2>
+                    <span class="close-modal">×</span>
+                </div>
+                <div class="modal-body">
+                    <form id="hotelForm" method="post" enctype="multipart/form-data">
+                        <input type="hidden" id="hotelId" name="Id" value="0" />
+
+                        <!-- Hotel Name -->
+                        <div class="form-group">
+                            <label for="Name">Hotel Name</label>
+                            <input type="text" id="Name" name="Name" class="form-control"
+                                   required maxlength="100"
+                                   data-val="true" data-val-required="Hotel name is required"
+                                   data-val-length="Hotel name cannot exceed 100 characters"
+                                   data-val-length-max="100" />
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <!-- City -->
+                        <div class="form-group">
+                            <label for="City">City</label>
+                            <input type="text" id="City" name="City" class="form-control"
+                                   required maxlength="50"
+                                   data-val="true" data-val-required="City is required"
+                                   data-val-length="City cannot exceed 50 characters"
+                                   data-val-length-max="50" />
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="City" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="form-group">
+                            <label for="Location">Location</label>
+                            <input type="text" id="Location" name="Location" class="form-control"
+                                   required maxlength="200"
+                                   data-val="true" data-val-required="Location is required"
+                                   data-val-length="Location cannot exceed 200 characters"
+                                   data-val-length-max="200" />
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="Location" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label for="Phone">Phone</label>
+                            <input type="tel" id="Phone" name="Phone" class="form-control"
+                                   required
+                                   data-val="true"
+                                   data-val-required="Phone number is required"
+                                   data-val-regex="Please enter a valid phone number (10-15 digits)"
+                                   data-val-regex-pattern="^[0-9]{10,15}$" />
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="Phone" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="Description">Description</label>
+                            <textarea id="Description" name="Description" class="form-control" rows="3"
+                                      required maxlength="500"
+                                      data-val="true" data-val-required="Description is required"
+                                      data-val-length="Description cannot exceed 500 characters"
+                                      data-val-length-max="500"></textarea>
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="Description" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <!-- Rating and Status -->
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="Rating">Rating</label>
+                                <select id="Rating" name="Rating" class="form-control"
+                                        required
+                                        data-val="true" data-val-required="Rating is required">
+                                    <option value="">Select Rating</option>
+                                    <option value="1">1 Star</option>
+                                    <option value="2">2 Stars</option>
+                                    <option value="3">3 Stars</option>
+                                    <option value="4">4 Stars</option>
+                                    <option value="5">5 Stars</option>
+                                </select>
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="Rating" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="form-group half">
+                                <label for="Status">Status</label>
+                                <select id="Status" name="Status" class="form-control"
+                                        required
+                                        data-val="true" data-val-required="Status is required">
+                                    <option value="">Select Status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                </select>
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="Status" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+                        <!-- Image URL -->
+                        <div class="form-group">
+                            <label for="image">Hotel Image </label>
+                            <input type="file" id="image" name="image" class="form-control"
+                                   required />
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="image" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">  
+                            <button type="button" class="btn cancel-btn" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn save-btn">Save Hotel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteConfirmModal" class="modal">
+            <div class="modal-content delete-modal">
+                <div class="modal-header">
+                    <h2>Confirm Delete</h2>
+                    <span class="close-modal">×</span>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this hotel? This action cannot be undone.</p>
+                    <div class="form-actions">
+                        <button type="button" class="btn cancel-btn" data-dismiss="modal">Cancel</button>
+                        <button type="button" id="confirmDeleteBtn" class="btn delete-btn">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal variables
+            const hotelDetailsModal = document.getElementById('hotelDetailsModal');
+            const hotelFormModal = document.getElementById('hotelFormModal');
+            const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+            const formModalTitle = document.getElementById('formModalTitle');
+            let currentHotelId = 0;
+
+            // Add Hotel button click
+            document.getElementById('addHotelBtn').addEventListener('click', function() {
+                formModalTitle.textContent = 'Add New Hotel';
+                document.getElementById('hotelId').value = '0';
+                document.getElementById('hotelForm').reset();
+                openModal(hotelFormModal);
+            });
+
+            // Event delegation for action buttons
+            document.getElementById('hotelsContainer').addEventListener('click', function(e) {
+                const target = e.target;
+                if (target.classList.contains('action-btn')) {
+                    const hotelId = target.getAttribute('data-id');
+                    if (!hotelId) return;
+                    if (target.classList.contains('view')) {
+                        loadHotelDetails(hotelId);
+                    } else if (target.classList.contains('edit')) {
+                        loadHotelForEdit(hotelId);
+                    } else if (target.classList.contains('delete')) {
+                        currentHotelId = hotelId;
+                        openModal(deleteConfirmModal);
+                    }
+                }
+            });
+
+            // Confirm delete action
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                if (currentHotelId) deleteHotel(currentHotelId);
+            });
+
+            // Close modals
+            document.querySelectorAll('.close-modal, .cancel-btn').forEach(button => {
+                button.addEventListener('click', closeAllModals);
+            });
+
+            // Filter button
+            document.querySelector('.filter-btn').addEventListener('click', filterHotels);
+
+            // Form submission
+            document.getElementById('hotelForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveHotel();
+            });
+
+            // Utility functions
+            function openModal(modal) {
+                modal.style.display = 'block';
+            }
+
+            function closeAllModals() {
+                hotelDetailsModal.style.display = 'none';
+                hotelFormModal.style.display = 'none';
+                deleteConfirmModal.style.display = 'none';
+            }
+        // Function to load hotel details into the modal
+        function loadHotelDetails(hotelId) {
+            const modal = document.getElementById('hotelDetailsModal');
+            const title = document.getElementById('detailsModalTitle');
+            const content = document.getElementById('hotelDetailsContent');
+
+            // Show loading state
+            title.textContent = 'Loading...';
+            content.innerHTML = '<p>Loading hotel details...</p>';
+            modal.style.display = 'flex'; // Assuming this opens the modal; adjust if your openModal function differs
+
+            // Fetch hotel data
+            fetch(`/Hotel/GetHotel/${hotelId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load hotel details');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Populate modal with hotel data
+                    title.textContent = data.name || 'Unknown Hotel';
+                    content.innerHTML = `
+                        <img src="${data.imageUrl || 'https://via.placeholder.com/600x300'}" alt="${data.name}" class="hotel-image">
+                        <div class="hotel-info">
+                            <p><i class="fa fa-map-marker"></i> ${data.location || 'Unknown Location'}, ${data.city || ''}</p>
+                            <p>${generateStars(data.rating)} ${data.rating || 'N/A'} Stars</p>
+                            <p><i class="fa fa-phone"></i> ${data.phone || 'Not available'}</p>
+                        </div>
+                        <div class="hotel-description">
+                            <p>${data.description || 'No description available.'}</p>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    content.innerHTML = '<p>Failed to load details. Please try again later.</p>';
+                });
+        }
+
+        // Helper function to generate star icons based on rating
+        function generateStars(rating) {
+            let stars = '';
+            const ratingValue = rating || 0; // Default to 0 if undefined
+            for (let i = 1; i <= 5; i++) {
+                stars += i <= ratingValue ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
+            }
+            return stars;
+        }
+
+        // Example modal close functionality (adjust as needed)
+        document.querySelector('.close-modal').addEventListener('click', () => {
+            document.getElementById('hotelDetailsModal').style.display = 'none';
+        });
+            function loadHotelForEdit(hotelId) {
+                formModalTitle.textContent = 'Edit Hotel';
+                document.getElementById('hotelId').value = hotelId;
+                openModal(hotelFormModal);
+
+                const formFields = document.querySelectorAll('#hotelForm input, #hotelForm select, #hotelForm textarea');
+                formFields.forEach(field => field.disabled = true);
+
+                fetch(`/Hotel/GetHotel/${hotelId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        formFields.forEach(field => field.disabled = false);
+                        document.getElementById('Name').value = data.name || '';
+                        document.getElementById('City').value = data.city || '';
+                        document.getElementById('Location').value = data.location || '';
+                        document.getElementById('Phone').value = data.phone || '';
+                        document.getElementById('Description').value = data.description || '';
+                        document.getElementById('Rating').value = data.rating || '';
+                        document.getElementById('Status').value = data.status || '';
+                        // document.getElementById('image').value = data.imageUrl || '';
+                    })
+                    .catch(error => {
+                        alert('Failed to load hotel data.');
+                        formFields.forEach(field => field.disabled = false);
+                    });
+            }
+
+
+
+            function saveHotel() {
+            const form = $("#hotelForm")[0];
+            $.validator.unobtrusive.parse($("#hotelForm"));
+
+            if (!$("#hotelForm").valid()) return;
+
+            const saveBtn = $(form).find('.save-btn');
+            saveBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+
+            const formData = new FormData(form);
+            const hotelId = $("#hotelId").val();
+            const url = hotelId === "0" ? "/Hotel/Create" : `/Hotel/Update/${hotelId}`;
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: formData,
+                processData: false,  // Important for FormData
+                contentType: false,  // Important for FormData
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        closeAllModals();
+                        location.reload();
+                    } else {
+                        displayValidationErrors(response.errors || {});
+                        saveBtn.prop('disabled', false).text('Save Hotel');
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while saving the hotel.');
+                    saveBtn.prop('disabled', false).text('Save Hotel');
+                }
+            });
+        }
+
+            function deleteHotel(hotelId) {
+                fetch(`/Hotel/Delete/${hotelId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        closeAllModals();
+                        document.querySelector(`.hotel-card[data-id="${hotelId}"]`)?.remove();
+                        alert('Hotel deleted successfully');
+                    } else {
+                        throw new Error('Server error');
+                    }
+                })
+                .catch(() => alert('Failed to delete hotel.'));
+            }
+
+            function filterHotels() {
+                const searchTerm = document.getElementById('hotelSearch').value.toLowerCase();
+                const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+                const hotelCards = document.querySelectorAll('.hotel-card');
+
+                hotelCards.forEach(card => {
+                    const hotelName = card.querySelector('.hotel-card-title').textContent.toLowerCase();
+                    const hotelStatus = card.getAttribute('data-status');
+                    const matchesSearch = hotelName.includes(searchTerm);
+                    const matchesStatus = statusFilter === 'all' || hotelStatus === statusFilter;
+
+                    card.style.display = (matchesSearch && matchesStatus) ? 'block' : 'none';
+                });
+            }
+
+            function displayValidationErrors(errors) {
+                $('.field-validation-valid').text('');
+                for (const key in errors) {
+                    if (errors.hasOwnProperty(key)) {
+                        $(`[data-valmsg-for="${key}"]`).text(errors[key].join(' '));
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

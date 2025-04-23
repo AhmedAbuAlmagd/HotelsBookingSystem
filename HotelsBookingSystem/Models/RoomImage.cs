@@ -13,7 +13,7 @@ public class RoomImage
 
     public string? Caption { get; set; }
 
-    public bool? IsPrimary { get; set; }
+    public bool IsPrimary { get; set; }
 
     [ForeignKey("Room")]
     public int RoomId { get; set; }

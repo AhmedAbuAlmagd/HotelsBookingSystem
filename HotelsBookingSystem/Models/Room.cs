@@ -15,7 +15,7 @@ namespace HotelsBookingSystem.Models
         public int HotelId { get; set; }
         public virtual Hotel Hotel { get; set; }
 
-        public virtual List<BookingRoom>? BookingRooms { get; set; }
+        public virtual List<BookingRoom>? BookingRooms { get; set; } = new List<BookingRoom>();
         public virtual List<RoomImage>? RoomImages { get; set; } = new List<RoomImage>();
         public virtual List<CartItem>? CartItems { get; set; } = new List<CartItem>();
 
