@@ -16,9 +16,7 @@ namespace HotelsBookingSystem.Repository
         Task<List<HotelViewModel>> GetTopRatedHotelsAsync(int count = 4);
         Task<List<ReviewViewModel>> GetRecentReviewsAsync(int count = 5);
 
-        Hotel GetHotelWithRoomsAndImages(int id);
         Hotel GetById(int id);
-
 
         Task<int> GetTotalHotelsCountAsync();
         Task<List<HotelViewModel>> GetTopHotelsAsync(int count = 6);
