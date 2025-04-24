@@ -27,7 +27,7 @@ namespace HotelsBookingSystem.Controllers
         #region index
         public IActionResult Index(int page = 1)
         {
-            int PageSize = 3;
+            int PageSize = 10;
             var rooms = roomRepository.GetAllroom();
 
             var roomViewModels = rooms.Select(r => new RoomViewModel

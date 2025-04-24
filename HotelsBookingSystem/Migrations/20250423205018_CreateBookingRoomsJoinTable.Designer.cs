@@ -4,6 +4,7 @@ using HotelsBookingSystem.Models.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelsBookingSystem.Migrations
 {
     [DbContext(typeof(HotelsContext))]
-    partial class HotelsContextModelSnapshot : ModelSnapshot
+    [Migration("20250423205018_CreateBookingRoomsJoinTable")]
+    partial class CreateBookingRoomsJoinTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -334,27 +337,9 @@ namespace HotelsBookingSystem.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("rating")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Hotels");
-                });
-
-            modelBuilder.Entity("HotelsBookingSystem.Models.Hotel_Service", b =>
-                {
-                    b.Property<int>("HotelId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("serviceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("HotelId", "serviceId");
-
-                    b.HasIndex("serviceId");
-
-                    b.ToTable("Hotel_Service");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.Payment", b =>
@@ -768,25 +753,6 @@ namespace HotelsBookingSystem.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("HotelsBookingSystem.Models.Hotel_Service", b =>
-                {
-                    b.HasOne("HotelsBookingSystem.Models.Hotel", "Hotel")
-                        .WithMany("HotelServices")
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HotelsBookingSystem.Models.Service", "Service")
-                        .WithMany("HotelServices")
-                        .HasForeignKey("serviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hotel");
-
-                    b.Navigation("Service");
-                });
-
             modelBuilder.Entity("HotelsBookingSystem.Models.Payment", b =>
                 {
                     b.HasOne("HotelsBookingSystem.Models.Booking", "Booking")
@@ -930,8 +896,6 @@ namespace HotelsBookingSystem.Migrations
 
                     b.Navigation("HotelImages");
 
-                    b.Navigation("HotelServices");
-
                     b.Navigation("Reviews");
 
                     b.Navigation("Rooms");
@@ -949,8 +913,6 @@ namespace HotelsBookingSystem.Migrations
             modelBuilder.Entity("HotelsBookingSystem.Models.Service", b =>
                 {
                     b.Navigation("BookingServices");
-
-                    b.Navigation("HotelServices");
                 });
 #pragma warning restore 612, 618
         }
