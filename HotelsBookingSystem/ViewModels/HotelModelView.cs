@@ -17,5 +17,6 @@ namespace HotelsBookingSystem.ViewModels
         public List<string> HotelImages { get; set; }
         public List<Room> hotelRooms { get; set; }
         public List<string>roomimages { get; set; }
+        public List<Service>? Services { get; set; }
     }
 }

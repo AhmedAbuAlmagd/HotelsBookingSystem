@@ -4,19 +4,25 @@
         ← Back to Hotels
     </a>
 <div class="container mt-4">
-    <h2>@Model.Name - Rooms</h2>
+        <div class="text-primary">
+
+         <h2 class="text-primary">@Model.Name - Rooms</h2>
     <p>@Model.Address, @Model.City</p>
 
+    </div>
     <div class="row">
         @foreach (var room in Model.hotelRooms)
         {
             <div class="col-md-6 mb-4">
                 <div class="card h-100">
-                    <div class="card-header bg-secondary text-white">
-                        <h4>@room.Type</h4>
+                    <div class="card-header bg-warning  text-white">
+                            <h4 class="mt-2 text-white">Room Number:@room.RoomNumber</h4>
                     </div>
                     <div class="card-body">
-                        <p><strong>Room ID:</strong> @room.Id</p>
+                            <p><strong>Type:</strong>@room.Type</p>
+                            <p><strong>Number Beds:</strong> @room.NumberOfBeds</p>
+                         <p><strong>Price:</strong> @room.PricePerNight</p>
+                        <p><strong>Descreption:</strong> @room.Description</p>
 
                         <div id="roomCarousel-@room.Id" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
