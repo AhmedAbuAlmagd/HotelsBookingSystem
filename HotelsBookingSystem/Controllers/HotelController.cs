@@ -14,6 +14,7 @@ namespace HotelsBookingSystem.Controllers
         private readonly IHotelService _hotelService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
+
         public HotelController(IHotelRepository hotelRepository ,IHotelService hotelService , IWebHostEnvironment webHostEnvironment)
         {
             this.hotelRepository = hotelRepository;
@@ -137,43 +138,7 @@ namespace HotelsBookingSystem.Controllers
 
 
         [HttpPost]
-        public IActionResult Update(int id ,HotelFormViewModel hotel)
-        {
-            if (ModelState.IsValid)
-            {
-                _hotelService.UpdateHotel(id, hotel);
-
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new { success = true });
-                }
-
-                return RedirectToAction(nameof(HotelsManagement));
-            }
-
-            else
-            {
-                var errors = ModelState.ToDictionary(
-                kvp => kvp.Key,
-                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                   );
-                return Json(new { success = false, errors });
-            }
-           
-        }
-
-
-        public IActionResult GetHotel(int id)
-        {
-            var hotel = _hotelService.GetHotelDetails(id);
-            if (hotel == null)
-                return NotFound();
-
-            return Json(hotel);
-        }
-
-        [HttpPost]
-        public IActionResult Create(HotelFormViewModel hotel , IFormFile image)
+        public IActionResult Create(HotelFormViewModel hotel, IFormFile image)
         {
             if (ModelState.IsValid)
             {
@@ -198,6 +163,71 @@ namespace HotelsBookingSystem.Controllers
                 return Json(new { success = false, errors });
             }
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetHotelDetails(int id)
+        //{
+        //    try
+        //    {
+        //        var hotel = await _hotelService.GetHotelByIdAsync(id);
+        //        if (hotel == null)
+        //        {
+        //            return NotFound(new { success = false, message = "Hotel not found" });
+        //        }
+
+        //        var rooms = await _roomService.GetRoomsByHotelIdAsync(id);
+        //        var services = await _serviceService.GetServicesByHotelIdAsync(id);
+
+        //        return Json(new
+        //        {
+        //            success = true,
+        //            hotel = hotel,
+        //            rooms = rooms,
+        //            services = services
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error getting hotel details");
+        //        return StatusCode(500, new { success = false, message = "An error occurred retrieving hotel details" });
+        //    }
+        //}
+
+        [HttpPost]
+        public IActionResult Update(int id ,HotelFormViewModel hotel , IFormFile image)
+        {
+            if (ModelState.IsValid)
+            {
+                string uploadsPhoto = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Hotels");
+                string filePath = Path.Combine(uploadsPhoto, image.FileName);
+                var fileStream = new FileStream(filePath, FileMode.Create);
+                image.CopyTo(fileStream);
+                hotel.ImageUrl = "/images/Hotels/" + image.FileName;
+                _hotelService.UpdateHotel(id, hotel);
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = true });
+                }
+
+                return RedirectToAction(nameof(HotelsManagement));
+            }
+
+            else
+            {
+                var errors = ModelState.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                   );
+                return Json(new { success = false, errors });
+            }
+           
+        }
+
+
+      
+
+      
 
         [HttpPost]
         public IActionResult Delete(int id)

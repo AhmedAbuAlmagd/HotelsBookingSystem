@@ -3,9 +3,12 @@ using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Repository;
 using HotelsBookingSystem.ViewModels;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
 using X.PagedList.Extensions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace HotelsBookingSystem.Controllers
 {
@@ -13,9 +16,13 @@ namespace HotelsBookingSystem.Controllers
     public class RoomController : Controller
     {
         private readonly IRoomRepository roomRepository;
-        public RoomController(IRoomRepository roomRepo)
+        private readonly ILogger<RoomController> logger;
+        private readonly IWebHostEnvironment webHostEnvironment;
+        public RoomController(IRoomRepository roomRepo , ILogger<RoomController> logger , IWebHostEnvironment webHostEnvironment)
         {
             roomRepository = roomRepo;
+            this.logger = logger;
+            this.webHostEnvironment = webHostEnvironment;
         }
         #region index
         public IActionResult Index(int page = 1)
@@ -199,7 +206,153 @@ namespace HotelsBookingSystem.Controllers
 
         #endregion
 
+        #region Admin
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult GetRoom(int id)
+        {
+            try
+            {
+                var room =  roomRepository.GetById(id);
+                if (room == null)
+                {
+                    return NotFound(new { success = false, message = "Room not found" });
+                }
 
+                return Json(room);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting room");
+                return StatusCode(500, new { success = false, message = "An error occurred retrieving room details" });
+            }
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(ViewModels.AdminViewModels.RoomViewModelAd model , IFormFile image)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        errors = ModelState.ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                        )
+                    });
+                }
+
+                string uploadsPhoto = Path.Combine(webHostEnvironment.WebRootPath, "images", "Rooms");
+                string filePath = Path.Combine(uploadsPhoto, image.FileName);
+                var fileStream = new FileStream(filePath, FileMode.Create);
+                image.CopyTo(fileStream);
+                model.image = "/images/Rooms/" + image.FileName;
+
+                var room = new Room
+                {
+                    HotelId = model.HotelId,
+                    Type = model.Type,
+                    PricePerNight = model.PricePerNight,
+                    NumberOfBeds = model.NumberOfBeds,
+                    Description = model.Description,
+                    Status = model.Status,
+                    
+                };
+
+                room.RoomImages.Add(new RoomImage { ImageUrl = model.image, IsPrimary = true });
+
+                 roomRepository.Add(room);
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error creating room");
+                return StatusCode(500, new { success = false, message = "An error occurred creating the room" });
+            }
+        }
+
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(int id, ViewModels.AdminViewModels.RoomViewModelAd model , IFormFile image)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        errors = ModelState.ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                        )
+                    });
+                }
+
+                var room =  roomRepository.GetById(id);
+                if (room == null)
+                {
+                    return NotFound(new { success = false, message = "Room not found" });
+                }
+
+                room.Type = model.Type;
+                room.PricePerNight = model.PricePerNight;
+                room.NumberOfBeds = model.NumberOfBeds;
+                room.Description = model.Description;
+                room.Status = model.Status;
+
+                string uploadsPhoto = Path.Combine(webHostEnvironment.WebRootPath, "images", "Rooms");
+                string filePath = Path.Combine(uploadsPhoto, image.FileName);
+                var fileStream = new FileStream(filePath, FileMode.Create);
+                image.CopyTo(fileStream);
+                model.image = "/images/Rooms/" + image.FileName;
+
+                if (model.image != null)
+                {
+
+                    room.RoomImages.FirstOrDefault(r => r.IsPrimary == true).ImageUrl = model.image;
+                }
+
+                 roomRepository.Update(room);
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating room");
+                return StatusCode(500, new { success = false, message = "An error occurred updating the room" });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                var room =  roomRepository.GetById(id);
+                if (room == null)
+                {
+                    return NotFound(new { success = false, message = "Room not found" });
+                }
+
+                 roomRepository.Delete(id);
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error deleting room");
+                return StatusCode(500, new { success = false, message = "An error occurred deleting the room" });
+            }
+        }
+
+        #endregion
 
     }
 }
