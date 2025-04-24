@@ -21,7 +21,7 @@ namespace HotelsBookingSystem.Repository
             var rooms = _context.Rooms
                 .Where(r => r.Status == "available")   
                 .Include(r => r.Hotel)                 
-                .Include(r => r.RoomImages)           
+                .Include(r => r.RoomImages)       
                 .OrderBy(r => r.Id)                  
                 .ToPagedList(page, pageSize);        
 
@@ -123,6 +123,8 @@ namespace HotelsBookingSystem.Repository
 
 
 
+
+
         public async Task<List<Room>> GetAllRoomsAsync()
         {
             return await _context.Rooms
@@ -137,6 +139,7 @@ namespace HotelsBookingSystem.Repository
         public async Task<List<Room>> GetTopRoomsAsync(int count)
         {
             return await _context.Rooms
+                .Include(r=>r.RoomImages)
                 .Include(r => r.Hotel)
                 .OrderBy(r => r.Hotel.Name)
                 .Take(count)
@@ -149,9 +152,9 @@ namespace HotelsBookingSystem.Repository
                .Where(r => r.Status == "available")
                .Include(r => r.Hotel)
                .Include(r => r.RoomImages)
+               .Include(r => r.BookingRooms)
+               .ThenInclude(r => r.booking)     
               .ToList();
-
-
             return rooms;
         }
     }

@@ -19,5 +19,9 @@ namespace HotelsBookingSystem.Repository
                 .Take(count)
                 .ToListAsync();
         }
+        public async Task<int> GetTotalUsersCountAsync()
+        {
+            return await _context.Users.CountAsync();
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace HotelsBookingSystem.Controllers
         #region index
         public IActionResult Index(int page = 1)
         {
-            int PageSize = 3;
+            int PageSize = 10;
             var rooms = roomRepository.GetAllroom();
 
             var roomViewModels = rooms.Select(r => new RoomViewModel
@@ -60,6 +60,36 @@ namespace HotelsBookingSystem.Controllers
        
 
         #region filter
+        public IActionResult AvailableRooms(DateTime checkIn, DateTime checkOut, int adults, int children, int page = 1)
+        {
+            int pageSize = 3;
+
+
+            var allRooms = roomRepository.GetAllroom();
+
+          
+            var availableRooms = allRooms
+               .Where(room => !room.BookingRooms
+              .Any(b =>
+             b.booking.CheckIn.HasValue && b.booking.CheckOut.HasValue &&
+             b.booking.CheckIn.Value <= checkOut &&
+             b.booking.CheckOut.Value >= checkIn)); 
+
+
+            var roomViewModels = availableRooms.Select(r => new RoomViewModel
+            {
+                Id = r.Id,
+                Description = r.Description,
+                Type = r.Type,
+                Status = r.Status,
+                PricePerNight = r.PricePerNight,
+                RoomImages = r.RoomImages?.Select(img => img.ImageUrl).ToList(),
+                hotel = r.Hotel,
+                hotels = roomRepository.GetAllhotels()
+            }).ToPagedList(page, pageSize);
+
+            return View("Index", roomViewModels); 
+        }
 
         public IActionResult FilterRooms(
             int page = 1,  string type = null,  int? minPrice = null, int? maxPrice = null,

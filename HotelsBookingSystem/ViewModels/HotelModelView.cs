@@ -11,6 +11,7 @@ namespace HotelsBookingSystem.ViewModels
         public string? Status { get; set; }
         public string City { get; set; }
         public string Address { get; set; }
+        public double Rating { get; set; }
         public string? Latitude { get; set; }
         public string? Longitude { get; set; }
         public List<string> HotelImages { get; set; }
