@@ -121,6 +121,8 @@ namespace HotelsBookingSystem.Services
             hotel.Longitude = model.Longitude.ToString();
             hotel.Latitude = model.Latitude.ToString();
 
+            _hotelRepository.GetById(id).HotelImages.FirstOrDefault(x => x.IsPrimary == true).ImageUrl = model.ImageUrl;           
+
             _hotelRepository.Update(hotel);
             _hotelRepository.SaveChanges();
         }

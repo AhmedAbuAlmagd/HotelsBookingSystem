@@ -87,7 +87,7 @@
             }
         </div>
 
-       <!-- Hotel Details Modal -->
+        <!-- Hotel Details Modal -->
         <div id="hotelDetailsModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -213,7 +213,7 @@
                         </div>
 
                         <!-- Form Actions -->
-                        <div class="form-actions">  
+                        <div class="form-actions">
                             <button type="button" class="btn cancel-btn" data-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn save-btn">Save Hotel</button>
                         </div>
@@ -316,7 +316,7 @@
             modal.style.display = 'flex'; // Assuming this opens the modal; adjust if your openModal function differs
 
             // Fetch hotel data
-            fetch(`/Hotel/GetHotel/${hotelId}`)
+            fetch(`/Hotel/GetHotelDetails/${hotelId}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Failed to load hotel details');
@@ -404,8 +404,8 @@
                 url: url,
                 type: "POST",
                 data: formData,
-                processData: false,  // Important for FormData
-                contentType: false,  // Important for FormData
+                processData: false,
+                contentType: false,
                 headers: {
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
@@ -445,6 +445,7 @@
                 .catch(() => alert('Failed to delete hotel.'));
             }
 
+
             function filterHotels() {
                 const searchTerm = document.getElementById('hotelSearch').value.toLowerCase();
                 const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
@@ -459,6 +460,7 @@
                     card.style.display = (matchesSearch && matchesStatus) ? 'block' : 'none';
                 });
             }
+
 
             function displayValidationErrors(errors) {
                 $('.field-validation-valid').text('');

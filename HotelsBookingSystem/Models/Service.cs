@@ -12,6 +12,5 @@ namespace HotelsBookingSystem.Models
         [ForeignKey("CartItem")]
         public int? cartItemId { get; set; }
         public virtual CartItem? CartItem { get; set; } 
-
     }
 }
