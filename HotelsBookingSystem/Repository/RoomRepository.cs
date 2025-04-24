@@ -28,18 +28,7 @@ namespace HotelsBookingSystem.Repository
             return rooms;
         }
 
-        //public List<Room> GetAllroom()
-        //{
-        //    var rooms = _context.Rooms
-        //       .Where(r => r.Status == "available")
-        //       .Include(r => r.Hotel)
-        //       .Include(r => r.RoomImages)
-        //      .ToList();
-
-
-        //    return rooms;
-        //}
-
+    
         Room IRoomRepository.GetById(int id)
         {
 
@@ -55,6 +44,7 @@ namespace HotelsBookingSystem.Repository
                 throw new Exception("Room not found");
             }
         }
+        #region forCurd 
         void IRoomRepository.Add(Room room)
         {
 
@@ -83,6 +73,9 @@ namespace HotelsBookingSystem.Repository
         {
             _context.Rooms.Update(room);
         }
+        #endregion
+
+        #region Room page filter
         public IPagedList<Room> FilterRooms(string type, int? minPrice, int? maxPrice,
                                    int? hotelId, string city, int pageNumber, int pageSize)
         {
@@ -120,11 +113,22 @@ namespace HotelsBookingSystem.Repository
                 .ToList();
             return hotels;
         }
+        public List<Room> GetAllroom()
+        {
+            var rooms = _context.Rooms
+               .Where(r => r.Status == "available")
+               .Include(r => r.Hotel)
+               .Include(r => r.RoomImages)
+               .Include(r => r.BookingRooms)
+               .ThenInclude(r => r.booking)
+              .ToList();
+            return rooms;
+        }
 
+        #endregion
 
-
-
-
+        #region Admin
+        // For Admin
         public async Task<List<Room>> GetAllRoomsAsync()
         {
             return await _context.Rooms
@@ -145,17 +149,9 @@ namespace HotelsBookingSystem.Repository
                 .Take(count)
                 .ToListAsync();
         }
+        #endregion
+       
 
-        public List<Room> GetAllroom()
-        {
-            var rooms = _context.Rooms
-               .Where(r => r.Status == "available")
-               .Include(r => r.Hotel)
-               .Include(r => r.RoomImages)
-               .Include(r => r.BookingRooms)
-               .ThenInclude(r => r.booking)     
-              .ToList();
-            return rooms;
-        }
+       
     }
 }

@@ -1,4 +1,5 @@
-﻿using HotelsBookingSystem.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using HotelsBookingSystem.Models;
 
 namespace HotelsBookingSystem.ViewModels
 {
@@ -17,6 +18,13 @@ namespace HotelsBookingSystem.ViewModels
         public int? NumberOfBeds { get; set; }
         public List<string> typslist { get; set; }
 
+        //[Range(1, int.MaxValue, ErrorMessage = "Minimum price must be at least 1.")]
+        //public int? MinPrice { get; set; }
+
+        //[Range(1, int.MaxValue, ErrorMessage = "Maximum price must be at least 1.")]
+        //public int? MaxPrice { get; set; }
+
+       
 
 
 

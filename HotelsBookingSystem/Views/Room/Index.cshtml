@@ -15,7 +15,7 @@
 
 <div class="container my-5">
 
-    <form method="get" asp-action="FilterRooms" asp-controller="Room">
+    <form method="post" asp-action="FilterRooms" asp-controller="Room">
         <div class="row mb-3">
             <div class="col-md-2">
 
@@ -31,6 +31,7 @@
 
             </div>
 
+           
             <div class="col-md-2">
                 <input type="number" name="minPrice" class="form-control" placeholder="Min Price"
                        value="@ViewData["CurrentMinPrice"]" min="1" />
@@ -42,6 +43,7 @@
                        value="@ViewData["CurrentMaxPrice"]" min="1" />
                 <span class="text-danger" data-valmsg-for="maxPrice" data-valmsg-replace="true"></span>
             </div>
+
 
             <div class="col-md-2">
                 <select name="hotelId" class="form-select">
@@ -174,54 +176,84 @@
         </div>
     </div>
     <div class=" my-5 w-75 m-auto " id="map" style="height: 300px;"></div>
+    @{
+        string actionName = (ViewBag.IsFiltered == true) ? "FilterRooms" : "Index";
+    }
+
     <div class="pagination-container my-5 pb-5">
         <ul class="pagination justify-content-center my-5">
             @if (Model.HasPreviousPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="/Room/Index?page=@(Model.PageNumber - 1)">&laquo;</a>
+                    <a class="page-link"
+                       asp-action="@actionName"
+                       asp-route-page="@(Model.PageNumber - 1)"
+                       asp-route-type="@ViewData["CurrentType"]"
+                       asp-route-minPrice="@ViewData["CurrentMinPrice"]"
+                       asp-route-maxPrice="@ViewData["CurrentMaxPrice"]"
+                       asp-route-hotelId="@ViewData["CurrentHotelId"]"
+                       asp-route-city="@ViewData["CurrentCity"]">
+                        &laquo;
+                    </a>
                 </li>
             }
             else
             {
-                <li class="page-item disabled">
-                    <span class="page-link">&laquo;</span>
-                </li>
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
             }
 
             @for (int i = 1; i <= Model.PageCount; i++)
             {
                 <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link" href="/Room/Index?page=@i">@i</a>
+                    <a class="page-link"
+                       asp-action="@actionName"
+                       asp-route-page="@i"
+                       asp-route-type="@ViewData["CurrentType"]"
+                       asp-route-minPrice="@ViewData["CurrentMinPrice"]"
+                       asp-route-maxPrice="@ViewData["CurrentMaxPrice"]"
+                       asp-route-hotelId="@ViewData["CurrentHotelId"]"
+                       asp-route-city="@ViewData["CurrentCity"]">
+                        @i
+                    </a>
                 </li>
             }
 
             @if (Model.HasNextPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="/Room/Index?page=@(Model.PageNumber + 1)">&raquo;</a>
+                    <a class="page-link"
+                       asp-action="@actionName"
+                       asp-route-page="@(Model.PageNumber + 1)"
+                       asp-route-type="@ViewData["CurrentType"]"
+                       asp-route-minPrice="@ViewData["CurrentMinPrice"]"
+                       asp-route-maxPrice="@ViewData["CurrentMaxPrice"]"
+                       asp-route-hotelId="@ViewData["CurrentHotelId"]"
+                       asp-route-city="@ViewData["CurrentCity"]">
+                        &raquo;
+                    </a>
                 </li>
             }
             else
             {
-                <li class="page-item disabled">
-                    <span class="page-link">&raquo;</span>
-                </li>
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
             }
         </ul>
     </div>
 
 </div>
 
- 
+
 
 <script>
-    var map = L.map('map').setView([30.0444, 31.2357], 6); // Centered on Egypt
-
+   
+          var map = L.map('map', {
+        minZoom: 4,
+        maxZoom: 15
+    }).setView([30.0444, 31.2357], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-
+ 
     var bounds = [];
 
     @foreach (var h in Model)
@@ -244,8 +276,8 @@
         }
     }
 
-    if (bounds.length > 0) {
-        map.fitBounds(bounds);
-    }
+    // if (bounds.length > 0) {
+    //     map.fitBounds(bounds);
+    // }
 </script>
 <partial name="_ValidationScriptsPartial" /> 

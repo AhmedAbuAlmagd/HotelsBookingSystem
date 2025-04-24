@@ -4,7 +4,7 @@ using X.PagedList;
 
 namespace HotelsBookingSystem.Repository
 {
-    public interface IRoomRepository
+    public interface IRoomRepository 
     {
 
         IPagedList<Room> GetAll(int page, int pageSize);
