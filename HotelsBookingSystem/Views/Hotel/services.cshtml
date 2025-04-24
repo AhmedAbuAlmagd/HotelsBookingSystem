@@ -1,0 +1,12 @@
+﻿@foreach (var service in Model.Services)
+{
+    <div class="card my-3 m-auto p-3 w-75">
+        <h5>@service.Name</h5>
+        <p>@service.Description</p>
+        <p><strong>Price:</strong> @service.Price EGP</p>
+        <form asp-controller="Cart" asp-action="AddServiceToCart" method="post">
+            <input type="hidden" name="serviceId" value="@service.Id" />
+          
+        </form>
+    </div>
+}

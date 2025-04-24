@@ -58,6 +58,7 @@ namespace HotelsBookingSystem.Controllers
                 Address = h.Address,
                 City = h.City,
                 Phone = h.Phone,
+                Services = h.HotelServices.Select(hs => hs.Service).ToList(),
                 Description = h.Description,
                 Latitude = h.Latitude,
                 Longitude = h.Longitude,
@@ -67,6 +68,30 @@ namespace HotelsBookingSystem.Controllers
 
             return View("AllHotels", hotelViews);
         }
+
+        public IActionResult Services(int hotelId)
+        {
+            var hotel = hotelRepository.GetHotelWithServices(hotelId);
+
+            if (hotel == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new HotelModelView
+            {
+                Id = hotel.Id,
+                Name = hotel.Name,
+                Services = hotel.HotelServices.Select(hs => hs.Service).ToList()
+            };
+
+            return View("services", viewModel);
+        }
+
+
+
+
+
         public IActionResult ViewRooms(int hotelId)
         {
             var hotel = hotelRepository.GetHotelWithRoomsAndImages(hotelId);
@@ -82,6 +107,7 @@ namespace HotelsBookingSystem.Controllers
                 Phone = hotel.Phone,
                 HotelImages = hotel.HotelImages.Select(img => img.ImageUrl).ToList(),
                 hotelRooms = hotel.Rooms,
+
             };
 
             return View("ViewRooms", hotelView);

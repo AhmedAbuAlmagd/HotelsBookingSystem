@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HotelsBookingSystem.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
@@ -14,6 +15,7 @@ namespace HotelsBookingSystem.Models.Context
 
         public virtual DbSet<Booking> Bookings { get; set; }
         public virtual DbSet<BookingService> BookingServices { get; set; }
+        public virtual DbSet<Hotel_Service> Hotel_Service { get; set; }
         public virtual DbSet<Hotel> Hotels { get; set; }
         public virtual DbSet<HotelImage> HotelImages { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
@@ -50,6 +52,8 @@ namespace HotelsBookingSystem.Models.Context
                 Name = "User",
                 NormalizedName = "USER"
             });
+            builder.Entity<Hotel_Service>()
+    .HasKey(hs => new { hs.HotelId, hs.serviceId });
 
             // Admin User
             builder.Entity<ApplicationUser>().HasData(new ApplicationUser

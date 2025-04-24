@@ -12,6 +12,14 @@ namespace HotelsBookingSystem.Repository
         {
             this.con = con;
         }
+        public Hotel GetHotelWithServices(int hotelId)
+        {
+            return con.Hotels
+                .Include(h => h.HotelServices)
+                    .ThenInclude(hs => hs.Service)
+                .FirstOrDefault(h => h.Id == hotelId);
+        }
+
         //public List<Hotel> GetHotelsWithRoomsAndImages()
         //{
         //    return con.Hotels
@@ -24,6 +32,7 @@ namespace HotelsBookingSystem.Repository
         {
             return con.Hotels
                 .Include(h => h.HotelImages)
+                 .Include(h => h.HotelServices)
                 .Include(h => h.Rooms)
                     .ThenInclude(r => r.RoomImages)
                 .ToList();
@@ -32,9 +41,11 @@ namespace HotelsBookingSystem.Repository
         {
             return con.Hotels
                       .Include(h => h.HotelImages)
+                      .Include(h => h.HotelServices)
                       .Include(h => h.Rooms)
                           .ThenInclude(r => r.RoomImages)
-                      .FirstOrDefault(h => h.Id == id);
+                      .FirstOrDefault(h => h.Id == id)
+                      ;
         }
         public void Add(Hotel hotel)
         {

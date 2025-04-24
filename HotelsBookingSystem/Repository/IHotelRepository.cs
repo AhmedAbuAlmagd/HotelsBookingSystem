@@ -8,7 +8,7 @@ namespace HotelsBookingSystem.Repository
 {
     public interface IHotelRepository : IRepository<Hotel>
     {
-
+        Hotel GetHotelWithServices(int hotelId);
         List<Hotel> GetHotelsWithRoomsAndImages();
         Hotel GetHotelWithRoomsAndImages(int id);
       
