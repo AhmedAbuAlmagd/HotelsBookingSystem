@@ -65,7 +65,10 @@
                         </div>
                     </div>
                     <div class="hotel-card-footer">
-                        <button class="action-btn view" data-id="@hotel.Id">View Details</button>
+                        <a href="@Url.Action("Details", "Hotel", new { id = hotel.Id })"
+                           class="action-btn view btn btn-info">
+                            View Details
+                        </a>
                         <button class="action-btn edit" data-id="@hotel.Id">Edit</button>
                         <button class="action-btn delete" data-id="@hotel.Id">Delete</button>
                     </div>
@@ -304,46 +307,7 @@
                 hotelFormModal.style.display = 'none';
                 deleteConfirmModal.style.display = 'none';
             }
-        // Function to load hotel details into the modal
-        function loadHotelDetails(hotelId) {
-            const modal = document.getElementById('hotelDetailsModal');
-            const title = document.getElementById('detailsModalTitle');
-            const content = document.getElementById('hotelDetailsContent');
-
-            // Show loading state
-            title.textContent = 'Loading...';
-            content.innerHTML = '<p>Loading hotel details...</p>';
-            modal.style.display = 'flex'; // Assuming this opens the modal; adjust if your openModal function differs
-
-            // Fetch hotel data
-            fetch(`/Hotel/GetHotelDetails/${hotelId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load hotel details');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Populate modal with hotel data
-                    title.textContent = data.name || 'Unknown Hotel';
-                    content.innerHTML = `
-                        <img src="${data.imageUrl || 'https://via.placeholder.com/600x300'}" alt="${data.name}" class="hotel-image">
-                        <div class="hotel-info">
-                            <p><i class="fa fa-map-marker"></i> ${data.location || 'Unknown Location'}, ${data.city || ''}</p>
-                            <p>${generateStars(data.rating)} ${data.rating || 'N/A'} Stars</p>
-                            <p><i class="fa fa-phone"></i> ${data.phone || 'Not available'}</p>
-                        </div>
-                        <div class="hotel-description">
-                            <p>${data.description || 'No description available.'}</p>
-                        </div>
-                    `;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    content.innerHTML = '<p>Failed to load details. Please try again later.</p>';
-                });
-        }
-
+       
         // Helper function to generate star icons based on rating
         function generateStars(rating) {
             let stars = '';
@@ -358,6 +322,7 @@
         document.querySelector('.close-modal').addEventListener('click', () => {
             document.getElementById('hotelDetailsModal').style.display = 'none';
         });
+
             function loadHotelForEdit(hotelId) {
                 formModalTitle.textContent = 'Edit Hotel';
                 document.getElementById('hotelId').value = hotelId;

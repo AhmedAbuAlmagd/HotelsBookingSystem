@@ -7,7 +7,7 @@ namespace HotelsBookingSystem.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
-        public int? Price { get; set; }
+        public int Price { get; set; }
         public List<BookingService>? BookingServices { get; set; } = new List<BookingService>();
         [ForeignKey("CartItem")]
         public int? cartItemId { get; set; }

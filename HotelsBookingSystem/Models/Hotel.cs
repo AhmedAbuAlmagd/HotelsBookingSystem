@@ -17,7 +17,7 @@ namespace HotelsBookingSystem.Models
         [Range(1,5)]
         public int? rating { get; set; }
         public virtual List<HotelImage>? HotelImages { get; set; } = new List<HotelImage>();
-        public virtual List<Room> Rooms { get; set; } = new List<Room>();
+        public virtual List<Room>? Rooms { get; set; } = new List<Room>();
         public virtual List<Review>? Reviews { get; set; } = new List<Review>();
         public virtual List<Booking>? Bookings { get; set; } = new List<Booking>();
 

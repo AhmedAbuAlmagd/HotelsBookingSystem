@@ -5,7 +5,6 @@ namespace HotelsBookingSystem.ViewModels.AdminViewModels
     public class ServiceViewModelAd
     {
         public int Id { get; set; }
-
         public int HotelId { get; set; }
 
         [Required(ErrorMessage = "Service name is required")]
@@ -14,11 +13,11 @@ namespace HotelsBookingSystem.ViewModels.AdminViewModels
 
         [Required(ErrorMessage = "Price is required")]
         [Range(0, double.MaxValue, ErrorMessage = "Price must  be greater than or equal to 0")]
-        public decimal Price { get; set; }
+        public int Price { get; set; }
 
         [Required(ErrorMessage = "Description is required")]
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
     }
 }

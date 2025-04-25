@@ -36,7 +36,7 @@ namespace HotelsBookingSystem.Repository
                 .Include(h => h.HotelImages)
                  .Include(h => h.HotelServices)
                 .Include(h => h.Rooms)
-                    .ThenInclude(r => r.RoomImages)
+                .ThenInclude(r => r.RoomImages)
                 .ToList();
         }
         public Hotel GetHotelWithRoomsAndImages(int id)
