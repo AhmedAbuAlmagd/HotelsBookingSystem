@@ -3,6 +3,9 @@ using HotelsBookingSystem.Repository;
 using HotelsBookingSystem.Services;
 using HotelsBookingSystem.ViewModels;
 using HotelsBookingSystem.ViewModels.AdminViewModels;
+using HotelsBookingSystem.ViewModels.AdminViewModels.Dashboard;
+using HotelsBookingSystem.ViewModels.AdminViewModels.HotelDetails;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,14 +15,20 @@ namespace HotelsBookingSystem.Controllers
     {
         private readonly IHotelRepository hotelRepository;
         private readonly IHotelService _hotelService;
+        private readonly ILogger<HotelController> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IRoomRepository _roomRepository;
+        private readonly IServiceRepository _serviceRepository;
 
-
-        public HotelController(IHotelRepository hotelRepository ,IHotelService hotelService , IWebHostEnvironment webHostEnvironment)
+        public HotelController(IHotelRepository hotelRepository ,IHotelService hotelService , ILogger<HotelController> logger
+         , IWebHostEnvironment webHostEnvironment , IRoomRepository roomRepository , IServiceRepository serviceRepository)
         {
             this.hotelRepository = hotelRepository;
             _hotelService = hotelService;
+            _logger = logger;
             _webHostEnvironment = webHostEnvironment;
+            _roomRepository = roomRepository;
+            _serviceRepository = serviceRepository;
         }
 
 
@@ -120,6 +129,8 @@ namespace HotelsBookingSystem.Controllers
             return View("ViewRooms", hotelView);
         }
 
+        #region Admin
+
         public IActionResult HotelsManagement(int page = 1)
         {
             const int pageSize = 9; 
@@ -136,8 +147,10 @@ namespace HotelsBookingSystem.Controllers
             return View(viewModel);
         }
 
+     
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(HotelFormViewModel hotel, IFormFile image)
         {
             if (ModelState.IsValid)
@@ -163,37 +176,83 @@ namespace HotelsBookingSystem.Controllers
                 return Json(new { success = false, errors });
             }
         }
+        [HttpGet]
+        public IActionResult GetHotel(int id)
+        {
+            var hotel = hotelRepository.GetById(id);
+            if (hotel == null)
+            {
+                return NotFound();
+            }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetHotelDetails(int id)
-        //{
-        //    try
-        //    {
-        //        var hotel = await _hotelService.GetHotelByIdAsync(id);
-        //        if (hotel == null)
-        //        {
-        //            return NotFound(new { success = false, message = "Hotel not found" });
-        //        }
+            return Json(new
+            {
+                id = hotel.Id,
+                name = hotel.Name,
+                city = hotel.City,
+                location = hotel.Address,
+                phone = hotel.Phone,
+                description = hotel.Description,
+                rating = hotel.rating,
+                status = hotel.Status
+                
+            });
+        }
 
-        //        var rooms = await _roomService.GetRoomsByHotelIdAsync(id);
-        //        var services = await _serviceService.GetServicesByHotelIdAsync(id);
+            [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Details(int id, int roomPage = 1, int servicePage = 1, int pageSize = 6, string activeTab = "hotel-info")
+        {
+            try
+            {
+                var hotel = hotelRepository.GetById(id);
+                if (hotel == null)
+                {
+                    return NotFound();
+                }
 
-        //        return Json(new
-        //        {
-        //            success = true,
-        //            hotel = hotel,
-        //            rooms = rooms,
-        //            services = services
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error getting hotel details");
-        //        return StatusCode(500, new { success = false, message = "An error occurred retrieving hotel details" });
-        //    }
-        //}
+                // Get total count and paginated data
+                var totalRooms = _roomRepository.GetCountByHotelId(id);
+                var totalServices = _serviceRepository.GetCountByHotelId(id);
+
+                var rooms = _roomRepository.GetPagedByHotelId(id, roomPage, pageSize);
+                var services = _serviceRepository.GetPagedByHotelId(id, servicePage, pageSize);
+
+                var viewModel = new HotelDetailsPageViewModel
+                {
+                    Hotel = hotel,
+                    Rooms = rooms,
+                    Services = services,
+                    RoomPagination = new PaginationInfo
+                    {
+                        CurrentPage = roomPage,
+                        ItemsPerPage = pageSize,
+                        TotalItems = totalRooms,
+                        TotalPages = (int)Math.Ceiling(totalRooms / (double)pageSize)
+                    },
+                    ServicePagination = new PaginationInfo
+                    {
+                        CurrentPage = servicePage,
+                        ItemsPerPage = pageSize,
+                        TotalItems = totalServices,
+                        TotalPages = (int)Math.Ceiling(totalServices / (double)pageSize)
+                    }
+                };
+
+                // Pass the active tab to the view via ViewBag
+                ViewBag.ActiveTab = activeTab;
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving hotel details");
+                return RedirectToAction("Error", "Home");
+            }
+        }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int id ,HotelFormViewModel hotel , IFormFile image)
         {
             if (ModelState.IsValid)
@@ -230,6 +289,7 @@ namespace HotelsBookingSystem.Controllers
       
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             try
@@ -252,6 +312,7 @@ namespace HotelsBookingSystem.Controllers
                 return RedirectToAction(nameof(HotelsManagement));
             }
         }
+        #endregion
 
     }
 }

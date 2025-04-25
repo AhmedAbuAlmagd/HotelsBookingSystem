@@ -6,6 +6,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 using X.PagedList.Extensions;
 using static System.Net.Mime.MediaTypeNames;
@@ -219,7 +220,17 @@ namespace HotelsBookingSystem.Controllers
                     return NotFound(new { success = false, message = "Room not found" });
                 }
 
-                return Json(room);
+                return Json(new
+                {
+                    id = room.Id,
+                    Type = room.Type,
+                    RoomNumber = room.RoomNumber,
+                    Description = room.Description,
+                    NumberOfBeds = room.NumberOfBeds,
+                    Status = room.Status,
+                    PricePerNight = room.PricePerNight
+
+                });
             }
             catch (Exception ex)
             {
@@ -228,13 +239,23 @@ namespace HotelsBookingSystem.Controllers
             }
         }
 
+      
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ViewModels.AdminViewModels.RoomViewModelAd model , IFormFile image)
+     
+        public IActionResult Create(ViewModels.AdminViewModels.RoomViewModelAd model, IFormFile image)
         {
             try
             {
+                // Check if a room with this number already exists in this hotel
+                if (roomRepository.RoomNumberExists(model.HotelId, model.RoomNumber))
+                {
+                    return Json(new { success = false, message = "This room number already exists in this hotel" });
+                }
+
+                ModelState.Remove("image");
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(new
@@ -247,41 +268,64 @@ namespace HotelsBookingSystem.Controllers
                     });
                 }
 
+                if (image == null)
+                {
+                    return Json(new { success = false, message = "Room image is required" });
+                }
+
                 string uploadsPhoto = Path.Combine(webHostEnvironment.WebRootPath, "images", "Rooms");
-                string filePath = Path.Combine(uploadsPhoto, image.FileName);
-                var fileStream = new FileStream(filePath, FileMode.Create);
-                image.CopyTo(fileStream);
-                model.image = "/images/Rooms/" + image.FileName;
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName); // Generate unique filename
+                string filePath = Path.Combine(uploadsPhoto, fileName);
+
+                // Make sure directory exists
+                Directory.CreateDirectory(uploadsPhoto);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    image.CopyTo(fileStream);
+                }
+
+                model.image = "/images/Rooms/" + fileName;
 
                 var room = new Room
                 {
                     HotelId = model.HotelId,
+                    RoomNumber = model.RoomNumber,
                     Type = model.Type,
                     PricePerNight = model.PricePerNight,
                     NumberOfBeds = model.NumberOfBeds,
                     Description = model.Description,
                     Status = model.Status,
-                    
+                    RoomImages = new List<RoomImage>()
                 };
 
                 room.RoomImages.Add(new RoomImage { ImageUrl = model.image, IsPrimary = true });
 
-                 roomRepository.Add(room);
+                roomRepository.Add(room);
+                roomRepository.SaveChanges();
 
                 return Json(new { success = true });
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error creating room");
-                return StatusCode(500, new { success = false, message = "An error occurred creating the room" });
+                return StatusCode(500, new { success = false, message = "An error occurred creating the room: " + ex.Message });
             }
         }
 
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(int id, ViewModels.AdminViewModels.RoomViewModelAd model , IFormFile image)
+        public IActionResult Update(int id, ViewModels.AdminViewModels.RoomViewModelAd model, IFormFile image)
         {
             try
             {
+                // Check if another room has this number (excluding the current room)
+                if (roomRepository.RoomNumberExists(model.HotelId, model.RoomNumber, id))
+                {
+                    return Json(new { success = false, message = "This room number already exists in this hotel" });
+                }
+
+                ModelState.Remove("image");
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(new
@@ -294,40 +338,60 @@ namespace HotelsBookingSystem.Controllers
                     });
                 }
 
-                var room =  roomRepository.GetById(id);
+                var room = roomRepository.GetById(id);
                 if (room == null)
                 {
                     return NotFound(new { success = false, message = "Room not found" });
                 }
 
                 room.Type = model.Type;
+                room.RoomNumber = model.RoomNumber;
                 room.PricePerNight = model.PricePerNight;
                 room.NumberOfBeds = model.NumberOfBeds;
                 room.Description = model.Description;
                 room.Status = model.Status;
 
-                string uploadsPhoto = Path.Combine(webHostEnvironment.WebRootPath, "images", "Rooms");
-                string filePath = Path.Combine(uploadsPhoto, image.FileName);
-                var fileStream = new FileStream(filePath, FileMode.Create);
-                image.CopyTo(fileStream);
-                model.image = "/images/Rooms/" + image.FileName;
-
-                if (model.image != null)
+                // Only process image if one was uploaded
+                if (image != null && image.Length > 0)
                 {
+                    string uploadsPhoto = Path.Combine(webHostEnvironment.WebRootPath, "images", "Rooms");
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName); // Generate unique filename
+                    string filePath = Path.Combine(uploadsPhoto, fileName);
 
-                    room.RoomImages.FirstOrDefault(r => r.IsPrimary == true).ImageUrl = model.image;
+                    // Make sure directory exists
+                    Directory.CreateDirectory(uploadsPhoto);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        image.CopyTo(fileStream);
+                    }
+
+                    string newImagePath = "/images/Rooms/" + fileName;
+
+                    // Update primary image
+                    var primaryImage = room.RoomImages.FirstOrDefault(r => r.IsPrimary == true);
+                    if (primaryImage != null)
+                    {
+                        primaryImage.ImageUrl = newImagePath;
+                    }
+                    else
+                    {
+                        room.RoomImages.Add(new RoomImage { ImageUrl = newImagePath, IsPrimary = true });
+                    }
                 }
 
-                 roomRepository.Update(room);
+                roomRepository.Update(room);
+                roomRepository.SaveChanges();
 
                 return Json(new { success = true });
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error updating room");
-                return StatusCode(500, new { success = false, message = "An error occurred updating the room" });
+                return StatusCode(500, new { success = false, message = "An error occurred updating the room: " + ex.Message });
             }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -335,21 +399,30 @@ namespace HotelsBookingSystem.Controllers
         {
             try
             {
-                var room =  roomRepository.GetById(id);
+                var room = roomRepository.GetById(id);
                 if (room == null)
                 {
                     return NotFound(new { success = false, message = "Room not found" });
                 }
 
-                 roomRepository.Delete(id);
+                roomRepository.Delete(id);
+                roomRepository.SaveChanges();
 
                 return Json(new { success = true });
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error deleting room");
-                return StatusCode(500, new { success = false, message = "An error occurred deleting the room" });
+                return StatusCode(500, new { success = false, message = "An error occurred deleting the room: " + ex.Message });
             }
+        }
+
+       
+        [HttpGet]
+        public IActionResult CheckRoomNumber(int hotelId, int roomNumber, int? roomId = null)
+        {
+            bool exists =  roomRepository.RoomNumberExists(hotelId, roomNumber, roomId);
+            return Json(new { exists });
         }
 
         #endregion

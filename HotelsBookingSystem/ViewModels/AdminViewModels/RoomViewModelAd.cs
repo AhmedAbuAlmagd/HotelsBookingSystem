@@ -10,7 +10,7 @@ namespace HotelsBookingSystem.ViewModels.AdminViewModels
 
         [Required(ErrorMessage = "Description is required")]
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
         [Required(ErrorMessage = "Room type is required")]
         public string Type { get; set; }
 
@@ -20,7 +20,7 @@ namespace HotelsBookingSystem.ViewModels.AdminViewModels
         [Required(ErrorMessage = "Price is required")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public int PricePerNight { get; set; }
-        [Required]
+        [Required(ErrorMessage = "image is required")]
         public string image { get; set; }
         public int RoomNumber { get; set; }
 

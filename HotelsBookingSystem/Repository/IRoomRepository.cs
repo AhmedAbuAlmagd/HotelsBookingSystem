@@ -21,7 +21,9 @@ namespace HotelsBookingSystem.Repository
         Task<List<Room>> GetAllRoomsAsync();
         Task<int> GetTotalRoomsCountAsync();
         Task<List<Room>> GetTopRoomsAsync(int count);
-
+        int GetCountByHotelId(int hotelId);
+        List<Room> GetPagedByHotelId(int hotelId, int pageNumber, int pageSize);
+        bool RoomNumberExists(int hotelId, int roomNumber, int? excludeRoomId = null);
 
 
         #endregion
