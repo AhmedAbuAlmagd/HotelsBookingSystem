@@ -14,61 +14,55 @@
 </head>
 
 <div class="container my-5">
-
-    <form method="get" asp-action="FilterRooms" asp-controller="Room">
+    <form method="post" asp-action="filter" asp-controller="Room" novalidate="novalidate">
         <div class="row mb-3">
             <div class="col-md-2">
-
-                <select name="type" class="form-select">
+                <select name="TypeFilter" class="form-select">
                     <option value="">-- Select Type --</option>
-                    <option value="All" selected="@(ViewData["CurrentType"]?.ToString() == "All")">All</option>
+                    <option value="All" selected="@(Model.FirstOrDefault()?.TypeFilter == "All")">All</option>
 
                     @foreach (var type in Model.FirstOrDefault()?.typslist ?? new List<string>())
                     {
-                        <option value="@type" selected="@(type == ViewData["CurrentType"]?.ToString())">@type</option>
+                        <option value="@type" selected="@(type == Model.FirstOrDefault()?.TypeFilter)">@type</option>
                     }
                 </select>
-
             </div>
 
             <div class="col-md-2">
-                <input type="number" name="minPrice" class="form-control" placeholder="Min Price"
-                       value="@ViewData["CurrentMinPrice"]" min="1" />
-                <span class="text-danger" data-valmsg-for="minPrice" data-valmsg-replace="true"></span>
+                <input type="number" name="MinPrice" class="form-control" placeholder="Min Price"
+                       value="@Model.FirstOrDefault()?.MinPrice" min="0" />
+                <span asp-validation-for="FirstOrDefault().MinPrice" class="text-danger d-block text-center"></span>
+
+                @* <span class="text-danger" data-valmsg-for="MinPrice" data-valmsg-replace="true"></span> *@
             </div>
 
             <div class="col-md-2">
-                <input type="number" name="maxPrice" class="form-control" placeholder="Max Price"
-                       value="@ViewData["CurrentMaxPrice"]" min="1" />
-                <span class="text-danger" data-valmsg-for="maxPrice" data-valmsg-replace="true"></span>
+                <input type="number" name="MaxPrice" class="form-control" placeholder="Max Price"
+                       value="@Model.FirstOrDefault()?.MaxPrice" min="0" />
+                <span asp-validation-for="FirstOrDefault().MaxPrice" class="text-danger  d-block text-center "></span>
+                @* <span class="text-danger" data-valmsg-for="MaxPrice" data-valmsg-replace="true"></span> *@
             </div>
 
             <div class="col-md-2">
-                <select name="hotelId" class="form-select">
+                <select name="HotelId" class="form-select">
                     <option value="">-- Select Hotel --</option>
-                  <option value="0" selected="@(ViewData["CurrentHotelId"]?.ToString() == "All")">All</option>  
+                    <option value="0" selected="@(Model.FirstOrDefault()?.HotelId == 0)">All</option>
 
                     @foreach (var hotel in Model.FirstOrDefault()?.hotels ?? new List<Hotel>())
                     {
-
-                        <option value="@hotel.Id"selected="@(hotel.Id.ToString() == ViewData["CurrentHotelId"]?.ToString())">
-                            @hotel.Name
-                        </option>
+                        <option value="@hotel.Id" selected="@(hotel.Id == Model.FirstOrDefault()?.HotelId)">@hotel.Name</option>
                     }
                 </select>
             </div>
 
             <div class="col-md-2">
-                <select name="city" class="form-select">
+                <select name="City" class="form-select">
                     <option value="">-- Select City --</option>
-                  <option value="All" selected="@(ViewData["CurrentCity"]?.ToString() == "All")">All</option>  
+                    <option value="All" selected="@(Model.FirstOrDefault()?.City == "All")">All</option>
 
                     @foreach (var hotel in Model.FirstOrDefault()?.hotels ?? new List<Hotel>())
                     {
-                        <option value="@hotel.City"
-                                selected="@(hotel.City == ViewData["CurrentCity"]?.ToString())">
-                            @hotel.City
-                        </option>
+                        <option value="@hotel.City" selected="@(hotel.City == Model.FirstOrDefault()?.City)">@hotel.City</option>
                     }
                 </select>
             </div>
@@ -81,7 +75,7 @@
             </div>
         </div>
     </form>
-@if (!string.IsNullOrEmpty(ViewBag.Message as string))
+    @if (!string.IsNullOrEmpty(ViewBag.Message as string))
 {
     <div class="alert alert-warning text-center">
         @ViewBag.Message
@@ -89,7 +83,7 @@
     </div>
 }
 
-
+   
    
 
 
@@ -174,54 +168,84 @@
         </div>
     </div>
     <div class=" my-5 w-75 m-auto " id="map" style="height: 300px;"></div>
+    @{
+        string actionName = (ViewBag.IsFiltered == true) ? "filter" : "Index";
+    }
+
     <div class="pagination-container my-5 pb-5">
         <ul class="pagination justify-content-center my-5">
             @if (Model.HasPreviousPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="/Room/Index?page=@(Model.PageNumber - 1)">&laquo;</a>
+                    <a class="page-link"
+                       asp-action="@actionName"
+                       asp-route-page="@(Model.PageNumber - 1)"
+                       asp-route-type="@Model.FirstOrDefault()?.TypeFilter"
+                       asp-route-minPrice="@Model.FirstOrDefault()?.MinPrice"
+                       asp-route-maxPrice="@Model.FirstOrDefault()?.MaxPrice"
+                       asp-route-hotelId="@Model.FirstOrDefault()?.HotelId"
+                       asp-route-city="@Model.FirstOrDefault()?.City">
+                        &laquo;
+                    </a>
                 </li>
             }
             else
             {
-                <li class="page-item disabled">
-                    <span class="page-link">&laquo;</span>
-                </li>
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
             }
 
             @for (int i = 1; i <= Model.PageCount; i++)
             {
                 <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link" href="/Room/Index?page=@i">@i</a>
+                    <a class="page-link"
+                       asp-action="@actionName"
+                       asp-route-page="@i"
+                       asp-route-type="@Model.FirstOrDefault()?.TypeFilter"
+                       asp-route-minPrice="@Model.FirstOrDefault()?.MinPrice"
+                       asp-route-maxPrice="@Model.FirstOrDefault()?.MaxPrice"
+                       asp-route-hotelId="@Model.FirstOrDefault()?.HotelId"
+                       asp-route-city="@Model.FirstOrDefault()?.City">
+                        @i
+                    </a>
                 </li>
             }
 
             @if (Model.HasNextPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="/Room/Index?page=@(Model.PageNumber + 1)">&raquo;</a>
+                    <a class="page-link"
+                       asp-action="@actionName"
+                       asp-route-page="@(Model.PageNumber + 1)"
+                       asp-route-type="@Model.FirstOrDefault()?.TypeFilter]"
+                       asp-route-minPrice="@Model.FirstOrDefault()?.MinPrice"
+                       asp-route-maxPrice="@Model.FirstOrDefault()?.MaxPrice"
+                       asp-route-hotelId="@Model.FirstOrDefault()?.HotelId"
+                       asp-route-city="@Model.FirstOrDefault()?.City">
+                        &raquo;
+                    </a>
                 </li>
             }
             else
             {
-                <li class="page-item disabled">
-                    <span class="page-link">&raquo;</span>
-                </li>
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
             }
         </ul>
     </div>
 
 </div>
+<partial name="_ValidationScriptsPartial" />
 
- 
 
 <script>
-    var map = L.map('map').setView([30.0444, 31.2357], 6); // Centered on Egypt
-
+   
+          var map = L.map('map', {
+        minZoom: 4,
+        maxZoom: 15
+    }).setView([30.0444, 31.2357], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-
+ 
     var bounds = [];
 
     @foreach (var h in Model)
@@ -244,8 +268,7 @@
         }
     }
 
-    if (bounds.length > 0) {
-        map.fitBounds(bounds);
-    }
+    // if (bounds.length > 0) {
+    //     map.fitBounds(bounds);
+    // }
 </script>
-<partial name="_ValidationScriptsPartial" /> 

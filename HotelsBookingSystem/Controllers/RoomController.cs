@@ -28,7 +28,7 @@ namespace HotelsBookingSystem.Controllers
         #region index
         public IActionResult Index(int page = 1)
         {
-            int PageSize = 10;
+            int PageSize = 6;
             var rooms = roomRepository.GetAllroom();
 
             var roomViewModels = rooms.Select(r => new RoomViewModel
@@ -42,11 +42,17 @@ namespace HotelsBookingSystem.Controllers
                 hotel = r.Hotel,
                 hotels = roomRepository.GetAllhotels(),
                 RoomNumber = r.RoomNumber,
-                NumberOfBeds = r.NumberOfBeds,                
+                NumberOfBeds = r.NumberOfBeds,
                 typslist = roomRepository.GetAllroom().Select(r => r.Type).Distinct().ToList(),
+                City = null,
+                TypeFilter = null,
+                MinPrice = null,
+                MaxPrice = null,
+                HotelId = null,
+
 
             }).ToPagedList(page, PageSize);
-          //  ViewData["forMap"] = roomRepository.GetAllhotels();
+            ViewBag.IsFiltered = false;
             return View(roomViewModels);
         }
         #endregion
@@ -65,7 +71,7 @@ namespace HotelsBookingSystem.Controllers
         #endregion
 
 
-       
+
 
         #region filter
         public IActionResult AvailableRooms(DateTime checkIn, DateTime checkOut, int adults, int children, int page = 1)
@@ -75,13 +81,13 @@ namespace HotelsBookingSystem.Controllers
 
             var allRooms = roomRepository.GetAllroom();
 
-          
+
             var availableRooms = allRooms
                .Where(room => !room.BookingRooms
               .Any(b =>
              b.booking.CheckIn.HasValue && b.booking.CheckOut.HasValue &&
              b.booking.CheckIn.Value <= checkOut &&
-             b.booking.CheckOut.Value >= checkIn)); 
+             b.booking.CheckOut.Value >= checkIn));
 
 
             var roomViewModels = availableRooms.Select(r => new RoomViewModel
@@ -96,38 +102,53 @@ namespace HotelsBookingSystem.Controllers
                 hotels = roomRepository.GetAllhotels()
             }).ToPagedList(page, pageSize);
 
-            return View("Index", roomViewModels); 
+            return View("Index", roomViewModels);
         }
-
-        public IActionResult FilterRooms(
-            int page = 1,  string type = null,  int? minPrice = null, int? maxPrice = null,
-            int? hotelId = null,  string city = null)
+       
+        public IActionResult filter(RoomViewModel roomVM, int page = 1)
         {
             int PageSize = 3;
             List<Hotel> hotellist = roomRepository.GetAllhotels();
+            #region Validation
+            if (roomVM.MinPrice.HasValue && roomVM.MinPrice < 1)
+            {
+                ModelState.AddModelError("MinPrice", "Minimum price must be at least 0.");
+            }
+
+            if (roomVM.MaxPrice.HasValue && roomVM.MaxPrice < 1)
+            {
+                ModelState.AddModelError("MaxPrice", "Maximum price must be at least 0.");
+            }
+
+            if (roomVM.MinPrice.HasValue && roomVM.MaxPrice.HasValue && roomVM.MinPrice > roomVM.MaxPrice)
+            {
+                ModelState.AddModelError("MaxPrice", "Maximum price must be greater than minimum price.");
+            }
 
 
+            #endregion
             #region iftheyAllEqAll
-            if (type == "All" && !minPrice.HasValue && !maxPrice.HasValue && (hotelId == null || hotelId == 0) && city == "All")
+            if (roomVM.TypeFilter == "All" && !roomVM.MinPrice.HasValue && !roomVM.MaxPrice.HasValue && (roomVM.HotelId == null || roomVM.HotelId == 0) && roomVM.City == "All")
             {
                 ViewBag.Message = "Please provide min Price or max Price criteria.";
 
                 var emptyRoomViewModel = new List<RoomViewModel>
                 {
-                    new RoomViewModel { hotels = hotellist ,
+                    new RoomViewModel {
+                        hotels = hotellist ,
                         typslist = roomRepository.GetAllroom().Select(r => r.Type).Distinct().ToList(),
-                        citys = hotellist.Select(h => h.City).Distinct().ToList()
-
+                        citys = hotellist.Select(h => h.City).Distinct().ToList(),
+                        TypeFilter = roomVM.TypeFilter,
+                        MinPrice = roomVM.MinPrice,
+                        MaxPrice = roomVM.MaxPrice,
+                        HotelId = roomVM.HotelId,
+                        City = roomVM.City
                     }
                 };
-                if (hotelId == 0)
-                    hotelId = null;
+                if (roomVM.HotelId == 0)
+                    roomVM.HotelId = null;
 
-                ViewData["CurrentType"] = type;
-                ViewData["CurrentMinPrice"] = minPrice;
-                ViewData["CurrentMaxPrice"] = maxPrice;
-                ViewData["CurrentHotelId"] = hotelId?.ToString() ?? "All";
-                ViewData["CurrentCity"] = city;
+
 
                 return View("Index", emptyRoomViewModel.ToPagedList(page, PageSize));
             }
@@ -135,49 +156,52 @@ namespace HotelsBookingSystem.Controllers
             #endregion
 
             #region conversion to null
-            if (string.IsNullOrWhiteSpace(type) || type == "All")
-                type = null;
-            if (string.IsNullOrWhiteSpace(city) || city == "All")
-                city = null;
-            if (hotelId == 0)
-                hotelId = null;
+            if (string.IsNullOrWhiteSpace(roomVM.TypeFilter) || roomVM.TypeFilter == "All")
+                roomVM.TypeFilter = null;
+            if (string.IsNullOrWhiteSpace(roomVM.City) || roomVM.City == "All")
+                roomVM.City = null;
+            if (roomVM.HotelId == 0)
+                roomVM.HotelId = null;
             #endregion
 
-
-            ViewData["CurrentType"] = type ?? "All";
-            ViewData["CurrentMinPrice"] = minPrice;
-            ViewData["CurrentMaxPrice"] = maxPrice;
-            ViewData["CurrentHotelId"] = hotelId?.ToString() ?? "All"; 
-            ViewData["CurrentCity"] = city ?? "All";
-
             #region ifAllisNull
-            if (type == null && !minPrice.HasValue && !maxPrice.HasValue && hotelId == null && city == null)
+            if (roomVM.TypeFilter == null && !roomVM.MinPrice.HasValue && !roomVM.MaxPrice.HasValue && roomVM.HotelId == null && roomVM.City == null)
             {
                 ViewBag.Message = "Please provide at least one filter criteria.";
                 var emptyRoomViewModel = new List<RoomViewModel>
                 {
-                    new RoomViewModel { hotels = hotellist,
-                    typslist = roomRepository.GetAllroom().Select(r => r.Type).Distinct().ToList(),
-                        citys = hotellist.Select(h => h.City).Distinct().ToList()
-
+                    new RoomViewModel {
+                        hotels = hotellist,
+                        typslist = roomRepository.GetAllroom().Select(r => r.Type).Distinct().ToList(),
+                        citys = hotellist.Select(h => h.City).Distinct().ToList(),
+                         TypeFilter = roomVM.TypeFilter,
+                        MinPrice = roomVM.MinPrice,
+                        MaxPrice = roomVM.MaxPrice,
+                        HotelId = roomVM.HotelId,
+                        City = roomVM.City
                     }
                 };
                 return View("Index", emptyRoomViewModel.ToPagedList(page, PageSize));
             }
             #endregion
 
-           
-
-            IPagedList<Room> filteredRooms = roomRepository.FilterRooms(
-                type, minPrice, maxPrice, hotelId, city, page, PageSize);
-
+            IPagedList<Room> filteredRooms = roomRepository.FilterRooms(roomVM, page, PageSize);
             #region emptyview
 
             if (filteredRooms == null || !filteredRooms.Any())
             {
                 var emptyRoomViewModel = new List<RoomViewModel>
                 {
-                    new RoomViewModel { hotels = hotellist }
+                    new RoomViewModel { hotels = hotellist,
+                    typslist = roomRepository.GetAllroom().Select(r => r.Type).Distinct().ToList(),
+                        citys = hotellist.Select(h => h.City).Distinct().ToList(),
+                     TypeFilter = roomVM.TypeFilter,
+                        MinPrice = roomVM.MinPrice,
+                        MaxPrice = roomVM.MaxPrice,
+                        HotelId = roomVM.HotelId,
+                        City = roomVM.City
+
+                    }
                 };
                 return View("Index", emptyRoomViewModel.ToPagedList(page, PageSize));
             }
@@ -196,16 +220,23 @@ namespace HotelsBookingSystem.Controllers
                 hotels = hotellist,
                 RoomNumber = r.RoomNumber,
                 NumberOfBeds = r.NumberOfBeds,
+                ////
+                City = roomVM.City,
+                TypeFilter = roomVM.TypeFilter,
+                MinPrice = roomVM.MinPrice,
+                MaxPrice = roomVM.MaxPrice,
+                HotelId = roomVM.HotelId,
                 typslist = roomRepository.GetAllroom().Select(r => r.Type).Distinct().ToList(),
-            }).ToPagedList(page, PageSize);
-           // ViewData["forMap"] = roomRepository.GetAllhotels();
+            });
+
 
             #endregion
-
+            ViewBag.IsFiltered = true;
             return View("Index", roomViewModels);
         }
 
         #endregion
+
 
         #region Admin
         [HttpGet]
