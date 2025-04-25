@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Models.Context;
+using HotelsBookingSystem.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 using X.PagedList;
@@ -44,7 +45,10 @@ namespace HotelsBookingSystem.Repository
                 throw new Exception("Room not found");
             }
         }
-        #region forCurd 
+
+
+
+        #region forCrud 
         void IRoomRepository.Add(Room room)
         {
 
@@ -76,33 +80,27 @@ namespace HotelsBookingSystem.Repository
         #endregion
 
         #region Room page filter
-        public IPagedList<Room> FilterRooms(string type, int? minPrice, int? maxPrice,
-                                   int? hotelId, string city, int pageNumber, int pageSize)
+       
+        public IPagedList<Room> FilterRooms(RoomViewModel roomViewModel, int pageNumber, int pageSize)
         {
-            var query = _context.Rooms.Where(r=>r.Status == "available") 
-                .Include(r => r.RoomImages)
-                .Include(r => r.Hotel)
-                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(type))
-                query = query.Where(r => r.Type.Contains(type));
-
-            if (minPrice.HasValue)
-                query = query.Where(r => r.PricePerNight >= minPrice.Value);
-
-            if (maxPrice.HasValue)
-                query = query.Where(r => r.PricePerNight <= maxPrice.Value);
-
-            if (hotelId.HasValue)
-                query = query.Where(r => r.HotelId == hotelId.Value);
-
-            if (!string.IsNullOrEmpty(city))
-                query = query.Where(r => r.Hotel.City.Contains(city));
-
+            var query = _context.Rooms.Where(r => r.Status == "available")
+               .Include(r => r.RoomImages)
+               .Include(r => r.Hotel)
+               .AsQueryable();
+            if (!string.IsNullOrEmpty(roomViewModel.TypeFilter))
+                query = query.Where(r => r.Type.Contains(roomViewModel.TypeFilter));
+            if (roomViewModel.MinPrice.HasValue)
+                query = query.Where(r => r.PricePerNight >= roomViewModel.MinPrice.Value);
+            if (roomViewModel.MaxPrice.HasValue)
+                query = query.Where(r => r.PricePerNight <= roomViewModel.MaxPrice.Value);
+            if (roomViewModel.HotelId.HasValue)
+                query = query.Where(r => r.HotelId == roomViewModel.HotelId.Value);
+            if (!string.IsNullOrEmpty(roomViewModel.City))
+                query = query.Where(r => r.Hotel.City.Contains(roomViewModel.City));
+            // return query.ToList();
             return query.OrderBy(r => r.Id).ToPagedList(pageNumber, pageSize);
+
         }
-
-
         public List<Hotel> GetAllhotels()
         {
            var hotels= _context.Hotels.Where(h=>h.Status=="available")
