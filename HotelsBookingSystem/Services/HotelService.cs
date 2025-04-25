@@ -47,7 +47,7 @@ namespace HotelsBookingSystem.Services
                 Location = hotel.Address,
                 Description = hotel.Description,
                 ImageUrl = hotel.HotelImages.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
-                //Rating = hotel.Rating,
+                Rating = (Double)hotel.rating,
                 RoomCount = hotel.Rooms?.Count ?? 0,
                 Status = hotel.Status,
                 Longitude =Double.Parse(hotel.Longitude),
@@ -87,7 +87,7 @@ namespace HotelsBookingSystem.Services
                 Name = model.Name,
                 Address = model.Location,
                 Description = model.Description,
-                //Rating = model.Rating,
+                rating = model.Rating,
                 Status = model.Status,
                 City = model.City ,
                 Phone = model.Phone,
@@ -116,10 +116,12 @@ namespace HotelsBookingSystem.Services
             hotel.Description = model.Description;
             hotel.City = model.City;
             hotel.Phone = model.Phone;
-            //hotel.Rating = model.Rating;
+            hotel.rating = model.Rating;
             hotel.Status = model.Status;
             hotel.Longitude = model.Longitude.ToString();
             hotel.Latitude = model.Latitude.ToString();
+
+            _hotelRepository.GetById(id).HotelImages.FirstOrDefault(x => x.IsPrimary == true).ImageUrl = model.ImageUrl;           
 
             _hotelRepository.Update(hotel);
             _hotelRepository.SaveChanges();
