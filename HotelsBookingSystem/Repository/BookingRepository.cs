@@ -1,5 +1,6 @@
 ﻿using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Models.Context;
+using HotelsBookingSystem.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelsBookingSystem.Repository
@@ -40,6 +41,50 @@ namespace HotelsBookingSystem.Repository
                 .OrderByDescending(b => b.Booking_date)
                 .Take(count)
                 .ToListAsync();
+        }
+
+        public async Task<List<Booking>> GetByFilterAsync(BookingFilterViewModel filter)
+        {
+            var query = _context.Bookings
+                .Include(b => b.Hotel)
+                .Include(b => b.User)
+                .AsQueryable();
+            if (!string.IsNullOrEmpty(filter.Status))
+            {
+                query = query.Where(b => b.Status == filter.Status);
+            }
+
+            if (filter.HotelId.HasValue)
+            {
+                query = query.Where(b => b.HotelId == filter.HotelId.Value);
+            }
+
+            if (filter.BookingDateFrom.HasValue)
+            {
+                query = query.Where(b => b.Booking_date >= filter.BookingDateFrom.Value.Date);
+            }
+
+            if (filter.BookingDateTo.HasValue)
+            {
+                query = query.Where(b => b.Booking_date <= filter.BookingDateTo.Value.Date);
+            }
+
+            if (!string.IsNullOrEmpty(filter.ClientName))
+            {
+                query = query.Where(b => b.User.FullName.Contains(filter.ClientName));
+            }
+
+            if (filter.MinPrice.HasValue)
+            {
+                query = query.Where(b => b.TotalPrice >= filter.MinPrice.Value);
+            }
+
+            if (filter.MaxPrice.HasValue)
+            {
+                query = query.Where(b => b.TotalPrice <= filter.MaxPrice.Value);
+            }
+
+            return await query.ToListAsync();
         }
     }
 }
