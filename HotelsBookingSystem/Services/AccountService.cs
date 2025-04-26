@@ -23,7 +23,7 @@ namespace HotelsBookingSystem.Services
             if (user == null)
                 return new LoginResult { Succeeded = false, ErrorMessage = "Invalid USerName or password." };
 
-            var result = await signInManager.PasswordSignInAsync(user, vm.Password, vm.RememberMe, false);
+            var result = await signInManager.PasswordSignInAsync(user, vm.Password, vm.RememberMe,false);
             if (!result.Succeeded)
                 return new LoginResult { Succeeded = false, ErrorMessage = "Invalid UserName or password." };
 

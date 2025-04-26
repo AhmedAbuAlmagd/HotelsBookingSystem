@@ -1,0 +1,135 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model List<ApplicationUser>
+@inject UserManager<ApplicationUser> UserManager
+
+<link href="~/css/BookingsAd.css" rel="stylesheet" />
+
+
+<div class="bookings-dashboard">
+    <div class="dashboard-header mt-3">
+        <h1>Users Management</h1>
+    </div>
+
+    <div class="filter-container">
+        <div class="filter-header">
+            <i class="fas fa-filter"></i>
+            <span>Filter Users</span>
+        </div>
+        <form asp-action="Index" method="get" class="filter-form">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Name</label>
+                    <div class="input-wrapper">
+                        <i class="input-icon fas fa-user"></i>
+                        <input type="text" name="name" class="filter-input" placeholder="Search by name..." value="@Context.Request.Query["name"]">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Country</label>
+                    <div class="input-wrapper">
+                        <i class="input-icon fas fa-globe"></i>
+                        <input type="text" name="Country" class="filter-input" placeholder="Search by country..." value="@Context.Request.Query["country"]">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>City</label>
+                    <div class="input-wrapper">
+                        <i class="input-icon fas fa-city"></i>
+                        <input type="text" name="city" class="filter-input" placeholder="Search by city..." value="@Context.Request.Query["city"]">
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button type="submit" class="filter-btn apply">
+                        <i class="fas fa-search"></i>Apply Filters
+                    </button>
+                    <a href="@Url.Action("Index")" class="filter-btn reset">
+                        <i class="fas fa-undo"></i>Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Location</th>
+                    <th>Bookings</th>
+                    <th>Current Role</th>
+                    <th style="width: 180px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td class="client-name">
+                            <i class="fas fa-user"></i>
+                            @user.FullName
+                        </td>
+                        <td>@user.Email</td>
+                        <td>@user.City, @user.Country</td>
+                        <td>@user.Bookings.Count()</td>
+                        <td>
+                            @{
+                                var userRoles = await UserManager.GetRolesAsync(user);
+                                var role = userRoles.FirstOrDefault() ?? "User";
+                            }
+                            <span class="status-badge @(role == "Admin" ? "status-confirmed" : "status-pending")">
+                                @role
+                            </span>
+                        </td>
+                        <td>
+                            <form asp-controller="Roles" asp-action="ChangeRole" asp-route-id="@user.Id" method="post" style="display: flex; align-items: center; gap: 5px;">
+                                <select name="role" class="filter-select" style="flex: 1; min-width: 100px;">
+                                    @if (role == "User")
+                                    {
+                                        <option value="User" selected>User</option>
+                                        <option value="Admin">Admin</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="User">User</option>
+                                        <option value="Admin" selected>Admin</option>
+                                    }
+                                </select>
+                                <button type="submit" class="action-btn">
+                                    <i class="fas fa-user-shield"></i> Update
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Additional style for the roles dropdown and button */
+    .action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-weight: 500;
+    }
+    
+    /* Fix input and select styles */
+    select.filter-select {
+        height: 38px;
+    }
+    
+    .filter-select, .filter-input {
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    .filter-select:focus, .filter-input:focus {
+        border-color: #f9a825;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(249, 168, 37, 0.25);
+    }
+</style>

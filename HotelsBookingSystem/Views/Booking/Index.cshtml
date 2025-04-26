@@ -1,0 +1,202 @@
+﻿@model IEnumerable<HotelsBookingSystem.Models.Booking>
+@{
+    ViewData["Title"] = "Bookings";
+    int SN = 1;
+}
+
+<link href="~/css/BookingsAd.css" rel="stylesheet" />
+
+<div class="bookings-dashboard">
+    <div class="dashboard-header mt-3">
+        <h1>Hotel Bookings</h1>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-container">
+        <div class="filter-header">
+            <i class="fas fa-filter"></i>
+            <span>Filter Bookings</span>
+        </div>
+        <form id="filterForm" method="get" action="@Url.Action("Index")" class="filter-form">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="statusFilter">Booking Status</label>
+                    <div class="select-wrapper">
+                        <select id="statusFilter" name="status" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="hotelFilter">Hotel Property</label>
+                    <div class="select-wrapper">
+                        <select id="hotelFilter" name="hotelId" class="filter-select">
+                            <option value="">All Hotels</option>
+                            @foreach (var hotel in ViewBag.Hotels ?? new List<SelectListItem>())
+                            {
+                                <option value="@hotel.Value">@hotel.Text</option>
+                            }
+                        </select>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="clientSearch">Client Name</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-search input-icon"></i>
+                        <input type="text" id="clientSearch" name="clientName" placeholder="Search by client name" class="filter-input" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="filter-group date-group">
+                    <label>Booking Date Range</label>
+                    <div class="date-inputs">
+                        <div class="date-input-wrapper">
+                            <i class="fas fa-calendar-alt input-icon"></i>
+                            <input type="date" id="bookingDateFrom" name="bookingDateFrom" class="filter-input" placeholder="From" />
+                        </div>
+                        <span class="date-separator">-</span>
+                        <div class="date-input-wrapper">
+                            <i class="fas fa-calendar-alt input-icon"></i>
+                            <input type="date" id="bookingDateTo" name="bookingDateTo" class="filter-input" placeholder="To" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group price-group">
+                    <label>Price Range</label>
+                    <div class="price-inputs">
+                        <div class="price-input-wrapper">
+                            <i class="fas fa-dollar-sign input-icon"></i>
+                            <input type="number" id="minPrice" name="minPrice" placeholder="Min price" class="filter-input" />
+                        </div>
+                        <span class="price-separator">-</span>
+                        <div class="price-input-wrapper">
+                            <i class="fas fa-dollar-sign input-icon"></i>
+                            <input type="number" id="maxPrice" name="maxPrice" placeholder="Max price" class="filter-input" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-buttons">
+                    <button type="submit" class="filter-btn apply">
+                        <i class="fas fa-search"></i> Apply Filters
+                    </button>
+                    <button type="reset" class="filter-btn reset">
+                        <i class="fas fa-times"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>Hotel</th>
+                    <th>Client</th>
+                    <th>Booking Date</th>
+                    <th>CheckIn</th>
+                    <th>CheckOut</th>
+                    <th>GuestsCount</th>
+                    <th>TotalPrice</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(SN++)</td>
+                        <td>
+                            <div class="hotel-name">
+                                <i class="fas fa-hotel"></i> @Html.DisplayFor(modelItem => item.Hotel.Name)
+                            </div>
+                        </td>
+                        <td>
+                            <div class="client-name">
+                                <i class="fas fa-user-circle"></i> @Html.DisplayFor(modelItem => item.User.FullName)
+                            </div>
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.Booking_date)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CheckIn)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CheckOut)</td>
+                        <td>
+                            <div class="guests-badge">
+                                <i class="fas fa-user"></i> @Html.DisplayFor(modelItem => item.GuestsCount)
+                            </div>
+                        </td>
+                        <td>
+                            <div class="price-value">
+                                <i class="fas fa-dollar-sign"></i> @Html.DisplayFor(modelItem => item.TotalPrice)
+                            </div>
+                        </td>
+                        <td>
+                            <div class="status-badge status-@item.Status.ToLower()">
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Reset button functionality
+        document.querySelector('button[type="reset"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('filterForm').reset();
+            window.location.href = '@Url.Action("Index")';
+        });
+
+        // Set filter values from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.has('status')) {
+            document.getElementById('statusFilter').value = urlParams.get('status');
+        }
+
+        if (urlParams.has('hotelId')) {
+            document.getElementById('hotelFilter').value = urlParams.get('hotelId');
+        }
+
+        if (urlParams.has('bookingDateFrom')) {
+            document.getElementById('bookingDateFrom').value = urlParams.get('bookingDateFrom');
+        }
+
+        if (urlParams.has('bookingDateTo')) {
+            document.getElementById('bookingDateTo').value = urlParams.get('bookingDateTo');
+        }
+
+        if (urlParams.has('clientName')) {
+            document.getElementById('clientSearch').value = urlParams.get('clientName');
+        }
+
+        if (urlParams.has('minPrice')) {
+            document.getElementById('minPrice').value = urlParams.get('minPrice');
+        }
+
+        if (urlParams.has('maxPrice')) {
+            document.getElementById('maxPrice').value = urlParams.get('maxPrice');
+        }
+    });
+</script>
