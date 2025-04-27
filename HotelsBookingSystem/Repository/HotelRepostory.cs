@@ -64,7 +64,7 @@ namespace HotelsBookingSystem.Repository
         public Hotel GetById(int id)
         {
 
-            Hotel hotel = con.Hotels.Include(h => h.HotelImages).FirstOrDefault(h => h.Id == id);
+            Hotel hotel = con.Hotels.Include(h => h.HotelImages).Include(h => h.Rooms).FirstOrDefault(h => h.Id == id);
             return hotel;
 
         }

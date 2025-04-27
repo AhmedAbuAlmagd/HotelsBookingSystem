@@ -239,7 +239,6 @@ namespace HotelsBookingSystem.Controllers
                     }
                 };
 
-                // Pass the active tab to the view via ViewBag
                 ViewBag.ActiveTab = activeTab;
 
                 return View(viewModel);

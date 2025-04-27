@@ -126,19 +126,6 @@ namespace HotelsBookingSystem.Repository
         #endregion
 
 
-        public List<Room> GetAllroom()
-        {
-            var rooms = _context.Rooms
-               .Where(r => r.Status == "available")
-               .Include(r => r.Hotel)
-               .Include(r => r.RoomImages)
-               .Include(r => r.BookingRooms)
-               .ThenInclude(r => r.booking)
-              .ToList();
-            return rooms;
-        }
-
-
         #region Admin
         public async Task<List<Room>> GetAllRoomsAsync()
         {
@@ -170,7 +157,7 @@ namespace HotelsBookingSystem.Repository
         {
             return _context.Rooms
                 .Where(r => r.HotelId == hotelId)
-                 .Include(r => r.RoomImages)
+                .Include(r => r.RoomImages)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();

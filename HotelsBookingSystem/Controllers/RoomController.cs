@@ -280,7 +280,6 @@ namespace HotelsBookingSystem.Controllers
         {
             try
             {
-                // Check if a room with this number already exists in this hotel
                 if (roomRepository.RoomNumberExists(model.HotelId, model.RoomNumber))
                 {
                     return Json(new { success = false, message = "This room number already exists in this hotel" });
@@ -350,11 +349,6 @@ namespace HotelsBookingSystem.Controllers
         {
             try
             {
-                // Check if another room has this number (excluding the current room)
-                if (roomRepository.RoomNumberExists(model.HotelId, model.RoomNumber, id))
-                {
-                    return Json(new { success = false, message = "This room number already exists in this hotel" });
-                }
 
                 ModelState.Remove("image");
                 if (!ModelState.IsValid)
@@ -376,6 +370,7 @@ namespace HotelsBookingSystem.Controllers
                 }
 
                 room.Type = model.Type;
+                room.HotelId = model.HotelId;
                 room.RoomNumber = model.RoomNumber;
                 room.PricePerNight = model.PricePerNight;
                 room.NumberOfBeds = model.NumberOfBeds;
@@ -386,7 +381,7 @@ namespace HotelsBookingSystem.Controllers
                 if (image != null && image.Length > 0)
                 {
                     string uploadsPhoto = Path.Combine(webHostEnvironment.WebRootPath, "images", "Rooms");
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName); // Generate unique filename
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName); //
                     string filePath = Path.Combine(uploadsPhoto, fileName);
 
                     // Make sure directory exists
