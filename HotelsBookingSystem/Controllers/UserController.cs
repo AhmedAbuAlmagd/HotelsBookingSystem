@@ -16,19 +16,39 @@ namespace HotelsBookingSystem.Controllers
             _userManager = userManager;
         }
         [Authorize(Roles = "Admin")]
-        public IActionResult Index(string name = "" , string country = "" , string city = "")
+        public IActionResult Index(string name = "", string country = "", string city = "", int page = 1)
         {
-            var usersQuery = _userManager.Users.Include(u => u.Bookings).OrderByDescending(u => u.Bookings.Count()).AsQueryable();
+            var usersQuery = _userManager.Users.Include(u => u.Bookings)
+                .OrderByDescending(u => u.Bookings.Count())
+                .AsQueryable();
 
-            if (name != "")
-                usersQuery = usersQuery.Where(u => u.FullName.ToLower() == name.ToLower());
+            if (!string.IsNullOrEmpty(name))
+                usersQuery = usersQuery.Where(u => u.FullName.ToLower().Contains(name.ToLower()));
 
-            if(country != "")
-                usersQuery = usersQuery.Where(u => u.Country.ToLower() == country.ToLower());
-            if (city != "")
-                usersQuery = usersQuery.Where(u => u.City.ToLower() == city.ToLower());
+            if (!string.IsNullOrEmpty(country))
+                usersQuery = usersQuery.Where(u => u.Country.ToLower().Contains(country.ToLower()));
 
-            return View(usersQuery.ToList());
+            if (!string.IsNullOrEmpty(city))
+                usersQuery = usersQuery.Where(u => u.City.ToLower().Contains(city.ToLower()));
+
+            int pageSize = 10;
+            int totalItems = usersQuery.Count();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+            var users = usersQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Name = name;
+            ViewBag.Country = country;
+            ViewBag.City = city;
+
+            return View(users);
         }
     }
 }

@@ -12,18 +12,24 @@ namespace HotelsBookingSystem.Repository
         {
             _hotelsContext = hotelsContext;
         }
-        public List<Review> GetAll(int hotelId , int rating)
+       public List<Review> GetAll(int hotelId = 0, int rating = 0)
         {
-            var query = _hotelsContext.Reviews.Include(x => x.Hotel).Include(x => x.User).AsQueryable();
+            var query = _hotelsContext.Reviews
+                .Include(r => r.Hotel)
+                .Include(r => r.User)
+                .AsQueryable();
 
-            if(hotelId != 0)
-                return query.Where(x => x.HotelId == hotelId).ToList();
-            
-            if (rating != 0)
-                return query.Where(x => x.Rating == rating).ToList();
+            if (hotelId > 0)
+            {
+                query = query.Where(r => r.HotelId == hotelId);
+            }
+
+            if (rating > 0)
+            {
+                query = query.Where(r => r.Rating == rating);
+            }
 
             return query.ToList();
-
         }
     }
 }   

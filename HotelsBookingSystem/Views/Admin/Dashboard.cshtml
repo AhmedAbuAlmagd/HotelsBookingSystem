@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Dashboard";
-    Layout = null;
+    Layout = "_AdminLayout";
 }
 
 <!DOCTYPE html>
@@ -15,61 +15,6 @@
     <link href="~/css/AdminDashboard.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="layout">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <span class="logo-icon">🏨</span>
-                    <span class="logo-text">HotelBooking</span>
-                </div>
-            </div>
-
-            <nav class="nav-links">
-                <a action="Dashboard" class="nav-link active">
-                    <span class="nav-link-icon">📊</span>
-                    <span class="nav-link-text">Dashboard</span>
-                </a>
-
-                <a asp-action="HotelsManagement" asp-controller="Hotel" class="nav-link">
-                    <span class="nav-link-icon">🏨</span>
-                    <span class="nav-link-text">Hotels</span>
-                </a>
-                <a asp-controller="booking" asp-action="index" class="nav-link">
-                    <span class="nav-link-icon">📅</span>
-                    <span class="nav-link-text">Bookings</span>
-                </a>
-                <a asp-controller="user" asp-action="index" class="nav-link">
-                    <span class="nav-link-icon">👥</span>
-                    <span class="nav-link-text">Users</span>
-                </a>
-                <a asp-controller="Admin" asp-action="GetReviews" class="nav-link">
-                    <span class="nav-link-icon">⭐</span>
-                    <span class="nav-link-text">Reviews</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <a asp-action="Logout" asp-controller="Account" class="nav-link">
-                    <span class="nav-link-icon">🚪</span>
-                    <span class="nav-link-text">Logout</span>
-                </a>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="header">
-                <button class="toggle-sidebar" id="toggleSidebar">☰</button>
-                <div class="header-right">
-                    <div class="date-display">April 28, 2025</div>
-                    <div class="user-menu">
-                        <div class="user-avatar">A</div>
-                        <div>Admin</div>
-                    </div>
-                </div>
-            </div>
-
             <h1 class="dashboard-title">Dashboard Overview</h1>
 
             <!-- Stats Cards -->
@@ -221,75 +166,7 @@
                     }
                 </div>
             </div>
-        </main>
-    </div>
 
     <div class="overlay" id="overlay"></div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Sidebar toggle functionality
-            const toggleBtn = document.getElementById('toggleSidebar');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const isMobile = window.innerWidth <= 1024;
-
-            toggleBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-                if (isMobile) {
-                    overlay.classList.toggle('active');
-                } else {
-                    sidebar.classList.toggle('collapsed');
-                }
-            });
-
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            });
-
-            // Search and filter functionality
-            const searchInputs = document.querySelectorAll('.search-input');
-            const filterButtons = document.querySelectorAll('.filter-btn');
-
-            searchInputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    console.log('Search input:', this.value);
-                    // Search logic would go here
-                });
-            });
-
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    console.log('Filter button clicked');
-                    // Filtering logic would go here
-                });
-            });
-
-            // Action buttons
-            const actionButtons = document.querySelectorAll('.action-btn');
-
-            actionButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    console.log('Action button clicked:', this.textContent.trim());
-                    // Action handling logic would go here
-                });
-            });
-
-            // Responsive sidebar behavior
-            window.addEventListener('resize', function() {
-                const newIsMobile = window.innerWidth <= 1024;
-
-                if (newIsMobile !== isMobile) {
-                    // Refresh page to apply correct sidebar state
-                    // For a real app, you'd handle this more gracefully
-                    if (sidebar.classList.contains('active') || sidebar.classList.contains('collapsed')) {
-                        sidebar.classList.remove('active', 'collapsed');
-                        overlay.classList.remove('active');
-                    }
-                }
-            });
-        });
-    </script>
 </body>
 </html>

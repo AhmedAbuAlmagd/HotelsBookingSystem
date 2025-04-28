@@ -130,7 +130,7 @@ namespace HotelsBookingSystem.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult HotelsManagement(int page = 1, string searchTerm = "", string status = "", string city = "")
         {
-            const int pageSize = 9;
+            const int pageSize = 8;
 
             status = string.IsNullOrWhiteSpace(status) ? null : status;
             city = string.IsNullOrWhiteSpace(city) ? null : city;

@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Hotels Management";
-    Layout = null;
+    Layout = "_AdminLayout";
 }
 
 <!DOCTYPE html>
@@ -23,16 +23,12 @@
         <!-- Header Section -->
         <div class="header">
             <h1 class="title">Hotels Management</h1>
-            <div>
-                <button id="addHotelBtn" class="add-hotel-btn">
-                    <i class="fa fa-plus"></i> Add New Hotel
-                </button>
-            </div>
+           
         </div>
 
         <!-- Filters Section -->
         <div class="filters-section">
-            <div class="search-bar">
+            <div class="search-bar" style="padding-left:0">
                 <form id="filterForm" method="get" action="@Url.Action("HotelsManagement", "Hotel")">
                     <input type="text" id="hotelSearch" name="searchTerm" class="search-input" placeholder="Search hotels..." value="@ViewBag.CurrentSearchTerm">
                     <select id="cityFilter" name="city" class="filter-select">
@@ -79,9 +75,14 @@
                             <option value="Maintenance">Maintenance</option>
                         }
                     </select>
-                    <button type="submit" class="filter-btn">Apply Filters</button>
-                    <a href="@Url.Action("HotelsManagement", "Hotel")" class="filter-btn" style="background-color:gray; text-decoration:none;">Clear Filters</a>
+                    <button type="submit" class="filterr-btn"><i class="fas fa-search"></i> Apply Filters</button>
+                    <a href="@Url.Action("HotelsManagement", "Hotel")" class="filterr-btn" style="background-color:gray; text-decoration:none;"><i class="fas fa-undo"></i> Clear Filters</a>
                 </form>
+            </div>
+            <div>
+                <button id="addHotelBtn" class="add-hotel-btn">
+                    <i class="fa fa-plus"></i> Add New Hotel
+                </button>
             </div>
         </div>
 
