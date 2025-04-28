@@ -41,6 +41,11 @@
                     <span class="nav-link-icon">⭐</span>
                     <span class="nav-link-text">Reviews</span>
                 </a>
+                 <a asp-action="Index" asp-controller="Roles" class="nav-link">
+                    <span class="nav-link-icon">🔒</span>
+                    <span class="nav-link-text">Roles</span>
+                   
+                 </a> 
             </nav>
 
             <div class="sidebar-footer">
@@ -64,13 +69,12 @@
                 </div>
             </div>
 
-            <!-- This is where each view will be inserted -->
             @RenderBody()
         </main>
     </div>
 
     <div class="overlay" id="overlay"></div>
 
-    <script src="~/js/Admin.js"></script> <!-- move JS separately -->
+    <script src="~/js/Admin.js"></script> 
 </body>
 </html>

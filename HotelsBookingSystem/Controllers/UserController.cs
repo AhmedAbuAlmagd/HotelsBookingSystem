@@ -10,14 +10,17 @@ namespace HotelsBookingSystem.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserController(UserManager<ApplicationUser> userManager)
+        public UserController(UserManager<ApplicationUser> userManager , RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]    
         public IActionResult Index(string name = "", string country = "", string city = "", int page = 1)
         {
+            var roles = _roleManager.Roles.ToList();
             var usersQuery = _userManager.Users.Include(u => u.Bookings)
                 .OrderByDescending(u => u.Bookings.Count())
                 .AsQueryable();
@@ -47,6 +50,7 @@ namespace HotelsBookingSystem.Controllers
             ViewBag.Name = name;
             ViewBag.Country = country;
             ViewBag.City = city;
+            ViewBag.Roles = roles;
 
             return View(users);
         }

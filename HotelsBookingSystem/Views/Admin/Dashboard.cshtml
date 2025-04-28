@@ -59,10 +59,6 @@
                     <a asp-controller="booking" asp-action="index" class="view-all">View All →</a>
                 </div>
 
-                <div class="search-bar">
-                    <input type="text" class="search-input" placeholder="Search bookings...">
-                    <button class="filter-btn">Filter</button>
-                </div>
 
                 <div class="table-container">
                     <table>
@@ -74,7 +70,6 @@
                                 <th>Check In</th>
                                 <th>Check Out</th>
                                 <th>Status</th>
-                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,15 +86,6 @@
                                             @booking.Status
                                         </span>
                                     </td>
-                                    <td>
-                                        <div class="actions">
-                                            <button class="action-btn view">View</button>
-                                            @if (booking.Status.ToLower() != "cancelled")
-                                            {
-                                                <button class="action-btn edit">Edit</button>
-                                            }
-                                        </div>
-                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -114,10 +100,6 @@
                     <a href="#" class="view-all">View All →</a>
                 </div>
 
-                <div class="search-bar">
-                    <input type="text" class="search-input" placeholder="Search hotels...">
-                    <button class="filter-btn">Filter</button>
-                </div>
 
                 <div class="grid-container">
                     @foreach (var hotel in Model.Hotels)
@@ -141,13 +123,8 @@
             <div class="dashboard-section">
                 <div class="section-header">
                     <h2 class="section-title">Rooms</h2>
-                    <a href="#" class="view-all">View All →</a>
                 </div>
 
-                <div class="search-bar">
-                    <input type="text" class="search-input" placeholder="Search rooms...">
-                    <button class="filter-btn">Filter</button>
-                </div>
 
                 <div class="grid-container">
                     @foreach (var room in Model.Rooms)
