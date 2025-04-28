@@ -61,3 +61,16 @@
         }
     });
 });
+
+const currentPath = window.location.pathname;
+const navLinks = document.querySelectorAll('.sidebar .nav-link');
+
+navLinks.forEach(link => {
+    link.classList.remove('active');
+
+    const href = link.getAttribute('href');
+
+    if (currentPath.endsWith(href) || (href !== '/' && currentPath.includes(href))) {
+        link.classList.add('active');
+    }
+});

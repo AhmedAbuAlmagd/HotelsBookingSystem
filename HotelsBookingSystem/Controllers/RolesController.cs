@@ -8,43 +8,108 @@ namespace HotelsBookingSystem.Controllers
 {
     public class RolesController : Controller
     {
-        private readonly RoleManager<IdentityRole> rolemanager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<ApplicationUser> userManager;
 
         public RolesController(RoleManager<IdentityRole> rolemanager , UserManager<ApplicationUser> userManager)
         {
-            this.rolemanager = rolemanager;
+            this.roleManager = rolemanager;
             this.userManager = userManager;
         }
-        [HttpGet]
+
+
         [Authorize(Roles = "Admin")]
-        public IActionResult New()
+        public IActionResult Index ()
         {
-            return View();
+            var roles = roleManager.Roles.ToList();
+            return View(roles);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> New(string roleName)
+        {
+            if (!string.IsNullOrEmpty(roleName))
+            {
+                var result = await roleManager.CreateAsync(new IdentityRole(roleName));
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> New(RoleViewModel roleVm)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, string roleName)
         {
-            if (ModelState.IsValid)
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(roleName))
             {
-                IdentityRole role = new IdentityRole();
-                role.Name = roleVm.Role;
-                IdentityResult result = await rolemanager.CreateAsync(role);
-                if (result.Succeeded)
-                    return View("New" ,new RoleViewModel());
-                else
-                {
-                    foreach (var error in result.Errors)
-                    ModelState.AddModelError("", error.Description);
-                    return View(roleVm);
-                }
+                return BadRequest();
             }
-            else
-            return View(roleVm);
+
+            var role = await roleManager.FindByIdAsync(id);
+
+            if (role == null)
+            {
+                return NotFound();
+            }
+
+            role.Name = roleName;
+            var result = await roleManager.UpdateAsync(role);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest();
+            }
+
+            var role = await roleManager.FindByIdAsync(id);
+
+            if (role == null)
+            {
+                return NotFound();
+            }
+
+            var result = await  roleManager.DeleteAsync(role);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]

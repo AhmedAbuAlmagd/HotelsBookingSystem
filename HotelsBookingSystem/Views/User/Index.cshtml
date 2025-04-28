@@ -100,15 +100,20 @@
                         <td>
                             <form asp-controller="Roles" asp-action="ChangeRole" asp-route-id="@user.Id" method="post" style="display: flex; align-items: center; gap: 5px;">
                                 <select name="role" class="filter-select" style="flex: 1; min-width: 100px;">
-                                    @if (role == "User")
+                                    
+
+                                    @foreach(var Role in ViewBag.Roles)
                                     {
-                                        <option value="User" selected>User</option>
-                                        <option value="Admin">Admin</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="User">User</option>
-                                        <option value="Admin" selected>Admin</option>
+                                        if(role == Role.ToString())
+                                        {
+                                            <option value="@Role" selected>@Role</option>
+
+                                        }
+                                        else
+                                        {
+                                            <option value="@Role">@Role</option>
+
+                                        }
                                     }
                                 </select>
                                 <button type="submit" class="action-btn">

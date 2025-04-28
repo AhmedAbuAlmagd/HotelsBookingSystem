@@ -35,7 +35,7 @@ namespace HotelsBookingSystem.Controllers
 
                 foreach (var error in errors)
                 {
-                    ModelState.AddModelError(string.Empty, error);
+                    ModelState.AddModelError("", error);
                 }
             }
 
