@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelsBookingSystem.Controllers
@@ -12,9 +13,6 @@ namespace HotelsBookingSystem.Controllers
         private readonly IRoomRepository _roomRepository;
         private readonly IUserRepository _userRepository;
 
-
-
-
         public HomeController(ILogger<HomeController> logger, IHotelRepository hotelRepository, IRoomRepository roomRepository, IUserRepository userRepository)
         {
             _logger = logger;
@@ -25,6 +23,8 @@ namespace HotelsBookingSystem.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
+            if(User.IsInRole("Admin"))
+                return RedirectToAction("DAshboard","Admin");
             var totalHotels = await _hotelRepository.GetTotalHotelsCountAsync();
             var totalRooms = await _roomRepository.GetTotalRoomsCountAsync();
             var totalUsers = await _userRepository.GetTotalUsersCountAsync();

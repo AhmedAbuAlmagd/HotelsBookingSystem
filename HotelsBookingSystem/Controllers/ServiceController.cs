@@ -15,16 +15,13 @@ namespace HotelsBookingSystem.Controllers
     {
         private readonly IServiceRepository _serviceRepository;
         private readonly ILogger<ServiceController> _logger;
-        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public ServiceController(
             IServiceRepository serviceRepository,
-            ILogger<ServiceController> logger,
-            IWebHostEnvironment webHostEnvironment)
+            ILogger<ServiceController> logger)
         {
             _serviceRepository = serviceRepository;
             _logger = logger;
-            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]

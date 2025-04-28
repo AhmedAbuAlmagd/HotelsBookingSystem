@@ -11,7 +11,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotels Management</title>
-    <link href="~/css/AdminDashboard.css" rel="stylesheet" />
+    <link href="~/css/HotelsManage.css" rel="stylesheet" /> 
     <link href="~/css/HotelsManagement.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
@@ -33,14 +33,55 @@
         <!-- Filters Section -->
         <div class="filters-section">
             <div class="search-bar">
-                <input type="text" id="hotelSearch" class="search-input" placeholder="Search hotels...">
-                <select id="statusFilter" class="filter-select">
-                    <option value="all">All Statuses</option>
-                    <option value="active">Available</option>
-                    <option value="inactive">Full</option>
-                    <option value="maintenance">Maintenance</option>
-                </select>
-                <button class="filter-btn">Apply Filters</button>
+                <form id="filterForm" method="get" action="@Url.Action("HotelsManagement", "Hotel")">
+                    <input type="text" id="hotelSearch" name="searchTerm" class="search-input" placeholder="Search hotels..." value="@ViewBag.CurrentSearchTerm">
+                    <select id="cityFilter" name="city" class="filter-select">
+                        <option value="">All Cities</option>
+                        @foreach (var cityOption in Model.Hotels.Select(x => x.City).Distinct())
+                        {
+                            if (ViewBag.CurrentCity == cityOption)
+                            {
+                                <option value="@cityOption" selected>@cityOption</option>
+                            }
+                            else
+                            {
+                                <option value="@cityOption">@cityOption</option>
+                            }
+                        }
+                    </select>
+
+                    <select id="statusFilter" name="status" class="filter-select">
+                        <option value="">All Statuses</option>
+                        @if (ViewBag.CurrentStatus == "Active")
+                        {
+                            <option value="Active" selected>Available</option>
+                        }
+                        else
+                        {
+                            <option value="Active">Available</option>
+                        }
+
+                        @if (ViewBag.CurrentStatus == "Inactive")
+                        {
+                            <option value="Inactive" selected>Full</option>
+                        }
+                        else
+                        {
+                            <option value="Inactive">Full</option>
+                        }
+
+                        @if (ViewBag.CurrentStatus == "Maintenance")
+                        {
+                            <option value="Maintenance" selected>Maintenance</option>
+                        }
+                        else
+                        {
+                            <option value="Maintenance">Maintenance</option>
+                        }
+                    </select>
+                    <button type="submit" class="filter-btn">Apply Filters</button>
+                    <a href="@Url.Action("HotelsManagement", "Hotel")" class="filter-btn" style="background-color:gray; text-decoration:none;">Clear Filters</a>
+                </form>
             </div>
         </div>
 
@@ -56,7 +97,7 @@
                     <div class="hotel-card-body">
                         <h3 class="hotel-card-title">@hotel.Name</h3>
                         <div class="hotel-card-info">
-                            <p><i class="fa fa-map-marker"></i> @hotel.Location</p>
+                            <p><i class="fa fa-map-marker"></i> @hotel.Location , @hotel.City</p>
                             <p><i class="fa fa-bed"></i> @hotel.RoomCount rooms</p>
                             <p><i class="fa fa-star"></i> 5 stars</p>
                         </div>
@@ -78,15 +119,15 @@
         <div class="pagination">
             @if (Model.CurrentPage > 1)
             {
-                <a href="@Url.Action("HotelsManagement", new { page = Model.CurrentPage - 1 })">Previous</a>
+                <a href="@Url.Action("HotelsManagement", "Hotel", new { page = Model.CurrentPage - 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity, status = ViewBag.CurrentStatus })">Previous</a>
             }
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
-                <a href="@Url.Action("HotelsManagement", new { page = i })" class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
+                <a href="@Url.Action("HotelsManagement", "Hotel", new { page = i, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity, status = ViewBag.CurrentStatus })" class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
             }
             @if (Model.CurrentPage < Model.TotalPages)
             {
-                <a href="@Url.Action("HotelsManagement", new { page = Model.CurrentPage + 1 })">Next</a>
+                <a href="@Url.Action("HotelsManagement", "Hotel", new { page = Model.CurrentPage + 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity, status = ViewBag.CurrentStatus })">Next</a>
             }
         </div>
 
@@ -288,15 +329,6 @@
                 button.addEventListener('click', closeAllModals);
             });
 
-            // Filter button
-            document.querySelector('.filter-btn').addEventListener('click', filterHotels);
-
-            // Form submission
-            document.getElementById('hotelForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveHotel();
-            });
-
             // Utility functions
             function openModal(modal) {
                 modal.style.display = 'block';
@@ -308,20 +340,48 @@
                 deleteConfirmModal.style.display = 'none';
             }
        
-        // Helper function to generate star icons based on rating
-        function generateStars(rating) {
-            let stars = '';
-            const ratingValue = rating || 0; // Default to 0 if undefined
-            for (let i = 1; i <= 5; i++) {
-                stars += i <= ratingValue ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
+            // Helper function to generate star icons based on rating
+            function generateStars(rating) {
+                let stars = '';
+                const ratingValue = rating || 0; // Default to 0 if undefined
+                for (let i = 1; i <= 5; i++) {
+                    stars += i <= ratingValue ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
+                }
+                return stars;
             }
-            return stars;
-        }
 
-        // Example modal close functionality (adjust as needed)
-        document.querySelector('.close-modal').addEventListener('click', () => {
-            document.getElementById('hotelDetailsModal').style.display = 'none';
-        });
+            // Load hotel details for view
+            function loadHotelDetails(hotelId) {
+                const detailsContent = document.getElementById('hotelDetailsContent');
+                detailsContent.innerHTML = '<div class="loading"><i class="fa fa-spinner fa-spin"></i> Loading...</div>';
+                openModal(hotelDetailsModal);
+
+                fetch(`/Hotel/GetHotel/${hotelId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        detailsContent.innerHTML = `
+                            <div class="hotel-detail-container">
+                                <div class="hotel-detail-image">
+                                    <img src="${data.imageUrl}" alt="${data.name}">
+                                </div>
+                                <div class="hotel-detail-info">
+                                    <h3>${data.name}</h3>
+                                    <p class="rating">${generateStars(data.rating)}</p>
+                                    <p><i class="fa fa-map-marker"></i> ${data.location}, ${data.city}</p>
+                                    <p><i class="fa fa-phone"></i> ${data.phone}</p>
+                                    <p><i class="fa fa-info-circle"></i> Status: <span class="status-badge ${data.status.toLowerCase()}">${data.status}</span></p>
+                                    <div class="description">
+                                        <h4>Description</h4>
+                                        <p>${data.description}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    })
+                    .catch(error => {
+                        detailsContent.innerHTML = '<div class="error">Failed to load hotel details.</div>';
+                    });
+            }
 
             function loadHotelForEdit(hotelId) {
                 formModalTitle.textContent = 'Edit Hotel';
@@ -342,7 +402,9 @@
                         document.getElementById('Description').value = data.description || '';
                         document.getElementById('Rating').value = data.rating || '';
                         document.getElementById('Status').value = data.status || '';
-                        // document.getElementById('image').value = data.imageUrl || '';
+                        // Note: File inputs can't be pre-filled due to security restrictions
+                        // Make the image field not required for editing
+                        document.getElementById('image').removeAttribute('required');
                     })
                     .catch(error => {
                         alert('Failed to load hotel data.');
@@ -350,45 +412,43 @@
                     });
             }
 
-
-
             function saveHotel() {
-            const form = $("#hotelForm")[0];
-            $.validator.unobtrusive.parse($("#hotelForm"));
+                const form = $("#hotelForm")[0];
+                $.validator.unobtrusive.parse($("#hotelForm"));
 
-            if (!$("#hotelForm").valid()) return;
+                if (!$("#hotelForm").valid()) return;
 
-            const saveBtn = $(form).find('.save-btn');
-            saveBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+                const saveBtn = $(form).find('.save-btn');
+                saveBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
 
-            const formData = new FormData(form);
-            const hotelId = $("#hotelId").val();
-            const url = hotelId === "0" ? "/Hotel/Create" : `/Hotel/Update/${hotelId}`;
+                const formData = new FormData(form);
+                const hotelId = $("#hotelId").val();
+                const url = hotelId === "0" ? "/Hotel/Create" : `/Hotel/Update/${hotelId}`;
 
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function(response) {
-                    if (response.success) {
-                        closeAllModals();
-                        location.reload();
-                    } else {
-                        displayValidationErrors(response.errors || {});
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            closeAllModals();
+                            location.reload();
+                        } else {
+                            displayValidationErrors(response.errors || {});
+                            saveBtn.prop('disabled', false).text('Save Hotel');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while saving the hotel.');
                         saveBtn.prop('disabled', false).text('Save Hotel');
                     }
-                },
-                error: function() {
-                    alert('An error occurred while saving the hotel.');
-                    saveBtn.prop('disabled', false).text('Save Hotel');
-                }
-            });
-        }
+                });
+            }
 
             function deleteHotel(hotelId) {
                 fetch(`/Hotel/Delete/${hotelId}`, {
@@ -410,23 +470,6 @@
                 .catch(() => alert('Failed to delete hotel.'));
             }
 
-
-            function filterHotels() {
-                const searchTerm = document.getElementById('hotelSearch').value.toLowerCase();
-                const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
-                const hotelCards = document.querySelectorAll('.hotel-card');
-
-                hotelCards.forEach(card => {
-                    const hotelName = card.querySelector('.hotel-card-title').textContent.toLowerCase();
-                    const hotelStatus = card.getAttribute('data-status');
-                    const matchesSearch = hotelName.includes(searchTerm);
-                    const matchesStatus = statusFilter === 'all' || hotelStatus === statusFilter;
-
-                    card.style.display = (matchesSearch && matchesStatus) ? 'block' : 'none';
-                });
-            }
-
-
             function displayValidationErrors(errors) {
                 $('.field-validation-valid').text('');
                 for (const key in errors) {
@@ -435,6 +478,21 @@
                     }
                 }
             }
+
+            // Make sure the form is properly set up for submission
+            $("#hotelForm").on("submit", function(e) {
+                e.preventDefault();
+                saveHotel();
+            });
+
+            // Close modals when clicking outside
+            window.onclick = function(event) {
+                if (event.target === hotelDetailsModal || 
+                    event.target === hotelFormModal || 
+                    event.target === deleteConfirmModal) {
+                    closeAllModals();
+                }
+            };
         });
     </script>
 </body>

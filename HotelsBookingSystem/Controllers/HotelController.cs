@@ -104,10 +104,6 @@ namespace HotelsBookingSystem.Controllers
             return View("services", viewModel);
         }
 
-
-
-
-
         public IActionResult ViewRooms(int hotelId)
         {
             var hotel = hotelRepository.GetHotelWithRoomsAndImages(hotelId);
@@ -131,12 +127,22 @@ namespace HotelsBookingSystem.Controllers
 
         #region Admin
 
-        public IActionResult HotelsManagement(int page = 1)
+        [Authorize(Roles = "Admin")]
+        public IActionResult HotelsManagement(int page = 1, string searchTerm = "", string status = "", string city = "")
         {
-            const int pageSize = 9; 
-            var hotels = _hotelService.GetHotelsPaged(page, pageSize);
-            var totalHotels = _hotelService.GetTotalHotelsCount();
+            const int pageSize = 9;
+
+            status = string.IsNullOrWhiteSpace(status) ? null : status;
+            city = string.IsNullOrWhiteSpace(city) ? null : city;
+            searchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null : searchTerm;
+
+            var hotels = _hotelService.GetHotelsPaged(page, pageSize, searchTerm, status, city);
+            var totalHotels = _hotelService.GetTotalHotelsCount(searchTerm, status, city);
             var totalPages = (int)Math.Ceiling((double)totalHotels / pageSize);
+
+            ViewBag.CurrentSearchTerm = searchTerm;
+            ViewBag.CurrentStatus = status;
+            ViewBag.CurrentCity = city;
 
             var viewModel = new HotelsManagementViewModel
             {
@@ -144,10 +150,11 @@ namespace HotelsBookingSystem.Controllers
                 CurrentPage = page,
                 TotalPages = totalPages
             };
+
             return View(viewModel);
         }
 
-     
+
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
@@ -199,7 +206,7 @@ namespace HotelsBookingSystem.Controllers
             });
         }
 
-            [HttpGet]
+        [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult Details(int id, int roomPage = 1, int servicePage = 1, int pageSize = 6, string activeTab = "hotel-info")
         {

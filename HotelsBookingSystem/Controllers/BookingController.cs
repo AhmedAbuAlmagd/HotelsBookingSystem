@@ -19,6 +19,7 @@ namespace HotelsBookingSystem.Controllers
             _hotelRepository = hotelRepository;
         }
 
+        [Authorize(Roles ="Admin")]
         public  async Task<IActionResult> Index(string status = "", int? hotelId = null,
                          DateTime? bookingDateFrom = null, DateTime? bookingDateTo = null,
                          string clientName = "", decimal? minPrice = null, decimal? maxPrice = null)

@@ -350,3 +350,55 @@
     .action-btn:hover {
         background-color: #f57f17;
     }
+
+
+/* Add this to your BookingsAd.css file */
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.page-item {
+    margin: 0 3px;
+}
+
+.page-link {
+    display: block;
+    padding: 8px 12px;
+    background-color: white;
+    color: #11192a;
+    text-decoration: none;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.page-item:not(.disabled):hover .page-link {
+    background-color: #f1f4f9;
+    border-color: #f9a825;
+    color: #f9a825;
+}
+
+.page-item.active .page-link {
+    background-color: #f9a825;
+    border-color: #f9a825;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}

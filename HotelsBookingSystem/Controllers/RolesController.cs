@@ -1,5 +1,6 @@
 ﻿using HotelsBookingSystem.Models;
 using HotelsBookingSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +17,14 @@ namespace HotelsBookingSystem.Controllers
             this.userManager = userManager;
         }
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult New()
         {
             return View();
         }
+
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> New(RoleViewModel roleVm)
         {
             if (ModelState.IsValid)
@@ -43,6 +47,7 @@ namespace HotelsBookingSystem.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangeRole(string id, string role)
         {
             var user = await userManager.FindByIdAsync(id);

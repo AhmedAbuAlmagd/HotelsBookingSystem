@@ -16,7 +16,7 @@
 <body>
     <div class="background-wrapper">
         <div class="login-container">
-            <form asp-action="Login" class="login-form">
+            <form asp-action="Login" method="post" class="login-form">
                 <h2>Login</h2>
                 <label for="Email">Username</label>
                 <input type="text" asp-for="UserName" placeholder="Enter your UserName" >
@@ -26,10 +26,10 @@
                 <input type="password" asp-for="Password" placeholder="Enter your password" >
                 <span asp-validation-for="Password" class="text-danger"></span>
 
-                <div class="remember-me">
-                    <input type="checkbox" asp-for="RememberMe">
-                    <label for="remember" style="margin-top:7px">Remember Me</label>
-                    <span asp-validation-for="RememberMe" class="text-danger text-start"></span>
+                <div class="form-check remember-me">
+                    <input class="form-check-input" type="checkbox" asp-for="RememberMe" id="RememberMe">
+                    <label class="form-check-label" for="RememberMe">Remember Me</label>
+                    <span asp-validation-for="RememberMe" class="text-danger"></span>
                 </div>
 
                 <div asp-validation-summary="ModelOnly" class="text-danger"> </div>
