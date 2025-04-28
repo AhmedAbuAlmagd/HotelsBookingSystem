@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Dashboard";
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -10,103 +11,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Hotel Booking System Dashboard</title>
+    <title>Hotel Booking System Dashboard</title>
     <link href="~/css/AdminDashboard.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="dashboard">
-        <div class="header">
-            <h1 class="title">Multi-Hotel Booking System</h1>
-            <div>April 21, 2025</div>
-        </div>
-
-        <div class="stats-cards">
-            <div class="card metric-card">
-                <div class="icon hotels">🏨</div>
-                <div>
-                    <div class="metric-value">@Model.TotalHotels</div>
-                    <div class="metric-label">Total Hotels</div>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">🏨</span>
+                    <span class="logo-text">HotelBooking</span>
                 </div>
             </div>
-            <div class="card metric-card">
-                <div class="icon rooms">🛏️</div>
-                <div>
-                    <div class="metric-value">@Model.TotalRooms</div>
-                    <div class="metric-label">Total Rooms</div>
+
+            <nav class="nav-links">
+                <a action="Dashboard" class="nav-link active">
+                    <span class="nav-link-icon">📊</span>
+                    <span class="nav-link-text">Dashboard</span>
+                </a>
+
+                <a asp-action="HotelsManagement" asp-controller="Hotel" class="nav-link">
+                    <span class="nav-link-icon">🏨</span>
+                    <span class="nav-link-text">Hotels</span>
+                </a>
+                <a asp-controller="booking" asp-action="index" class="nav-link">
+                    <span class="nav-link-icon">📅</span>
+                    <span class="nav-link-text">Bookings</span>
+                </a>
+                <a asp-controller="user" asp-action="index" class="nav-link">
+                    <span class="nav-link-icon">👥</span>
+                    <span class="nav-link-text">Users</span>
+                </a>
+                <a asp-controller="Admin" asp-action="GetReviews" class="nav-link">
+                    <span class="nav-link-icon">⭐</span>
+                    <span class="nav-link-text">Reviews</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a asp-action="Logout" asp-controller="Account" class="nav-link">
+                    <span class="nav-link-icon">🚪</span>
+                    <span class="nav-link-text">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <button class="toggle-sidebar" id="toggleSidebar">☰</button>
+                <div class="header-right">
+                    <div class="date-display">April 28, 2025</div>
+                    <div class="user-menu">
+                        <div class="user-avatar">A</div>
+                        <div>Admin</div>
+                    </div>
                 </div>
             </div>
-            <div class="card metric-card">
-                <div class="icon clients">👥</div>
-                <div>
-                    <div class="metric-value">@Model.ActiveClients</div>
-                    <div class="metric-label">Active Clients</div>
+
+            <h1 class="dashboard-title">Dashboard Overview</h1>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon hotels">🏨</div>
+                    <div class="stat-details">
+                        <div class="stat-value">@Model.TotalHotels</div>
+                        <div class="stat-label">Total Hotels</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon rooms">🛏️</div>
+                    <div class="stat-details">
+                        <div class="stat-value">@Model.TotalRooms</div>
+                        <div class="stat-label">Total Rooms</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon clients">👥</div>
+                    <div class="stat-details">
+                        <div class="stat-value">@Model.ActiveClients</div>
+                        <div class="stat-label">Active Clients</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon bookings">📅</div>
+                    <div class="stat-details">
+                        <div class="stat-value">@Model.TotalBookings</div>
+                        <div class="stat-label">Total Bookings</div>
+                    </div>
                 </div>
             </div>
-            <div class="card metric-card">
-                <div class="icon bookings">📅</div>
-                <div>
-                    <div class="metric-value">@Model.TotalBookings</div>
-                    <div class="metric-label">Total Bookings</div>
+
+            <!-- Recent Bookings Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Bookings</h2>
+                    <a asp-controller="booking" asp-action="index" class="view-all">View All →</a>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Search bookings...">
+                    <button class="filter-btn">Filter</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Hotel</th>
+                                <th>Room</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var booking in Model.RecentBookings)
+                            {
+                                <tr>
+                                    <td>@booking.ClientName</td>
+                                    <td>@booking.HotelName</td>
+                                    <td>@booking.MainRoomDisplay</td>
+                                    <td>@booking.CheckInDate</td>
+                                    <td>@booking.CheckOutDate</td>
+                                    <td>
+                                        <span class="status @(booking.Status.ToLower())">
+                                            @booking.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="action-btn view">View</button>
+                                            @if (booking.Status.ToLower() != "cancelled")
+                                            {
+                                                <button class="action-btn edit">Edit</button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
 
-        <div class="card full-width" >
-            <div class="card-header">
-                <div class="card-title">Recent Bookings</div>
-            </div>
-
-            <div class="search-bar">
-                <input type="text" class="search-input" placeholder="Search bookings...">
-                <button class="filter-btn">Filter</button>
-            </div>
-
-            <table class="recent-bookings">
-                <thead>
-                    <tr>
-                        <th>Client</th>
-                        <th>Hotel</th>
-                        <th>Room</th>
-                        <th>Check In</th>
-                        <th>Check Out</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var booking in Model.RecentBookings)
-                    {
-                        <tr>
-                            <td>@booking.ClientName</td>
-                            <td>@booking.HotelName</td>
-                            <td>@booking.MainRoomDisplay</td>
-                            <td>@booking.CheckInDate</td>
-                            <td>@booking.CheckOutDate</td>
-                            <td>
-                                <span class="status @(booking.Status.ToLower())">
-                                    @booking.Status
-                                </span>
-                            </td>
-                            <td>
-                                <div class="actions">
-                                    <button class="action-btn view">View</button>
-                                    @if (booking.Status.ToLower() != "cancelled")
-                                    {
-                                        <button class="action-btn edit">Edit</button>
-                                    }
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-
-        <div class="dashboard-row">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Hotels</div>
+            <!-- Hotels Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2 class="section-title">Hotels</h2>
+                    <a href="#" class="view-all">View All →</a>
                 </div>
 
                 <div class="search-bar">
@@ -114,26 +174,29 @@
                     <button class="filter-btn">Filter</button>
                 </div>
 
-                <div class="hotel-list">
-                    @foreach(var hotel in Model.Hotels)
+                <div class="grid-container">
+                    @foreach (var hotel in Model.Hotels)
                     {
-                        <div class="hotel-item">
-                            <img src="@hotel.ImageUrl" alt="Hotel" class="hotel-image">
-                            <div class="hotel-details">
-                                <div class="hotel-name">@hotel.Name</div>
-                                <div class="hotel-info">@hotel.Location • @hotel.RoomCount rooms</div>
-                            </div>
-                            <div>
-                                <span class="status-indicator active"></span> @hotel.Status
+                        <div class="grid-item">
+                            <img src="@hotel.ImageUrl" alt="@hotel.Name" class="item-image">
+                            <div class="item-content">
+                                <h3 class="item-title">@hotel.Name</h3>
+                                <p class="item-info">@hotel.Location • @hotel.RoomCount rooms</p>
+                                <div class="item-footer">
+                                    <span class="status @(hotel.Status.ToLower())">@hotel.Status</span>
+                                    <button class="action-btn view">View Details</button>
+                                </div>
                             </div>
                         </div>
                     }
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Rooms</div>
+            <!-- Rooms Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2 class="section-title">Rooms</h2>
+                    <a href="#" class="view-all">View All →</a>
                 </div>
 
                 <div class="search-bar">
@@ -141,82 +204,91 @@
                     <button class="filter-btn">Filter</button>
                 </div>
 
-                <div class="room-list">
-                    @foreach(var room in Model.Rooms)
+                <div class="grid-container">
+                    @foreach (var room in Model.Rooms)
                     {
-                        <div class="room-item">
-                            <img src="@room.ImageUrl" alt="Room" class="room-image">
-                            <div class="room-details">
-                                <div class="room-name">@room.Type</div>
-                                <div class="room-info">@room.HotelName • @room.PricePerNight/night</div>
-                            </div>
-
-                            <div>
-                                <span class="badge booked">@room.Status</span>
+                        <div class="grid-item">
+                            <img src="@room.ImageUrl" alt="@room.Type" class="item-image">
+                            <div class="item-content">
+                                <h3 class="item-title">@room.Type</h3>
+                                <p class="item-info">@room.HotelName • @room.PricePerNight/night</p>
+                                <div class="item-footer">
+                                    <span class="status @(room.Status.ToLower())">@room.Status</span>
+                                    <button class="action-btn view">View Details</button>
+                                </div>
                             </div>
                         </div>
                     }
                 </div>
             </div>
-        </div>
-
-        <div class="card full-width" style="z-index : 10">
-            <div class="card-header">
-                <div class="card-title">Clients</div>
-            </div>
-
-            <div class="search-bar">
-                <input type="text" class="search-input" placeholder="Search clients...">
-                <button class="filter-btn">Filter</button>
-            </div>
-
-            <div class="client-list">
-                @foreach(var client in Model.Clients)
-                {
-                    <div class="client-item">
-                        <div class="client-details">
-                            <div class="client-name">@client.Name</div>
-                            <div class="client-info">@client.Country , @client.City • @client.BookingCount bookings</div>
-                        </div>
-                        <div>
-                            <button class="action-btn view">View Details</button>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
+        </main>
     </div>
 
+    <div class="overlay" id="overlay"></div>
+
     <script>
-        // This would be where interactive functionality would be added
-        // For a real application, this would include search, filter, and other interactions
-
         document.addEventListener('DOMContentLoaded', function() {
-          // Add event listeners for the UI components
-          const filterButtons = document.querySelectorAll('.filter-btn');
-          const actionButtons = document.querySelectorAll('.action-btn');
-          const searchInputs = document.querySelectorAll('.search-input');
+            // Sidebar toggle functionality
+            const toggleBtn = document.getElementById('toggleSidebar');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const isMobile = window.innerWidth <= 1024;
 
-          filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-              console.log('Filter button clicked');
-              // Filtering logic would go here
+            toggleBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                if (isMobile) {
+                    overlay.classList.toggle('active');
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                }
             });
-          });
 
-          actionButtons.forEach(button => {
-            button.addEventListener('click', function() {
-              console.log('Action button clicked:', this.textContent);
-              // Action handling logic would go here
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
             });
-          });
 
-          searchInputs.forEach(input => {
-            input.addEventListener('input', function() {
-              console.log('Search input:', this.value);
-              // Search logic would go here
+            // Search and filter functionality
+            const searchInputs = document.querySelectorAll('.search-input');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+
+            searchInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    console.log('Search input:', this.value);
+                    // Search logic would go here
+                });
             });
-          });
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    console.log('Filter button clicked');
+                    // Filtering logic would go here
+                });
+            });
+
+            // Action buttons
+            const actionButtons = document.querySelectorAll('.action-btn');
+
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    console.log('Action button clicked:', this.textContent.trim());
+                    // Action handling logic would go here
+                });
+            });
+
+            // Responsive sidebar behavior
+            window.addEventListener('resize', function() {
+                const newIsMobile = window.innerWidth <= 1024;
+
+                if (newIsMobile !== isMobile) {
+                    // Refresh page to apply correct sidebar state
+                    // For a real app, you'd handle this more gracefully
+                    if (sidebar.classList.contains('active') || sidebar.classList.contains('collapsed')) {
+                        sidebar.classList.remove('active', 'collapsed');
+                        overlay.classList.remove('active');
+                    }
+                }
+            });
         });
     </script>
 </body>

@@ -275,7 +275,7 @@ namespace HotelsBookingSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-     
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(ViewModels.AdminViewModels.RoomViewModelAd model, IFormFile image)
         {
             try
@@ -345,6 +345,7 @@ namespace HotelsBookingSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int id, ViewModels.AdminViewModels.RoomViewModelAd model, IFormFile image)
         {
             try
@@ -421,6 +422,7 @@ namespace HotelsBookingSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             try
@@ -445,6 +447,7 @@ namespace HotelsBookingSystem.Controllers
 
        
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult CheckRoomNumber(int hotelId, int roomNumber, int? roomId = null)
         {
             bool exists =  roomRepository.RoomNumberExists(hotelId, roomNumber, roomId);

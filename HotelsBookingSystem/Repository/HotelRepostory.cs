@@ -45,7 +45,7 @@ namespace HotelsBookingSystem.Repository
                       .Include(h => h.HotelImages)
                       .Include(h => h.HotelServices)
                       .Include(h => h.Rooms)
-                          .ThenInclude(r => r.RoomImages)
+                       .ThenInclude(r => r.RoomImages)
                       .FirstOrDefault(h => h.Id == id)
                       ;
         }
@@ -161,7 +161,7 @@ namespace HotelsBookingSystem.Repository
 
         public List<Hotel> GetAllhotels()
         {
-            throw new NotImplementedException();
+           return con.Hotels.Include(x => x.Reviews).ToList();
         }
     }
 }
