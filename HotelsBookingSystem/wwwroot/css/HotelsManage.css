@@ -1,5 +1,5 @@
 ﻿:root {
-    --primary: #0b6e4f;
+    --primary: #0f172b;
     --secondary: #e63946;
     --warning: #f4a261;
     --light: #f8f9fa;
@@ -15,15 +15,11 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-    background-color: #f5f5f5;
-    padding: 20px;
-}
 
 .dashboard {
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
-    margin-top: 50px;
+    margin-top: 0px;
 }
 
 .header {
@@ -141,7 +137,7 @@ body {
 }
 
     .tab.active {
-        color: var(--primary);
+        color: green;
         font-weight: 500;
     }
 
@@ -272,8 +268,8 @@ body {
         border-color: var(--primary);
     }
 
-.filter-btn {
-    background-color: var(--primary);
+.filterr-btn {
+    background-color: #f9a825;
     color: white;
     border: none;
     border-radius: 5px;
@@ -282,10 +278,6 @@ body {
     cursor: pointer;
     font-size: 14px;
 }
-
-    .filter-btn:hover {
-        background-color: #095a41;
-    }
 
 .recent-bookings {
     width: 100%;
@@ -376,3 +368,4 @@ body {
         background-color: #ffcccb;
         color: var(--secondary);
     }
+

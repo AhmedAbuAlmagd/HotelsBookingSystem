@@ -13,9 +13,9 @@
 
 
 <div class="register-wrapper">
-    <div class="register-container">    
+    <div class="register-container" style="opacity:1">    
         <form asp-action="Register" class="register-form">
-            <h2>Create Account</h2>
+            <h2>Create Account</h2> 
 
             <div class="form-grid">
                 <div class="input-group">
@@ -38,7 +38,12 @@
 
                 <div class="input-group">
                     <label asp-for="Password"></label>
-                    <input asp-for="Password" placeholder="Create password" />
+                    <div class="password-wrapper">
+                        <input type="password" asp-for="Password" id="Password" placeholder="Enter your password" />
+                        <span class="eye-icon" id="toggle-password" style="cursor: pointer;">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
@@ -75,6 +80,24 @@
         </form>
     </div>
 </div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script>
+    document.getElementById('toggle-password').addEventListener('click', function () {
+        var passwordInput = document.getElementById('Password');
+        var icon = this.querySelector('i');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+</script>
 
 @section Scripts {
     @{

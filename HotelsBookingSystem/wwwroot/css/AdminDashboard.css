@@ -21,7 +21,7 @@
 }
 
 body {
-    background-color: var(--bg-light);
+    background-color: #e4e7f0   ;
     color: var(--text-dark);
 }
 
