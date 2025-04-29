@@ -1,0 +1,181 @@
+﻿@model IEnumerable<HotelsBookingSystem.Models.Review>
+@{
+    ViewData["Title"] = "Reviews";
+    Layout = "_AdminLayout";
+
+    var currentHotelId = Context.Request.Query["hotelId"].ToString();
+    var currentRating = Context.Request.Query["rating"].ToString();
+
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    bool hasPreviousPage = currentPage > 1;
+    bool hasNextPage = currentPage < totalPages;
+}
+
+
+<link href="~/css/BookingsAd.css" rel="stylesheet" />
+
+<div class="bookings-dashboard">
+    <div class="dashboard-header my-3">
+        <h1>Hotel Reviews</h1>
+    </div>
+    <div class="filter-container">
+        <div class="filter-header">
+            <i class="fas fa-filter"></i> Filter Options
+        </div>
+        <form class="filter-form" method="get" asp-action="GetReviews">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Hotel</label>
+                    <div class="select-wrapper">
+                        <select name="hotelId" class="filter-select">
+                            <option value="">All Hotels</option>
+                            @foreach (var hotel in ViewBag.Hotels)
+                            {
+                                if (currentHotelId == hotel.Id.ToString())
+                                {
+                                    <option value="@hotel.Id" selected>@hotel.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@hotel.Id">@hotel.Name</option>
+                                }
+                            }
+                        </select>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Rating</label>
+                    <div class="select-wrapper">
+                        <select name="rating" class="filter-select">
+                            <option value="">All Ratings</option>
+                            @for (int i = 5; i >= 1; i--)
+                            {
+                                if (currentRating == i.ToString())
+                                {
+                                    <option value="@i" selected>@i Star@(i > 1 ? "s" : "")</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i Star@(i > 1 ? "s" : "")</option>
+                                }
+                            }
+                        </select>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button type="submit" class="filter-btn apply">
+                        <i class="fas fa-search"></i> Apply
+                    </button>
+                    <a asp-action="GetReviews" class="filter-btn reset" style="text-decoration: none">
+                        <i class="fas fa-undo"></i> Reset
+                    </a>
+                </div>
+            </div>
+            <input type="hidden" name="page" value="1" />
+        </form>
+    </div>
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Hotel</th>
+                    <th>User</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="hotel-name">
+                            <i class="fas fa-hotel"></i>
+                            @(item.Hotel?.Name ?? "Unknown Hotel")
+                        </td>
+                        <td>
+                            <i class="fas fa-user"></i>
+                            @(item.User?.FullName ?? "Anonymous")
+                        </td>
+                        <td>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= item.Rating)
+                                {
+                                    <i class="fas fa-star" style="color: #f9a825;"></i>
+                                }
+                                else
+                                {
+                                    <i class="far fa-star" style="color: #ccc;"></i>
+                                }
+                            }
+                        </td>
+                        <td>@item.Comment</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container">
+        <ul class="pagination">
+            @if (hasPreviousPage)
+            {
+                <li class="page-item">
+                    <a asp-action="GetReviews"
+                       asp-route-page="@(currentPage - 1)"
+                       asp-route-hotelId="@currentHotelId"
+                       asp-route-rating="@currentRating"
+                       class="page-link">Previous</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            }
+
+            @for (var i = 1; i <= totalPages; i++)
+            {
+                if (i == currentPage)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a asp-action="GetReviews"
+                           asp-route-page="@i"
+                           asp-route-hotelId="@currentHotelId"
+                           asp-route-rating="@currentRating"
+                           class="page-link">@i</a>
+                    </li>
+                }
+            }
+
+            @if (hasNextPage)
+            {
+                <li class="page-item">
+                    <a asp-action="GetReviews"
+                       asp-route-page="@(currentPage + 1)"
+                       asp-route-hotelId="@currentHotelId"
+                       asp-route-rating="@currentRating"
+                       class="page-link">Next</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

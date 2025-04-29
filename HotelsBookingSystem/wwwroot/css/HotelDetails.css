@@ -25,7 +25,7 @@
                 transform: translateX(-50%);
                 width: 100px;
                 height: 3px;
-                background: linear-gradient(to right, #3498db, #2c3e50);
+                width : 1300px;
             }
 
     /* Tab styles */
@@ -199,7 +199,7 @@
         background-color: #229954;
         color: white;
         border: none;
-        padding: 8px 16px;
+        padding: 10px 20px;
         border-radius: 5px;
         cursor: pointer;
         display: flex;
@@ -207,6 +207,8 @@
         font-weight: 600;
         transition: background-color 0.3s;
         box-shadow: 0 2px 5px rgba(46, 204, 113, 0.3);
+        font-size : 16px;
+        
     }
 
         .add-new-btn i {
@@ -353,36 +355,58 @@
         }
 
 
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
 
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 20px 0;
-        padding: 10px;
-        font-family: Arial, sans-serif;
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+    .pagination a, .pagination span {
+        display: block;
+        padding: 8px 12px;
+        background-color: white;
+        color: #11192a;
+        text-decoration: none;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        transition: all 0.2s ease;
     }
 
-        .pagination a {
-            display: inline-block;
-            padding: 8px 16px;
-            text-decoration: none;
-            color: white;
-            background-color: #4a76a8;
-            border-radius: 4px;
-            margin: 0 5px;
-            transition: background-color 0.3s;
+        /* Hover effect (only for links, not current page) */
+        .pagination a:hover {
+            background-color: #f1f4f9;
+            border-color: #f9a825;
+            color: #f9a825;
         }
 
-            .pagination a:hover {
-                background-color: #2c5282;
-            }
+    /* Current page (active) */
+    .pagination .current-page {
+        background-color: #f9a825;
+        border-color: #f9a825;
+        color: white;
+    }
 
-        .pagination span {
-            margin: 0 10px;
-            color: #666;
-            font-size: 0.9em;
-        }
+    /* Disabled page (if you use span for disabled items) */
+    .pagination .disabled {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+    }
+
+
     /* Animations */
     @keyframes fadeIn {
         from {

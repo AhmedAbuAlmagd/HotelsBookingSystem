@@ -1,7 +1,22 @@
 ﻿@model IEnumerable<HotelsBookingSystem.Models.Booking>
 @{
     ViewData["Title"] = "Bookings";
+    Layout = "_AdminLayout";
     int SN = 1;
+
+
+    var currentHotelId = Context.Request.Query["hotelId"].ToString();
+    var currentStatus = Context.Request.Query["status"].ToString();
+    var currentClient = Context.Request.Query["clientName"].ToString();
+    var currentbookingDateFrom = Context.Request.Query["bookingDateFrom"].ToString();
+    var currentbookingDateTo = Context.Request.Query["bookingDateTo"].ToString();
+    var currentmaxPrice = Context.Request.Query["maxPrice"].ToString();
+    var currentminPrice = Context.Request.Query["minPrice"].ToString();
+
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    bool hasPreviousPage = currentPage > 1;
+    bool hasNextPage = currentPage < totalPages;
 }
 
 <link href="~/css/BookingsAd.css" rel="stylesheet" />
@@ -91,7 +106,7 @@
                         <i class="fas fa-search"></i> Apply Filters
                     </button>
                     <button type="reset" class="filter-btn reset">
-                        <i class="fas fa-times"></i> Reset
+                        <i class="fas fa-undo"></i> Reset
                     </button>
                 </div>
             </div>
@@ -152,8 +167,81 @@
             </tbody>
         </table>
     </div>
+    <div class="pagination-container">
+        <ul class="pagination">
+            @if (hasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new {
+                    page = currentPage - 1,
+                    hotelId = currentHotelId,
+                    status = currentStatus,
+                    clientName = currentClient,
+                    bookingDateFrom = currentbookingDateFrom,
+                    bookingDateTo = currentbookingDateTo,
+                    minPrice = currentminPrice,
+                    maxPrice = currentmaxPrice
+                })">Previous</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            }
+
+            @for (var i = 1; i <= totalPages; i++)
+            {
+                if (i == currentPage)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", new {
+                        page = i,
+                        hotelId = currentHotelId,
+                        status = currentStatus,
+                        clientName = currentClient,
+                        bookingDateFrom = currentbookingDateFrom,
+                        bookingDateTo = currentbookingDateTo,
+                        minPrice = currentminPrice,
+                        maxPrice = currentmaxPrice
+                    })">@i</a>
+                    </li>
+                }
+            }
+
+            @if (hasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new {
+                    page = currentPage + 1,
+                    hotelId = currentHotelId,
+                    status = currentStatus,
+                    clientName = currentClient,
+                    bookingDateFrom = currentbookingDateFrom,
+                    bookingDateTo = currentbookingDateTo,
+                    minPrice = currentminPrice,
+                    maxPrice = currentmaxPrice
+                })">Next</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            }
+        </ul>
+    </div>
 
 </div>
+
 
 <!-- Add Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

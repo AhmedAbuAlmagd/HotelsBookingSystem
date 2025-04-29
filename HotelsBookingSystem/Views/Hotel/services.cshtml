@@ -1,12 +1,33 @@
-﻿@foreach (var service in Model.Services)
-{
-    <div class="card my-3 m-auto p-3 w-75">
-        <h5>@service.Name</h5>
-        <p>@service.Description</p>
-        <p><strong>Price:</strong> @service.Price EGP</p>
-        <form asp-controller="Cart" asp-action="AddServiceToCart" method="post">
-            <input type="hidden" name="serviceId" value="@service.Id" />
-          
-        </form>
+﻿<div class="container py-5">
+    <div class="row g-4">
+        @foreach (var service in Model.Services)
+        {
+            <div class="col-lg-4 col-md-6">
+
+                <div class="card h-100 border-0 shadow-sm position-relative" style="border-radius: 15px;background:#0F172B ; padding-top: 50px;">
+                  
+                    <div class="position-absolute top-0 start-50 translate-middle">
+                        <div class=" text-white bg-warning  rounded-5 p-1 ">
+                            <i class="bi bi-gear-fill fs-2"></i>
+                        </div>
+                    </div>
+
+                
+                    <div class="card-body text-center">
+                        <h3 class="fw-bold text-white mt-2">@service.Name</h3>
+                        <p class="text-white  mb-3">@service.Description</p>
+                        <p class="display-6 text-warning fw-bold mb-3">@service.Price <small class="fs-6 text-white">EGP</small></p>
+                        
+                     
+                        <form asp-controller="Cart" asp-action="AddServiceToCart" method="post">
+                            <input type="hidden" name="serviceId" value="@service.Id" />
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 py-2">
+                                <i class="bi bi-cart-plus me-2"></i> Add to Cart
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-}
+</div>

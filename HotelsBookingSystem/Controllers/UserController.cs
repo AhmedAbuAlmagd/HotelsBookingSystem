@@ -1,4 +1,5 @@
 ﻿using HotelsBookingSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
@@ -9,24 +10,49 @@ namespace HotelsBookingSystem.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserController(UserManager<ApplicationUser> userManager)
+        public UserController(UserManager<ApplicationUser> userManager , RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
-            public IActionResult Index(string name = "" , string country = "" , string city = "")
-            {
-                var usersQuery = _userManager.Users.Include(u => u.Bookings).OrderByDescending(u => u.Bookings.Count()).AsQueryable();
+        [Authorize(Roles = "Admin")]    
+        public IActionResult Index(string name = "", string country = "", string city = "", int page = 1)
+        {
+            var roles = _roleManager.Roles.ToList();
+            var usersQuery = _userManager.Users.Include(u => u.Bookings)
+                .OrderByDescending(u => u.Bookings.Count())
+                .AsQueryable();
 
-                if (name != "")
-                    usersQuery = usersQuery.Where(u => u.FullName.ToLower() == name.ToLower());
+            if (!string.IsNullOrEmpty(name))
+                usersQuery = usersQuery.Where(u => u.FullName.ToLower().Contains(name.ToLower()));
 
-                if(country != "")
-                    usersQuery = usersQuery.Where(u => u.Country.ToLower() == country.ToLower());
-                if (city != "")
-                    usersQuery = usersQuery.Where(u => u.City.ToLower() == city.ToLower());
+            if (!string.IsNullOrEmpty(country))
+                usersQuery = usersQuery.Where(u => u.Country.ToLower().Contains(country.ToLower()));
 
-                return View(usersQuery.ToList());
-            }
+            if (!string.IsNullOrEmpty(city))
+                usersQuery = usersQuery.Where(u => u.City.ToLower().Contains(city.ToLower()));
+
+            int pageSize = 10;
+            int totalItems = usersQuery.Count();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+            var users = usersQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Name = name;
+            ViewBag.Country = country;
+            ViewBag.City = city;
+            ViewBag.Roles = roles;
+
+            return View(users);
+        }
     }
 }

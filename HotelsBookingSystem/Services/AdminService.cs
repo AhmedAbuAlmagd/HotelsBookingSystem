@@ -25,15 +25,17 @@ namespace HotelsBookingSystem.Services
             _userRepository = userRepository;
         }
 
+
         public async Task<DashboardViewModel> GetDashboardDataAsync()
         {
             var totalHotels = await _hotelRepository.GetTotalHotelsCountAsync();
             var totalRooms = await _roomRepository.GetTotalRoomsCountAsync();
             var totalBookings = await _bookingRepository.GetTotalBookingsCountAsync();
-            var recentBookings = await _bookingRepository.GetRecentBookingsAsync(5);
-            var topHotels = await _hotelRepository.GetTopHotelsAsync(6);
-            var topRooms = await _roomRepository.GetTopRoomsAsync(6);
-            var topClients = await _userRepository.GetTopClientsAsync(6);
+            var totalClients = await _userRepository.GetTotalClientsCountAsync();
+            var recentBookings = await _bookingRepository.GetRecentBookingsAsync(8);
+            var topHotels = await _hotelRepository.GetTopHotelsAsync(10);
+            var topRooms = await _roomRepository.GetTopRoomsAsync(10);
+            var topClients = await _userRepository.GetTopClientsAsync(10);
 
 
 
@@ -43,6 +45,7 @@ namespace HotelsBookingSystem.Services
                 TotalHotels = totalHotels,
                 TotalRooms = totalRooms,
                 TotalBookings = totalBookings,
+                ActiveClients = totalBookings,
 
                 RecentBookings = (recentBookings).Select(b => new BookingViewModel
                 {

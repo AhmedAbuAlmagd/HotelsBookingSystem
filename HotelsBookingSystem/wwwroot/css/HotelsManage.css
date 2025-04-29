@@ -1,0 +1,371 @@
+﻿:root {
+    --primary: #0f172b;
+    --secondary: #e63946;
+    --warning: #f4a261;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --gray: #6c757d;
+    --light-gray: #e9ecef;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.dashboard {
+    max-width: 1500px;
+    margin: 0 auto;
+    margin-top: 0px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 24px;
+    color: var(--dark);
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 35px;
+}
+
+.metric-card {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 20px;
+    color: white;
+}
+
+    .icon.hotels {
+        background-color: #d1e7f0;
+        color: #0077b6;
+    }
+
+    .icon.rooms {
+        background-color: #d1f0d9;
+        color: var(--primary);
+    }
+
+    .icon.clients {
+        background-color: #fff2cc;
+        color: #856404;
+    }
+
+    .icon.bookings {
+        background-color: #ffcccb;
+        color: var(--secondary);
+    }
+
+.metric-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--dark);
+    margin-bottom: 5px;
+}
+
+.metric-label {
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.dashboard-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-title {
+    font-size: 18px;
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+}
+
+.tab {
+    padding: 10px 15px;
+    cursor: pointer;
+    color: var(--gray);
+    position: relative;
+}
+
+    .tab.active {
+        color: green;
+        font-weight: 500;
+    }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    border-radius: 5px;
+}
+
+    .progress.primary {
+        background-color: var(--primary);
+    }
+
+    .progress.secondary {
+        background-color: var(--secondary);
+    }
+
+    .progress.warning {
+        background-color: var(--warning);
+    }
+
+    .progress.hotels {
+        background-color: #0077b6;
+    }
+
+.hotel-list, .room-list, .client-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.hotel-item, .room-item, .client-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+    .hotel-item:last-child, .room-item:last-child, .client-item:last-child {
+        border-bottom: none;
+    }
+
+    .hotel-item:hover, .room-item:hover, .client-item:hover {
+        background-color: #f9f9f9;
+    }
+
+.hotel-image, .room-image, .client-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.client-image {
+    border-radius: 50%;
+}
+
+.hotel-details, .room-details, .client-details {
+    flex: 1;
+}
+
+.hotel-name, .room-name, .client-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--dark);
+}
+
+.hotel-info, .room-info, .client-info {
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+    .badge.available {
+        background-color: #d1f0d9;
+        color: var(--primary);
+    }
+
+    .badge.booked {
+        background-color: #ffcccb;
+        color: var(--secondary);
+    }
+
+    .badge.maintenance {
+        background-color: #fff2cc;
+        color: #856404;
+    }
+
+.search-bar {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+.filterr-btn {
+    background-color: #f9a825;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.recent-bookings {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .recent-bookings th, .recent-bookings td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .recent-bookings th {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .recent-bookings td {
+        color: #333;
+    }
+
+    .recent-bookings tr:hover {
+        background-color: #f9f9f9;
+    }
+
+.status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+    .status.confirmed {
+        background-color: #d1f0d9;
+        color: var(--primary);
+    }
+
+    .status.pending {
+        background-color: #fff2cc;
+        color: #856404;
+    }
+
+    .status.cancelled {
+        background-color: #ffcccb;
+        color: var(--secondary);
+    }
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+    .status-indicator.active {
+        background-color: var(--primary);
+    }
+
+    .status-indicator.inactive {
+        background-color: var(--gray);
+    }
+
+.actions {
+    display: flex;
+    gap: 5px;
+}
+
+.action-btn {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+}
+
+    .action-btn.view {
+        background-color: #d1e7f0;
+        color: #0077b6;
+    }
+
+    .action-btn.edit {
+        background-color: #fff2cc;
+        color: #856404;
+    }
+
+    .action-btn.delete {
+        background-color: #ffcccb;
+        color: var(--secondary);
+    }
+

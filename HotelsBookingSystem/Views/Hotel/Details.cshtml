@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = Model.Hotel.Name;
+    Layout = "_AdminLayout";
 }
 
 <!DOCTYPE html>
@@ -91,13 +92,24 @@
                         <a href="@Url.Action("Details", new { id = Model.Hotel.Id, roomPage = Model.RoomPagination.CurrentPage - 1, servicePage = Model.ServicePagination.CurrentPage, activeTab = "rooms" })">Previous</a>
                     }
 
-                    <span>Page @Model.RoomPagination.CurrentPage of @Model.RoomPagination.TotalPages</span>
+                    @for (int i = 1; i <= Model.RoomPagination.TotalPages; i++)
+                    {
+                        if (i == Model.RoomPagination.CurrentPage)
+                        {
+                            <span class="current-page">@i</span> <!-- Highlight current page -->
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Details", new { id = Model.Hotel.Id, roomPage = i, servicePage = Model.ServicePagination.CurrentPage, activeTab = "rooms" })">@i</a>
+                        }
+                    }
 
                     @if (Model.RoomPagination.HasNextPage)
                     {
                         <a href="@Url.Action("Details", new { id = Model.Hotel.Id, roomPage = Model.RoomPagination.CurrentPage + 1, servicePage = Model.ServicePagination.CurrentPage, activeTab = "rooms" })">Next</a>
                     }
                 </div>
+
             </div>
 
             <!-- Services Tab -->
@@ -134,13 +146,24 @@
                         <a href="@Url.Action("Details", new { id = Model.Hotel.Id, roomPage = Model.RoomPagination.CurrentPage, servicePage = Model.ServicePagination.CurrentPage - 1, activeTab = "services" })">Previous</a>
                     }
 
-                    <span>Page @Model.ServicePagination.CurrentPage of @Model.ServicePagination.TotalPages</span>
+                    @for (int i = 1; i <= Model.ServicePagination.TotalPages; i++)
+                    {
+                        if (i == Model.ServicePagination.CurrentPage)
+                        {
+                            <span class="current-page">@i</span>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Details", new { id = Model.Hotel.Id, roomPage = Model.RoomPagination.CurrentPage, servicePage = i, activeTab = "services" })">@i</a>
+                        }
+                    }
 
                     @if (Model.ServicePagination.HasNextPage)
                     {
                         <a href="@Url.Action("Details", new { id = Model.Hotel.Id, roomPage = Model.RoomPagination.CurrentPage, servicePage = Model.ServicePagination.CurrentPage + 1, activeTab = "services" })">Next</a>
                     }
                 </div>
+
             </div>
         </div>
 

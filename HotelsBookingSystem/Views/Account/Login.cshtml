@@ -4,6 +4,7 @@
     ViewData["Title"] = "Login";
     Layout = "";
 }
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,20 +17,25 @@
 <body>
     <div class="background-wrapper">
         <div class="login-container">
-            <form asp-action="Login" class="login-form">
+            <form asp-action="Login" method="post" class="login-form">
                 <h2>Login</h2>
                 <label for="Email">Username</label>
-                <input type="text" asp-for="UserName" placeholder="Enter your UserName" >
+                <input type="text" asp-for="UserName" placeholder="Enter your UserName" />
                 <span asp-validation-for="UserName" class="text-danger text-start"></span>
 
                 <label for="password">Password</label>
-                <input type="password" asp-for="Password" placeholder="Enter your password" >
+                <div class="password-wrapper">
+                    <input type="password" asp-for="Password" id="Password" placeholder="Enter your password" />
+                    <span class="eye-icon" id="toggle-password" style="cursor: pointer;">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
 
-                <div class="remember-me">
-                    <input type="checkbox" asp-for="RememberMe">
-                    <label for="remember" style="margin-top:7px">Remember Me</label>
-                    <span asp-validation-for="RememberMe" class="text-danger text-start"></span>
+                <div class="form-check remember-me">
+                    <input class="form-check-input" type="checkbox" asp-for="RememberMe" id="RememberMe">
+                    <label class="form-check-label" for="RememberMe" style="margin-top:10px">Remember Me</label>
+                    <span asp-validation-for="RememberMe" class="text-danger"></span>
                 </div>
 
                 <div asp-validation-summary="ModelOnly" class="text-danger"> </div>
@@ -41,11 +47,31 @@
             </form>
         </div>
     </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script>
+        document.getElementById('toggle-password').addEventListener('click', function () {
+            var passwordInput = document.getElementById('Password');
+            var icon = this.querySelector('i');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    </script>
 </body>
 
 </html>
 
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

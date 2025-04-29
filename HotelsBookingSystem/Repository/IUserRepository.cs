@@ -6,5 +6,6 @@ namespace HotelsBookingSystem.Repository
     {
         Task<int> GetTotalUsersCountAsync();
         Task<List<ApplicationUser>> GetTopClientsAsync(int count);
+        Task<int> GetTotalClientsCountAsync();
     }
 }
