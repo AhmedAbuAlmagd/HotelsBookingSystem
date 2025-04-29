@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 builder.Services.AddSession(options =>
             options.IdleTimeout = TimeSpan.FromSeconds(30));
 builder.Services.AddDbContext<HotelsContext>(options =>

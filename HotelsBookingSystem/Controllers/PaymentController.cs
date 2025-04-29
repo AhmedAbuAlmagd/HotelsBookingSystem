@@ -15,45 +15,30 @@ namespace HotelsBookingSystem.Controllers
 
         private readonly IBookingRepository _bookingRepository;
 
-
         public PaymentController(IBookingRepository bookingRepository)
         {
             _bookingRepository = bookingRepository;
         }
-
-
         BookingViewModel bookingViewModel;
         public IActionResult Index()
         {
-
             return View();
         }
 
-        // [HttpPost]
-        // public IActionResult CreatePayment()
         [HttpPost]
-        public IActionResult CreatePayment(DateTime checkIn, DateTime checkOut, decimal totalAmount)
-
+        public IActionResult CreatePayment(Cart cart)
         {
             bookingViewModel = new BookingViewModel();
             var options = new PaymentIntentCreateOptions
             {
-                Amount = (long)(totalAmount * 100),
+                Amount = 5000,
                 Currency = "USD",
-                PaymentMethodTypes = new List<string> { "card" },
-                Description = $"Booking Room from {checkIn} To {checkOut}",
+                PaymentMethodTypes = new List<string>
+                {
+                  "card",
+                },
+                Description = $"Booking Room from {bookingViewModel.CheckIn} To {bookingViewModel.CheckOut}",
             };
-
-            //var options = new PaymentIntentCreateOptions
-            //{
-            //    Amount = (long)(bookingViewModel.TotalPrice * 100),
-            //    Currency = "USD",
-            //    PaymentMethodTypes = new List<string>
-            //    {
-            //      "card",
-            //    },
-            //    Description = $"Booking Room from {bookingViewModel.CheckIn} To {bookingViewModel.CheckOut}",
-            //};
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var booking = new Booking
@@ -62,9 +47,9 @@ namespace HotelsBookingSystem.Controllers
                 Status = "Confirmed",
                 Booking_date = DateTime.Now,
                 HotelId = 1,
-                TotalPrice = bookingViewModel.TotalPrice,
-                CheckIn = bookingViewModel.CheckIn,
-                CheckOut = bookingViewModel.CheckOut
+                TotalPrice = 1000,
+                CheckIn = DateTime.Now,
+                CheckOut = DateTime.Now
 
             };
 
@@ -74,10 +59,7 @@ namespace HotelsBookingSystem.Controllers
             var service = new PaymentIntentService();
             var paymentIntent = service.Create(options);
 
-            return Json(new
-            {
-                clientSecret = paymentIntent.ClientSecret
-            });
+            return Json(new { clientSecret = paymentIntent.ClientSecret });
         }
 
         public IActionResult Success()
