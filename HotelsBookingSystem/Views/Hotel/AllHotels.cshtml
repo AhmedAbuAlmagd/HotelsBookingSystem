@@ -1,95 +1,174 @@
-﻿
-@model List<HotelsBookingSystem.ViewModels.HotelModelView>
+﻿@model HotelsBookingSystem.ViewModels.AdminViewModels.HotelsManagementViewModel
+
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = "Hotels Management";
+    
 }
-<div class="container mt-4">
-    @foreach (var hotel in Model)
-    {
-        <div class="card mb-5 shadow">
-            <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">@hotel.Name</h2>
-                <p class="mb-0">@hotel.Address, @hotel.City</p>
-            </div>
 
-            <div class="card-body">
-                <p class="card-text">@hotel.Description</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotels Management</title>
+    <link href="~/css/HotelsManage.css" rel="stylesheet" />
+    <link href="~/css/HotelsManagement.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header Section -->
+        <div class="header mt-3">
+            <h1 class="title">Hotels Management</h1>
 
-              
-                <h3 class="mt-4">Hotel Images</h3>
-                <div id="hotelCarousel-@hotel.Id" class="carousel slide mb-4" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @for (int i = 0; i < hotel.HotelImages.Count; i++)
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="search-bar" style="padding-left:0">
+                <form id="filterForm" method="get" action="@Url.Action("Index", "Hotel")">
+                    <input type="text" id="hotelSearch" name="searchTerm" class="search-input" placeholder="Search hotels..." value="@ViewBag.CurrentSearchTerm">
+                    <select id="cityFilter" name="city" class="filter-select">
+                        <option value="">All Cities</option>
+                        @foreach (var cityOption in Model.Hotels.Select(x => x.City).Distinct())
                         {
-                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                <img src="/images/@hotel.HotelImages[i]" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="Hotel Image">
-                            </div>
+                            if (ViewBag.CurrentCity == cityOption)
+                            {
+                                <option value="@cityOption" selected>@cityOption</option>
+                            }
+                            else
+                            {
+                                <option value="@cityOption">@cityOption</option>
+                            }
                         }
+                    </select>
+
+
+                    <button type="submit" class="filterr-btn"><i class="fas fa-search"></i> Apply Filters</button>
+                    <a href="@Url.Action("Index", "Hotel")" class="filterr-btn" style="background-color:gray; text-decoration:none;"><i class="fas fa-undo"></i> Clear Filters</a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Hotels Grid -->
+        <div class="hotels-grid" id="hotelsContainer">
+            @foreach (var hotel in Model.Hotels)
+            {
+                <div class="hotel-card" data-id="@hotel.Id" >
+                    <div class="hotel-card-header">
+                        <img src="@hotel.ImageUrl" alt="@hotel.Name" class="hotel-card-image">
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#hotelCarousel-@hotel.Id" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#hotelCarousel-@hotel.Id" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-
-              @*   <!-- Rooms Section -->
-                <h3 class="mt-4">Available Rooms</h3>
-                <div class="row">
-                    @foreach (var room in hotel.hotelRooms)
-                    {
-                        <div class="col-md-6 mb-4">
-                            <div class="card h-100">
-                                <div class="card-header bg-secondary text-white">
-                                    <h4 class="mb-0">@room.Type</h4>
-                                </div>
-
-                                <!-- Room Images Carousel -->
-                                <div id="roomCarousel-@room.Id" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        @for (int i = 0; i < room.RoomImages.Count; i++)
-                                        {
-                                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                                <img src="@room.RoomImages[i].ImageUrl" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Room Image">
-                                            </div>
-                                        }
-                                    </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel-@room.Id" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel-@room.Id" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                </div>
-
-                                <div class="card-body">
-                                    <p class="card-text"><strong>Room ID:</strong> @room.Id</p>
-                                    <!-- Add more room details as needed -->
-                        </div>    *@     
-                            <a asp-action="ViewRooms" asp-route-hotelId="@hotel.Id" class="btn btn-outline-primary mt-3">View Rooms</a>
-                <a asp-action="Services" asp-route-hotelId="@hotel.Id" class="btn btn-outline-success mt-3">View Services</a>
-
-
-                            </div>
+                    <div class="hotel-card-body">
+                        <h3 class="hotel-card-title">@hotel.Name</h3>
+                        <div class="hotel-card-info">
+                            <p><i class="fa fa-map-marker"></i> @hotel.Location , @hotel.City</p>
+                            <p><i class="fa fa-bed"></i> @hotel.RoomCount rooms</p>
+                            <p><i class="fa fa-star"></i> 5 stars</p>
                         </div>
-                    }
+                        <div class="hotel-card-description">
+                            @(hotel.Description?.Length > 100 ? hotel.Description.Substring(0, 100) + "..." : hotel.Description)
+                        </div>
+                    </div>
+                    <div class="hotel-card-footer">
+                        <a href="@Url.Action("index", "Room", new { id = hotel.Id })"
+                           class="action-btn view btn btn-info" style="background-color : #f9a825 ;color : white">
+                            View Rooms
+                        </a>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <div class="pagination">
+            @if (Model.CurrentPage > 1)
+            {
+                <a href="@Url.Action("Index", "Hotel", new { page = Model.CurrentPage - 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity, status = ViewBag.CurrentStatus })">Previous</a>
+            }
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <a href="@Url.Action("Index", "Hotel", new { page = i, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity, status = ViewBag.CurrentStatus })" class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <a href="@Url.Action("Index", "Hotel", new { page = Model.CurrentPage + 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity, status = ViewBag.CurrentStatus })">Next</a>
+            }
+        </div>
+
+        <!-- Hotel Details Modal -->
+        <div id="hotelDetailsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="detailsModalTitle">Hotel Details</h2>
+                    <span class="close-modal">×</span>
+                </div>
+                <div id="hotelDetailsContent" class="modal-body">
                 </div>
             </div>
         </div>
-    }
-</div>
 
+ 
+    </div>
 
+    <!-- JavaScript -->
     <script>
-     
-        document.querySelectorAll('.carousel').forEach(carousel => {
-            new bootstrap.Carousel(carousel, {
-                interval: 3000, 
-                pause: 'hover'
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal variables
+            const hotelDetailsModal = document.getElementById('hotelDetailsModal');
+            const hotelFormModal = document.getElementById('hotelFormModal');
+            const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+            const formModalTitle = document.getElementById('formModalTitle');
+            let currentHotelId = 0;
+
+            // Event delegation for action buttons
+            document.getElementById('hotelsContainer').addEventListener('click', function(e) {
+                const target = e.target;
+                if (target.classList.contains('action-btn')) {
+                    const hotelId = target.getAttribute('data-id');
+                    if (!hotelId) return;
+                    if (target.classList.contains('view')) {
+                        loadHotelDetails(hotelId);
+                    } else if (target.classList.contains('edit')) {
+                        loadHotelForEdit(hotelId);
+                    } else if (target.classList.contains('delete')) {
+                        currentHotelId = hotelId;
+                        openModal(deleteConfirmModal);
+                    }
+                }
+            });
+
+           
+            // Utility functions
+            function openModal(modal) {
+                modal.style.display = 'block';
+            }
+
+            function closeAllModals() {
+                hotelDetailsModal.style.display = 'none';
+                hotelFormModal.style.display = 'none';
+                deleteConfirmModal.style.display = 'none';
+            }
+
+            // Helper function to generate star icons based on rating
+            function generateStars(rating) {
+                let stars = '';
+                const ratingValue = rating || 0; // Default to 0 if undefined
+                for (let i = 1; i <= 5; i++) {
+                    stars += i <= ratingValue ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
+                }
+                return stars;
+            }
+            // Close modals when clicking outside
+            window.onclick = function(event) {
+                if (event.target === hotelDetailsModal ||
+                    event.target === hotelFormModal ||
+                    event.target === deleteConfirmModal) {
+                    closeAllModals();
+                }
+            };
         });
     </script>
+</body>
+</html>
