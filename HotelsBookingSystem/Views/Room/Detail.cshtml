@@ -4,6 +4,7 @@
     ViewData["Title"] = "Detail";
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
 <div class="  my-5 mb-5">
    
@@ -13,7 +14,9 @@
         <div class="row g-5 align-items-center">
             <div class="col-lg-6">
                 <h6 class="section-title text-start text-primary text-uppercase"></h6>
-                <h1 class="mb-4"> <span class="text-primary text-uppercase">@Model.Hotel.Name</span></h1>
+                <h1 class=""> <span class="text-primary text-uppercase">@Model.Hotel.Name</span></h1>
+                <p class="mb-4">@Model.Hotel.Address</p>
+
                 <p class="mb-4">@Model.Description</p>
                 <div class="row g-3 pb-4">
                     <div class="col-sm-4 wow fadeIn" data-wow-delay="0.1s">
@@ -62,4 +65,53 @@
             </div>
 
         </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<div class="content mb-5">
+    <form action="" method="POST">
+ 
+        <div class="mapfors">
+            <div class="row">
+                <div class="col-5">
+                    <input type="text" class="form-control" placeholder="Latitude" name="lat" id="lat" required>
+                </div>
+                <div class="col-5">
+                    <input type="text" class="form-control" placeholder="Longitude" name="lng" id="lng" required>
+                </div>
+            </div>
+        </div>
+
+        <input type="submit" class="btn btn-primary mt-3" value="Submit">
+    </form>
+
+    <div class="my-5 w-75 m-auto" id="map" style="height: 300px;"></div>
+
+    <script>
+             var map = L.map('map', {
+            minZoom: 4,
+            maxZoom: 15
+        }).setView([30.0444, 31.2357], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const marker = L.marker([30.0444, 31.2357], { draggable: true }).addTo(map);
+
+       
+        marker.on('dragend', function (e) {
+            const { lat, lng } = marker.getLatLng();
+            document.getElementById("lat").value = lat.toFixed(6);
+            document.getElementById("lng").value = lng.toFixed(6);
+        });
+
+      
+        map.on('click', function (e) {
+            marker.setLatLng(e.latlng);
+            document.getElementById("lat").value = e.latlng.lat.toFixed(6);
+            document.getElementById("lng").value = e.latlng.lng.toFixed(6);
+        });
+    </script>
+
 </div>
