@@ -4,6 +4,7 @@ using HotelsBookingSystem.Models.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelsBookingSystem.Migrations
 {
     [DbContext(typeof(HotelsContext))]
-    partial class HotelsContextModelSnapshot : ModelSnapshot
+    [Migration("20250428123952_v2")]
+    partial class v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -480,6 +483,9 @@ namespace HotelsBookingSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CartItemId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -491,6 +497,8 @@ namespace HotelsBookingSystem.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartItemId");
 
                     b.ToTable("Services");
                 });
@@ -851,6 +859,13 @@ namespace HotelsBookingSystem.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("HotelsBookingSystem.Models.Service", b =>
+                {
+                    b.HasOne("HotelsBookingSystem.Models.CartItem", null)
+                        .WithMany("Services")
+                        .HasForeignKey("CartItemId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -937,6 +952,11 @@ namespace HotelsBookingSystem.Migrations
                     b.Navigation("CartItems");
 
                     b.Navigation("SelectedServices");
+                });
+
+            modelBuilder.Entity("HotelsBookingSystem.Models.CartItem", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.Hotel", b =>

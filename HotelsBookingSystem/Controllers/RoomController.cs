@@ -77,7 +77,7 @@ namespace HotelsBookingSystem.Controllers
         public IActionResult AvailableRooms(DateTime checkIn, DateTime checkOut, int adults, int children, int page = 1)
         {
             int pageSize = 3;
-
+            int totalPeople = adults + children;
 
             var allRooms = roomRepository.GetAllroom();
 
@@ -104,7 +104,7 @@ namespace HotelsBookingSystem.Controllers
 
             return View("Index", roomViewModels);
         }
-       
+
         public IActionResult filter(RoomViewModel roomVM, int page = 1)
         {
             int PageSize = 3;

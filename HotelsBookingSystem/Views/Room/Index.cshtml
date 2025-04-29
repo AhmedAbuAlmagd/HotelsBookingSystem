@@ -116,7 +116,7 @@
                                     {
                                         <img class="" src="~/images/@i.RoomImages.FirstOrDefault()" height="150px" width="100%" alt="">
                                     }
-                                    else
+                                    else 
                                     {
                                         <img class="" src="~/images/default-image.jpg" height="150px" width="100%" alt="No Image Available">
                                     }
@@ -154,7 +154,12 @@
                                     <p class="text-body mb-3">@i.Description</p>
                                     <div class="d-flex justify-content-between">
                                         <a class="btn btn-sm btn-primary rounded py-2 px-4" href="/Room/Detail/@i.Id">View Detail</a>
-                                        <a class="btn btn-sm btn-dark rounded py-2 px-4" href="">Book Now</a>
+                                        @* <a class="btn btn-sm btn-dark rounded py-2 px-4" href="">ِAdd To Cart</a> *@
+                                        <a class="btn btn-sm btn-dark rounded py-2 px-4"
+                                           href="@Url.Action("AddToCart", "Cart", new { roomId = i.Id, checkIn = DateTime.Now, checkOut = DateTime.Now.AddDays(1) })">
+                                            Add To Cart
+                                        </a>
+
                                     </div>
                                 </div>
                             </div>

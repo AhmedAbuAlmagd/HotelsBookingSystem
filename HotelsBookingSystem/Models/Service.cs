@@ -9,10 +9,10 @@ namespace HotelsBookingSystem.Models
         public string? Description { get; set; }
         public int Price { get; set; }
         public List<BookingService>? BookingServices { get; set; } = new List<BookingService>();
-        [ForeignKey("CartItem")]
-        public int? cartItemId { get; set; }
-        public virtual CartItem? CartItem { get; set; }
+        //[ForeignKey("CartItem")]
+        //public int? cartItemId { get; set; }
+        //public virtual CartItem? CartItem { get; set; }
         public virtual List<Hotel_Service>? HotelServices { get; set; } = new List<Hotel_Service>();
-
+        public virtual List<SelectedServices>? SelectedServices { get; set; } = new List<SelectedServices>();
     }
 }
