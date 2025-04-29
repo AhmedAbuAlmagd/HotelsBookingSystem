@@ -1,0 +1,322 @@
+﻿@model HotelsBookingSystem.Models.Cart
+
+@{
+    ViewData["Title"] = "Cart";
+
+    var hotels = Model.CartItems?
+        .Select(ci => ci.Room.Hotel)
+        .DistinctBy(h => h.Id)
+        .ToList();
+}
+
+@section Styles {
+    <style>
+       
+        .cart-btn {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border-radius: 5px;
+            padding: 12px 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+            .cart-btn:hover {
+                background-color: #FF9800;
+                transform: translateY(-2px);
+            }
+
+       
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        
+        .cart-item-text, .price-per-night {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+      
+        input[type="date"] {
+            background-color: var(--light);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            padding: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+            input[type="date"]:focus {
+                border-color: var(--primary);
+                outline: none;
+            }
+
+       
+        .cart-item:hover {
+            transform: scale(1.02);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .bg-image:hover {
+            opacity: 0.8;
+        }
+
+        .cart-container {
+            background-color: var(--light);
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-item-text {
+            color: var(--dark);
+        }
+
+        .cart-total {
+            color: var(--primary);
+            font-weight: bold;
+        }
+    </style>
+}
+
+<section class="h-100 gradient-custom">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center my-4">
+            <div class="col-md-8">
+
+        
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Your Booking</h5>
+                    </div>
+                    <div class="card-body">
+
+                        @if (Model?.CartItems != null && Model.CartItems.Any())
+                        {
+                            foreach (var item in Model.CartItems)
+                            {
+                                <div class="row cart-item" id="cart-item-@item.Id">
+                                    <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                                        <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                                            @if (item.Room.RoomImages.Any())
+                                            {
+                                                <img src="/images/@item.Room.RoomImages.FirstOrDefault().ImageUrl" class="w-100" alt="Room Image" />
+                                            }
+                                            else
+                                            {
+                                                <img src="/images/default-room.jpg" class="w-100" alt="Default Room Image" />
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                        <p><strong>Room Type: @item.Room.Description</strong></p>
+                                        <p>Hotel: @item.Room.Hotel.Name</p>
+                                        <p class="text-start text-md-center price-per-night">
+                                            <strong>Price/Night: $@item.Room.PricePerNight</strong><br />
+                                        </p>
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                                        <button class="btn btn-danger btn-sm" onclick="removeItemFromCart(@item.Id)">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <hr class="my-4" />
+                            }
+                        }
+                        else
+                        {
+                            <p>Your cart is empty.</p>
+                        }
+
+                        <label for="checkInDate">Check-In:</label>
+                        <input type="date" id="checkInDate" class="form-control" onchange="updateTotalAmount()" />
+                        <br />
+                        <label for="checkOutDate">Check-Out:</label>
+                        <input type="date" id="checkOutDate" class="form-control" onchange="updateTotalAmount()" />
+
+                        <p id="totalNights">Total Nights: 0</p>
+                        <p id="totalAmountText">Total: $0.00</p>
+
+                    </div>
+                </div>
+
+               
+                @if (hotels != null && hotels.Any())
+                {
+                    <div class="card mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="mb-0">Available Services</h5>
+                        </div>
+                        <div class="card-body">
+                            @foreach (var hotel in hotels)
+                            {
+                                <h6>@hotel.Name</h6>
+                                @if (hotel.HotelServices != null && hotel.HotelServices.Any())
+                                {
+                                    foreach (var service in hotel.HotelServices)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input hotel-service-checkbox"
+                                                   type="checkbox"
+                                                   value="@service.Service.Price"
+                                                   id="hotel-service-@service.serviceId"
+                                                   onchange="updateTotalAmount()" />
+                                            <label class="form-check-label" for="hotel-service-@service.serviceId">
+                                                @service.Service.Name - $@service.Service.Price per night
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>No services available.</p>
+                                }
+                                <hr />
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="card mb-4 mb-lg-0">
+                    <div class="card-body">
+                        <p><strong>We accept</strong></p>
+                        <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg" alt="Visa" />
+                        <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg" alt="American Express" />
+                        <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg" alt="Mastercard" />
+                        <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce/includes/gateways/paypal/assets/images/paypal.webp" alt="PayPal" />
+                    </div>
+                </div>
+
+            </div>
+
+           
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                Total Rooms
+                                <span id="totalRooms">@Model?.CartItems?.Count()</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                Total Amount
+                                <span id="summaryTotalAmount">$0.00</span>
+                            </li>
+                        </ul>
+                        @* <button type="button" class="btn btn-primary btn-lg btn-block mt-3"> *@
+                        @*     <a asp-action="Index" asp-controller="Payment" style="text-decoration:none;" class="text-light">Confirm Booking</a> *@
+                        @* </button> *@
+                        <form asp-action="CreatePayment" asp-controller="Payment" method="post">
+                            @Html.AntiForgeryToken()
+                           @* <input type="hidden" id="checkInInput" name="CheckIn" />
+                            <input type="hidden" id="checkOutInput" name="CheckOut" />
+                            <input type="hidden" id="totalAmountInput" name="TotalAmount" />
+                            @* <input type="hidden" id="totalPriceInput" name="TotalPrice" /> *@
+                            <input type="hidden" id="checkInInput" name="checkIn" />
+                            <input type="hidden" id="checkOutInput" name="checkOut" />
+                            <input type="hidden" id="totalAmountInput" name="totalAmount" />
+
+                            <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Confirm Booking</button>
+                        </form>
+
+                   
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script>
+        function updateTotalAmount() {
+            var checkInDate = document.getElementById("checkInDate").value;
+            var checkOutDate = document.getElementById("checkOutDate").value;
+
+            if (checkInDate && checkOutDate) {
+                var checkIn = new Date(checkInDate);
+                var checkOut = new Date(checkOutDate);
+
+                if (checkOut <= checkIn) {
+                    alert("Check-Out date must be after Check-In date.");
+                    return;
+                }
+
+                var nights = (checkOut - checkIn) / (1000 * 3600 * 24);
+                var totalAmount = 0;
+
+                var cartItems = document.querySelectorAll(".cart-item");
+                cartItems.forEach(function (item) {
+                    var pricePerNight = parseFloat(item.querySelector(".price-per-night").innerText.replace('Price/Night: $', ''));
+                    totalAmount += (pricePerNight * nights);
+                });
+
+                var hotelServiceCheckboxes = document.querySelectorAll(".hotel-service-checkbox");
+                hotelServiceCheckboxes.forEach(function (checkbox) {
+                    if (checkbox.checked) {
+                        var pricePerNight = parseFloat(checkbox.value);
+                        totalAmount += (pricePerNight * nights);
+                    }
+                });
+
+                document.getElementById("totalNights").innerText = "Total Nights: " + nights;
+                document.getElementById("totalAmountText").innerText = "Total: $" + totalAmount.toFixed(2);
+                document.getElementById("summaryTotalAmount").innerText = "$" + totalAmount.toFixed(2);
+            }
+        }
+
+        function removeItemFromCart(itemId) {
+            if (confirm("Are you sure you want to remove this item from your cart?")) {
+                fetch('/Cart/RemoveFromCart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'id=' + itemId + '&__RequestVerificationToken=' + encodeURIComponent(document.querySelector('input[name="__RequestVerificationToken"]').value)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        var cartItemElement = document.getElementById("cart-item-" + itemId);
+                        if (cartItemElement) {
+                            cartItemElement.remove();
+                        }
+                        var totalRooms = document.querySelectorAll(".cart-item").length;
+                        document.getElementById("totalRooms").innerText = totalRooms;
+
+                        updateTotalAmount();
+                    } else {
+                        alert("Failed to remove item from cart.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+                document.querySelector("form").addEventListener("submit", function (e) {
+            document.getElementById("checkInInput").value = document.getElementById("checkInDate").value;
+            document.getElementById("checkOutInput").value = document.getElementById("checkOutDate").value;
+            document.getElementById("totalAmountInput").value = document.getElementById("summaryTotalAmount").innerText.replace('$', '');
+        });
+
+    </script>
+}

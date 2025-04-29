@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Cart";
+}
+
+
+@* <div class="container p-5 m-5" style="padding-bottom: 150px !important; ">
+
+    <div class="row justify-content-center">
+        <h2>Cart</h2>
+        <p>Room 101 + Room 102 - 500 AED</p>
+
+        <div id="card-element">
+            <!-- A Stripe Element will be inserted here. -->
+        </div>
+
+        <div id="card-errors" role="alert"></div>
+
+        <button id="payButton">Pay Now</button>
+    </div>
+</div> *@
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 20px;">
+        <h2 class="text-center mb-4">Payment Details</h2>
+
+        <form id="payment-form">
+            <div class="form-group mb-3">
+                <label for="card-element" class="mb-2 fw-bold">Credit or Debit Card</label>
+                <div id="card-element" class="form-control p-3" style="height: auto; min-height: 50px;">
+                    <!-- Stripe Card Element will be inserted here -->
+                </div>
+                <div id="card-errors" class="text-danger mt-2" role="alert"></div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button type="button" class="btn btn-success w-48" id="payButton">Confirm Payment</button>
+                <button type="reset" class="btn btn-outline-secondary w-48">Reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script> 
+ <script> 
+     const stripe = Stripe('@(Context.RequestServices.GetRequiredService<IConfiguration>()["Stripe:PublishableKey"])'); 
+
+     const elements = stripe.elements(); 
+     const card = elements.create('card'); 
+     card.mount('#card-element'); 
+
+     card.addEventListener('change', function(event) { 
+       var displayError = document.getElementById('card-errors'); 
+      if (event.error) { 
+         displayError.textContent = event.error.message; 
+      } else { 
+        displayError.textContent = ''; 
+       } 
+     }); 
+
+    document.getElementById('payButton').addEventListener('click', async () => { 
+         const response = await fetch('/Payment/CreatePayment', { method: 'POST' }); 
+         const paymentData = await response.json(); 
+
+         const result = await stripe.confirmCardPayment(paymentData.clientSecret, { 
+             payment_method: { 
+                 card: card 
+             } 
+        }); 
+
+      if (result.error) { 
+            alert(result.error.message); 
+        } else { 
+             if (result.paymentIntent.status === 'succeeded') { 
+                 window.location.href = '/Payment/Success'; 
+             } 
+         } 
+     }); 
+ </script> 
+
+

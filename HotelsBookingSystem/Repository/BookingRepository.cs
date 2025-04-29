@@ -20,8 +20,8 @@ namespace HotelsBookingSystem.Repository
                 .Include(b => b.User)
                 .Include(b => b.Hotel)
                 .Include(b => b.BookingRooms)
-                    .ThenInclude(br => br.Room)
-                        .ThenInclude(r => r.Hotel)
+                .ThenInclude(br => br.Room)
+                .ThenInclude(r => r.Hotel)
                 .ToListAsync();
         }
 
@@ -85,6 +85,10 @@ namespace HotelsBookingSystem.Repository
             }
 
             return await query.ToListAsync();
+        }
+        void IBookingRepository.AddBooking(Booking booking)
+        {
+            _context.Bookings.Add(booking);
         }
     }
 }

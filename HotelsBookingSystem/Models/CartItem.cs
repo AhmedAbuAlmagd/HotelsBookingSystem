@@ -20,7 +20,7 @@ namespace HotelsBookingSystem.Models
         [NotMapped]
         public int Nights => (CheckOut - CheckIn).Days;
 
-        public virtual List<Service>? Services { get; set; } = new List<Service>();
+       // public virtual List<Service>? Services { get; set; } = new List<Service>();
 
     }
 }
