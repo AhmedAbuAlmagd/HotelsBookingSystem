@@ -30,7 +30,12 @@
                                 </div>
                                 <a href="contact.html" class="nav-item nav-link">Contact</a>
                             </div>
-
+                    <div class="d-inline-flex align-items-center py-2 me-3">
+                        <a href="@Url.Action("Index", "Cart")" class="nav-item nav-link">
+                            <img src="~/images/cart_icon.jpg" alt="Cart" style="width: 30px; height: 30px;">
+                            <span class="badge bg-primary">3</span> 
+                        </a>
+                    </div>
                     @if (User.Identity.IsAuthenticated)
                     {
                         <a asp-controller="Account" asp-action="Logout" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">

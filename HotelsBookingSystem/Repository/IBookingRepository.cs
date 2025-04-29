@@ -10,5 +10,7 @@ namespace HotelsBookingSystem.Repository
         Task<List<Booking>> GetRecentBookingsAsync(int count);
         Task<List<Booking>> GetByFilterAsync(BookingFilterViewModel filter);
 
+        void AddBooking(Booking booking);
+
     }
 }
