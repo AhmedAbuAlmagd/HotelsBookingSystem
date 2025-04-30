@@ -19,10 +19,16 @@ namespace HotelsBookingSystem.Repository
 
         List<Hotel> GetAllhotels();
         List<Room> GetAllroom();
-        // For Admin
+       #region Admin
         Task<List<Room>> GetAllRoomsAsync();
         Task<int> GetTotalRoomsCountAsync();
         Task<List<Room>> GetTopRoomsAsync(int count);
+        int GetCountByHotelId(int hotelId);
+        List<Room> GetPagedByHotelId(int hotelId, int pageNumber, int pageSize);
+        bool RoomNumberExists(int hotelId, int roomNumber, int? excludeRoomId = null);
+
+
+        #endregion
 
     }
 }

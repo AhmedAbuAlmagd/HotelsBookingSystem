@@ -125,8 +125,21 @@ namespace HotelsBookingSystem.Repository
 
         #endregion
 
+
+        //public List<Room> GetAllroom()
+        //{
+        //    var rooms = _context.Rooms
+        //       .Where(r => r.Status == "available")
+        //       .Include(r => r.Hotel)
+        //       .Include(r => r.RoomImages)
+        //       .Include(r => r.BookingRooms)
+        //       .ThenInclude(r => r.booking)
+        //      .ToList();
+        //    return rooms;
+        //}
+
+
         #region Admin
-        // For Admin
         public async Task<List<Room>> GetAllRoomsAsync()
         {
             return await _context.Rooms
@@ -147,9 +160,35 @@ namespace HotelsBookingSystem.Repository
                 .Take(count)
                 .ToListAsync();
         }
-        #endregion
        
+        public int GetCountByHotelId(int hotelId)
+        {
+            return _context.Rooms.Count(r => r.HotelId == hotelId);
+        }
 
-       
+        public List<Room> GetPagedByHotelId(int hotelId, int pageNumber, int pageSize)
+        {
+            return _context.Rooms
+                .Where(r => r.HotelId == hotelId)
+                 .Include(r => r.RoomImages)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
+        public bool RoomNumberExists(int hotelId, int roomNumber, int? roomId = null)
+        {
+            if (roomId.HasValue)
+            {
+                return GetAllroom().Any(r => r.HotelId == hotelId &&
+                                           r.RoomNumber == roomNumber &&
+                                           r.Id != roomId.Value);
+            }
+
+            return GetAllroom().Any(r => r.HotelId == hotelId &&
+                                       r.RoomNumber == roomNumber);
+        }
+        #endregion
+
     }
 }
