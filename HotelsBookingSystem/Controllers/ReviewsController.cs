@@ -20,7 +20,7 @@ namespace HotelsBookingSystem.Controllers
             hotelRepository = hotelRepo;
             _userManager = userManager;
         }
-
+        #region index
         public async Task<IActionResult> Index()
         {
 
@@ -43,13 +43,19 @@ namespace HotelsBookingSystem.Controllers
             };
             return View(model);
         }
+        #endregion
 
+
+        #region create
         [HttpPost]
-        [Authorize]
+      
         [ValidateAntiForgeryToken]
 
         public async Task<IActionResult> Create( ReviewViewModel reviewVM)
         {
+            reviewVM.hotels = hotelRepository.GetHotelsWithRoomsAndImages();
+
+            #region user
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Login", "Account");
 
@@ -57,16 +63,31 @@ namespace HotelsBookingSystem.Controllers
             {
                 return RedirectToAction("Login", "Account"); 
             }
-            int hotelid = reviewVM.HotelId ?? 0;    
+            #endregion
+
+            if (string.IsNullOrWhiteSpace(reviewVM.Comment))
+            {
+                ModelState.AddModelError(nameof(reviewVM.Comment), "Please enter a comment.");
+            }
+
+            
+            if(reviewVM.Rating == 0|| (reviewVM.Rating == null || reviewVM.Rating < 1 || reviewVM.Rating > 5))
+            {
+                ModelState.AddModelError("Rating", "Please select a rating .");
+                ViewBag.Message = "Please select a rating ";
+                return View("index",reviewVM);
+            }
+            #region hotel dropdown
+            int hotelid = reviewVM.HotelId ;    
             var hotel = hotelRepository.GetById(hotelid);
             if (hotel == null)
             {
                 return NotFound();
             }
+            #endregion
+            var userId = _userManager.GetUserId(User);
 
-            var userId = User.Identity.Name;
-            
-
+            #region review
             var review = new Review
             {
 
@@ -81,6 +102,7 @@ namespace HotelsBookingSystem.Controllers
                 UserId = userId,
                 
             };
+            #endregion
             if (ModelState.IsValid)
             {
 
@@ -90,24 +112,10 @@ namespace HotelsBookingSystem.Controllers
             }
 
 
-            return View(review);
+            return View(reviewVM);
              
         }
 
-        
-        //[HttpPost]
-        //public IActionResult Create(Review review)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-               
-        //        reviewRepository.Add(review);
-        //        reviewRepository.SaveChanges();
-        //        return RedirectToAction("Index"); 
-        //    }
-
-           
-        //    return View(review);
-        //}
+        #endregion
     }
 }

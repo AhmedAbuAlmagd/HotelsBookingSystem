@@ -8,6 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllersWithViews().AddViewOptions(options =>
+    {
+        options.HtmlHelperOptions.ClientValidationEnabled = true;
+    });
+
+
+
+
 builder.Services.AddSession(options =>
             options.IdleTimeout = TimeSpan.FromSeconds(30));
 builder.Services.AddDbContext<HotelsContext>(options =>

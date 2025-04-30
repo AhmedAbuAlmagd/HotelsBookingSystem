@@ -29,12 +29,12 @@
             }
 </style>
 
-@if (ViewData["Message"] != null)
-{
-    <div class="alert alert-warning">
-        @ViewData["Message"]
-    </div>
-}
+@* @if (ViewData["Message"] != null) *@
+@* { *@
+@*     <div class="alert alert-warning"> *@
+@*         @ViewData["Message"] *@
+@*     </div> *@
+@* } *@
 
 
 
@@ -131,18 +131,14 @@
                     <div class="col-md-6">
                         <div class="wow fadeInUp" data-wow-delay="0.2s">
 
-                            @if (ViewData["Message"] != null)
-                            {
-                                <div class="alert alert-warning">
-                                    @ViewData["Message"]
-                                </div>
-                            }
+                           
                             <form asp-action="Create" asp-controller="Reviews" method="post">
+                                @Html.AntiForgeryToken()
                                 <div class="row g-3">
                                     <!-- Hotel Dropdown -->
                                     <div class="col-12">
                                         <div class="form-floating">
-                                            <select asp-for="HotelId" class="form-select">
+                                            <select asp-for="HotelId" class="form-select" required>
                                                 <option value="">-- Select Hotel --</option>
                                                 @foreach (var hotel in Model.hotels ?? new List<Hotel>())
                                                 {
@@ -165,23 +161,28 @@
                                         </div>
                                     </div>
 
-                                    <!-- Star Rating -->
                                     <div class="form-group">
                                         <label asp-for="Rating">Rate the Hotel:</label>
                                         <div class="star-rating">
-                                            <input type="radio" id="star5" name="Rating" value="5" @(Model.Rating == 5 ? "checked" : "") />
+                                            <input type="radio" id="star5" name="Rating" value="5" @(Model.Rating == 5 ? "checked" : "") required />
                                             <label for="star5">★</label>
-                                            <input type="radio" id="star4" name="Rating" value="4" @(Model.Rating == 4 ? "checked" : "") />
+
+                                            <input type="radio" id="star4" name="Rating" value="4" @(Model.Rating == 4 ? "checked" : "") required />
                                             <label for="star4">★</label>
-                                            <input type="radio" id="star3" name="Rating" value="3" @(Model.Rating == 3 ? "checked" : "") />
+
+                                            <input type="radio" id="star3" name="Rating" value="3" @(Model.Rating == 3 ? "checked" : "") required />
                                             <label for="star3">★</label>
-                                            <input type="radio" id="star2" name="Rating" value="2" @(Model.Rating == 2 ? "checked" : "") />
+
+                                            <input type="radio" id="star2" name="Rating" value="2" @(Model.Rating == 2 ? "checked" : "") required />
                                             <label for="star2">★</label>
-                                            <input type="radio" id="star1" name="Rating" value="1" @(Model.Rating == 1 ? "checked" : "") />
+
+                                            <input type="radio" id="star1" name="Rating" value="1" @(Model.Rating == 1 ? "checked" : "") required />
                                             <label for="star1">★</label>
+
                                         </div>
-                                        <span asp-validation-for="Rating" class="text-danger"></span>
+
                                     </div>
+                                    <span asp-validation-for="Rating" class="text-danger"></span>
 
                                     <!-- Submit Button -->
                                     <div class="col-12">
@@ -211,12 +212,14 @@
     </div>
 </div>
 <!-- Client-side validation -->
-@* @section Scripts { *@
-@*     @{ *@
-@*         await Html.RenderPartialAsync("_ValidationScriptsPartial"); *@
-@*     } *@
-@* } *@
-     
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<partial name="_ValidationScriptsPartial" />
+
+
+
         <!-- Contact End -->
 
 
