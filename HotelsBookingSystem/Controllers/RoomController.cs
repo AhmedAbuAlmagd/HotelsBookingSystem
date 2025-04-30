@@ -26,10 +26,13 @@ namespace HotelsBookingSystem.Controllers
             this.webHostEnvironment = webHostEnvironment;
         }
         #region index
-        public IActionResult Index(int page = 1)
+        public IActionResult Index(int hotelId = 0, int page = 1)
         {
             int PageSize = 6;
-            var rooms = roomRepository.GetAllroom();
+
+            var rooms = hotelId > 0
+                ? roomRepository.GetAllroom().Where(r => r.HotelId == hotelId)
+                : roomRepository.GetAllroom();
 
             var roomViewModels = rooms.Select(r => new RoomViewModel
             {
@@ -48,13 +51,13 @@ namespace HotelsBookingSystem.Controllers
                 TypeFilter = null,
                 MinPrice = null,
                 MaxPrice = null,
-                HotelId = null,
-
-
+                HotelId = hotelId,
             }).ToPagedList(page, PageSize);
-            ViewBag.IsFiltered = false;
+
+            ViewBag.IsFiltered = hotelId > 0;
             return View(roomViewModels);
         }
+
         #endregion
         #region detail
         public IActionResult Detail(int id)
