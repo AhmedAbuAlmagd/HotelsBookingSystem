@@ -2,173 +2,109 @@
 
 @{
     ViewData["Title"] = "Hotels Management";
-    
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotels Management</title>
-    <link href="~/css/HotelsManage.css" rel="stylesheet" />
-    <link href="~/css/HotelsManagement.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    @* <link rel="stylesheet" href="@Url.Content("~/css/HotelsManage.css")" /> *@
+    @* <link rel="stylesheet" href="@Url.Content("~/css/HotelsManagement.css")" /> *@
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="dashboard">
-        <!-- Header Section -->
-        <div class="header mt-3">
-            <h1 class="title">Hotels Management</h1>
 
+    <div class="container my-4">
+        <!-- Header -->
+        <div class="text-center my-5">
+            <h6 class="text-primary text-uppercase">Our Hotels</h6>
+            <h1 class="mb-3">Explore Our <span class="text-primary">Hotels</span></h1>
         </div>
 
-        <!-- Filters Section -->
-        <div class="filters-section">
-            <div class="search-bar" style="padding-left:0">
-                <form id="filterForm" method="get" action="@Url.Action("Index", "Hotel")">
-                    <input type="text" id="hotelSearch" name="searchTerm" class="search-input" placeholder="Search hotels..." value="@ViewBag.CurrentSearchTerm">
-                    <select id="cityFilter" name="city" class="filter-select">
-                        <option value="">All Cities</option>
-                        @foreach (var cityOption in Model.Hotels.Select(x => x.City).Distinct())
-                        {
-                            if (ViewBag.CurrentCity == cityOption)
-                            {
-                                <option value="@cityOption" selected>@cityOption</option>
-                            }
-                            else
-                            {
-                                <option value="@cityOption">@cityOption</option>
-                            }
-                        }
-                    </select>
-
-
-                    <button type="submit" class="filterr-btn"><i class="fas fa-search"></i> Apply Filters</button>
-                    <a href="@Url.Action("Index", "Hotel")" class="filterr-btn" style="background-color:gray; text-decoration:none;"><i class="fas fa-undo"></i> Clear Filters</a>
-                </form>
+        <!-- Filters -->
+        <form class="row g-3 mb-4" id="filterForm" method="get" action="@Url.Action("Index", "Hotel")">
+            <div class="col-md-5">
+                <input type="text" id="hotelSearch" name="searchTerm" class="form-control" placeholder="Search hotels..." value="@ViewBag.CurrentSearchTerm" />
             </div>
-        </div>
+            <div class="col-md-4">
+                <select id="cityFilter" name="city" class="form-select">
+                    <option value="">All Cities</option>
+                    @foreach (var cityOption in Model.Hotels.Select(x => x.City).Distinct())
+                    {
+                        if (ViewBag.CurrentCity == cityOption)
+                        {
+                            <option value="@cityOption" selected>@cityOption</option>
+                        }
+                        else
+                        {
+                            <option value="@cityOption">@cityOption</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-warning w-100"><i class="fas fa-search"></i> Filter</button>
+                <a href="@Url.Action("Index", "Hotel")" class="btn btn-secondary w-100"><i class="fas fa-undo"></i> Clear</a>
+            </div>
+        </form>
 
         <!-- Hotels Grid -->
-        <div class="hotels-grid" id="hotelsContainer">
+        <div class="row">
             @foreach (var hotel in Model.Hotels)
             {
-                <div class="hotel-card" data-id="@hotel.Id" >
-                    <div class="hotel-card-header">
-                        <img src="@hotel.ImageUrl" alt="@hotel.Name" class="hotel-card-image">
-                    </div>
-                    <div class="hotel-card-body">
-                        <h3 class="hotel-card-title">@hotel.Name</h3>
-                        <div class="hotel-card-info">
-                            <p><i class="fa fa-map-marker"></i> @hotel.Location , @hotel.City</p>
-                            <p><i class="fa fa-bed"></i> @hotel.RoomCount rooms</p>
-                            <p><i class="fa fa-star"></i> 5 stars</p>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@hotel.ImageUrl" class="card-img-top" alt="@hotel.Name" style="height: 200px; object-fit: cover;" />
+                        <div class="card-body">
+                            <h5 class="card-title">@hotel.Name</h5>
+                            <p class="card-text text-muted"><i class="fas fa-map-marker-alt"></i> @hotel.Location, @hotel.City</p>
+                            <p class="card-text"><i class="fas fa-bed"></i> @hotel.RoomCount rooms</p>
+                            <p class="card-text"><i class="fas fa-star text-warning"></i> @hotel.Rating stars</p>
+                            <p class="card-text">
+                                @(hotel.Description?.Length > 100 ? hotel.Description.Substring(0, 100) + "..." : hotel.Description)
+                            </p>
                         </div>
-                        <div class="hotel-card-description">
-                            @(hotel.Description?.Length > 100 ? hotel.Description.Substring(0, 100) + "..." : hotel.Description)
+                        <div class="card-footer bg-white border-0 text-center">
+                            <a asp-action="Index" asp-controller="Room" asp-route-hotelId="@hotel.Id"
+                               class="btn btn-warning w-100 text-white" style="background-color : #FEA116 ; width : 100%">
+                                View Rooms
+                            </a>
                         </div>
                     </div>
-                    <div class="hotel-card-footer">
-                        <a href="@Url.Action("index", "Room", new { id = hotel.Id })"
-                           class="action-btn view btn btn-info" style="background-color : #f9a825 ;color : white">
-                            View Rooms
-                        </a>
-                    </div>
                 </div>
-            }
-
-        </div>
-        <div class="pagination">
-            @if (Model.CurrentPage > 1)
-            {
-                <a href="@Url.Action("Index", "Hotel", new { page = Model.CurrentPage - 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity, status = ViewBag.CurrentStatus })">Previous</a>
-            }
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <a href="@Url.Action("Index", "Hotel", new { page = i, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity, status = ViewBag.CurrentStatus })" class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
-            }
-            @if (Model.CurrentPage < Model.TotalPages)
-            {
-                <a href="@Url.Action("Index", "Hotel", new { page = Model.CurrentPage + 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity, status = ViewBag.CurrentStatus })">Next</a>
             }
         </div>
 
-        <!-- Hotel Details Modal -->
-        <div id="hotelDetailsModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="detailsModalTitle">Hotel Details</h2>
-                    <span class="close-modal">×</span>
-                </div>
-                <div id="hotelDetailsContent" class="modal-body">
-                </div>
-            </div>
-        </div>
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", "Hotel", new { page = Model.CurrentPage - 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity })">Previous</a>
+                    </li>
+                }
 
- 
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", "Hotel", new { page = i, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity })">@i</a>
+                    </li>
+                }
+
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", "Hotel", new { page = Model.CurrentPage + 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity })">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
     </div>
 
-    <!-- JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Modal variables
-            const hotelDetailsModal = document.getElementById('hotelDetailsModal');
-            const hotelFormModal = document.getElementById('hotelFormModal');
-            const deleteConfirmModal = document.getElementById('deleteConfirmModal');
-            const formModalTitle = document.getElementById('formModalTitle');
-            let currentHotelId = 0;
-
-            // Event delegation for action buttons
-            document.getElementById('hotelsContainer').addEventListener('click', function(e) {
-                const target = e.target;
-                if (target.classList.contains('action-btn')) {
-                    const hotelId = target.getAttribute('data-id');
-                    if (!hotelId) return;
-                    if (target.classList.contains('view')) {
-                        loadHotelDetails(hotelId);
-                    } else if (target.classList.contains('edit')) {
-                        loadHotelForEdit(hotelId);
-                    } else if (target.classList.contains('delete')) {
-                        currentHotelId = hotelId;
-                        openModal(deleteConfirmModal);
-                    }
-                }
-            });
-
-           
-            // Utility functions
-            function openModal(modal) {
-                modal.style.display = 'block';
-            }
-
-            function closeAllModals() {
-                hotelDetailsModal.style.display = 'none';
-                hotelFormModal.style.display = 'none';
-                deleteConfirmModal.style.display = 'none';
-            }
-
-            // Helper function to generate star icons based on rating
-            function generateStars(rating) {
-                let stars = '';
-                const ratingValue = rating || 0; // Default to 0 if undefined
-                for (let i = 1; i <= 5; i++) {
-                    stars += i <= ratingValue ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
-                }
-                return stars;
-            }
-            // Close modals when clicking outside
-            window.onclick = function(event) {
-                if (event.target === hotelDetailsModal ||
-                    event.target === hotelFormModal ||
-                    event.target === deleteConfirmModal) {
-                    closeAllModals();
-                }
-            };
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -114,11 +114,11 @@
                                 <div class="position-relative">
                                     @if (i.RoomImages != null && i.RoomImages.Any())
                                     {
-                                        <img class="" src="~/images/@i.RoomImages.FirstOrDefault()" height="150px" width="100%" alt="">
+                                        <img class="" src="@i.RoomImages.FirstOrDefault()" height="150px" width="100%" alt="">
                                     }
                                     else 
                                     {
-                                        <img class="" src="~/images/default-image.jpg" height="150px" width="100%" alt="No Image Available">
+                                        <img class="" src="default-image.jpg" height="150px" width="100%" alt="No Image Available">
                                     }
                                     <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$@i.PricePerNight/Night</small>
                                 </div>
