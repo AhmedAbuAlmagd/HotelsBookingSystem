@@ -26,10 +26,13 @@ namespace HotelsBookingSystem.Controllers
             this.webHostEnvironment = webHostEnvironment;
         }
         #region index
-        public IActionResult Index(int page = 1)
+        public IActionResult Index(int hotelId = 0, int page = 1)
         {
             int PageSize = 6;
-            var rooms = roomRepository.GetAllroom();
+
+            var rooms = hotelId > 0
+                ? roomRepository.GetAllroom().Where(r => r.HotelId == hotelId)
+                : roomRepository.GetAllroom();
 
             var roomViewModels = rooms.Select(r => new RoomViewModel
             {
@@ -48,13 +51,13 @@ namespace HotelsBookingSystem.Controllers
                 TypeFilter = null,
                 MinPrice = null,
                 MaxPrice = null,
-                HotelId = null,
-
-
+                HotelId = hotelId,
             }).ToPagedList(page, PageSize);
-            ViewBag.IsFiltered = false;
+
+            ViewBag.IsFiltered = hotelId > 0;
             return View(roomViewModels);
         }
+
         #endregion
         #region detail
         public IActionResult Detail(int id)
@@ -77,7 +80,7 @@ namespace HotelsBookingSystem.Controllers
         public IActionResult AvailableRooms(DateTime checkIn, DateTime checkOut, int adults, int children, int page = 1)
         {
             int pageSize = 3;
-
+            int totalPeople = adults + children;
 
             var allRooms = roomRepository.GetAllroom();
 
@@ -104,7 +107,7 @@ namespace HotelsBookingSystem.Controllers
 
             return View("Index", roomViewModels);
         }
-       
+
         public IActionResult filter(RoomViewModel roomVM, int page = 1)
         {
             int PageSize = 3;
@@ -275,12 +278,11 @@ namespace HotelsBookingSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-     
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(ViewModels.AdminViewModels.RoomViewModelAd model, IFormFile image)
         {
             try
             {
-                // Check if a room with this number already exists in this hotel
                 if (roomRepository.RoomNumberExists(model.HotelId, model.RoomNumber))
                 {
                     return Json(new { success = false, message = "This room number already exists in this hotel" });
@@ -346,15 +348,11 @@ namespace HotelsBookingSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int id, ViewModels.AdminViewModels.RoomViewModelAd model, IFormFile image)
         {
             try
             {
-                // Check if another room has this number (excluding the current room)
-                if (roomRepository.RoomNumberExists(model.HotelId, model.RoomNumber, id))
-                {
-                    return Json(new { success = false, message = "This room number already exists in this hotel" });
-                }
 
                 ModelState.Remove("image");
                 if (!ModelState.IsValid)
@@ -376,6 +374,7 @@ namespace HotelsBookingSystem.Controllers
                 }
 
                 room.Type = model.Type;
+                room.HotelId = model.HotelId;
                 room.RoomNumber = model.RoomNumber;
                 room.PricePerNight = model.PricePerNight;
                 room.NumberOfBeds = model.NumberOfBeds;
@@ -386,7 +385,7 @@ namespace HotelsBookingSystem.Controllers
                 if (image != null && image.Length > 0)
                 {
                     string uploadsPhoto = Path.Combine(webHostEnvironment.WebRootPath, "images", "Rooms");
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName); // Generate unique filename
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName); //
                     string filePath = Path.Combine(uploadsPhoto, fileName);
 
                     // Make sure directory exists
@@ -426,6 +425,7 @@ namespace HotelsBookingSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             try
@@ -450,6 +450,7 @@ namespace HotelsBookingSystem.Controllers
 
        
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult CheckRoomNumber(int hotelId, int roomNumber, int? roomId = null)
         {
             bool exists =  roomRepository.RoomNumberExists(hotelId, roomNumber, roomId);

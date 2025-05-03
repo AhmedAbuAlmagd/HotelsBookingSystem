@@ -1,0 +1,404 @@
+﻿/* Add this to your site's CSS file */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #f8f9fc;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+    .table thead {
+        background-color: #11192a;
+        color: white;
+    }
+
+    .table th {
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 500;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+    .table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e9ecef;
+        font-size: 14px;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f1f4f9;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+/* Status styling */
+.status-confirmed {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.status-pending {
+    color: #ffc107;
+    font-weight: 500;
+}
+
+.status-cancelled {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Add a container for the table */
+.table-container {
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+}
+/* Dashboard Layout */
+.bookings-dashboard {
+    padding: 0 20px 30px;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.dashboard-header {
+    margin-bottom: 25px;
+}
+
+    .dashboard-header h1 {
+        color: #11192a;
+        font-size: 28px;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+.dashboard-subtitle {
+    color: #6c757d;
+    font-size: 14px;
+    margin-top: 0;
+}
+
+/* Filter styles */
+.filter-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+}
+
+.filter-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+    color: #11192a;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+    .filter-header i {
+        margin-right: 8px;
+        color: #f9a825;
+    }
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 200px;
+}
+
+    .filter-group label {
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: #495057;
+        font-weight: 500;
+    }
+
+.select-wrapper {
+    position: relative;
+}
+
+    .select-wrapper i {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        pointer-events: none;
+    }
+
+.filter-select {
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+    appearance: none;
+    background-color: white;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+.filter-input {
+    padding: 10px 12px 10px 38px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+}
+
+.date-group, .price-group {
+    flex: 2;
+}
+
+.date-inputs, .price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-input-wrapper, .price-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.date-separator, .price-separator {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.filter-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+    .filter-btn.apply {
+        background-color: #f9a825;
+        color: white;
+    }
+
+    .filter-btn.reset {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .filter-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+/* Table styles */
+.table-wrapper {
+    /* background-color: white; */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.table {
+    width: 90%;
+    align-items: center;
+    border-collapse: collapse;
+    margin: auto;
+    background-color: white;
+}
+
+    .table thead {
+        background-color: #11192a;
+        color: white;
+    }
+
+    .table th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 500;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table td {
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+/* Status styling */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-confirmed {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.status-pending {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.status-cancelled {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.guests-badge, .price-value, .hotel-name, .client-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+    .guests-badge i, .price-value i, .hotel-name i, .client-name i {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+
+/* Responsive adjustments */
+ @media (max-width: 992px) { 
+     .filter-group, .date-group, .price-group 
+
+ { 
+     min-width: 100%; 
+ } 
+
+ .filter-buttons { 
+     margin-top: 15px; 
+     width: 100%; 
+ } 
+
+ .filter-btn { 
+     flex: 1; 
+     justify-content: center; 
+ } 
+
+ } 
+
+/* Button styles matching your orange logout button */
+.action-btn {
+    background-color: #f9a825;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .action-btn:hover {
+        background-color: #f57f17;
+    }
+
+
+/* Pagination */
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.page-item {
+    margin: 0 3px;
+}
+
+.page-link {
+    display: block;
+    padding: 8px 12px;
+    background-color: white;
+    color: #11192a;
+    text-decoration: none;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.page-item:not(.disabled):hover .page-link {
+    background-color: #f1f4f9;
+    border-color: #f9a825;
+    color: #f9a825;
+}
+
+.page-item.active .page-link {
+    background-color: #f9a825;
+    border-color: #f9a825;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}

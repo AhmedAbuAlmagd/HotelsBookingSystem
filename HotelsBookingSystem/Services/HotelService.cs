@@ -21,23 +21,57 @@ namespace HotelsBookingSystem.Services
             return hotels.Select(h => MapToViewModel(h)).ToList();
         }
 
-        public int GetTotalHotelsCount()
+        public int GetTotalHotelsCount(string searchTerm, string status, string city)
         {
-            return _hotelRepository.GetHotelsWithRoomsAndImages().Count();
+            var query = _hotelRepository.GetHotelsWithRoomsAndImages().AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(h => h.Name.Contains(searchTerm));
+            }
+
+            if (!string.IsNullOrEmpty(status) && status.ToLower() != "all")
+            {
+                query = query.Where(h => h.Status.ToLower() == status.ToLower());
+            }
+
+            if (!string.IsNullOrEmpty(city) && city.ToLower() != "all")
+            {
+                query = query.Where(h => h.City.ToLower() == city.ToLower());
+            }
+
+            return query.Count();
         }
-        public List<HotelViewModel> GetHotelsPaged(int pageNumber, int pageSize)
+        public List<HotelViewModel> GetHotelsPaged(int pageNumber, int pageSize, string searchTerm, string status, string city)
         {
             if (pageNumber < 1) 
                 pageNumber = 1;
 
-            var hotels = _hotelRepository.GetHotelsWithRoomsAndImages()
-                .OrderBy(h => h.Id)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+            var query = _hotelRepository.GetHotelsWithRoomsAndImages().Where(x => x.Status == "Active").AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(h => h.Name.Contains(searchTerm));
+            }
+
+            if (!string.IsNullOrEmpty(status) && status.ToLower() != "all")
+            {
+                query = query.Where(h => h.Status.ToLower() == status.ToLower());
+            }
+
+            if (!string.IsNullOrEmpty(city) && city.ToLower() != "all")
+            {
+                query = query.Where(h => h.City.ToLower() == city.ToLower());
+            }
+
+
+            var hotels = query.OrderBy(h => h.Id)
+                              .Skip((pageNumber - 1) * pageSize)
+                              .Take(pageSize).ToList();
 
             return hotels.Select(h => MapToViewModel(h)).ToList();
         }
+
         public HotelViewModel MapToViewModel(Hotel hotel)
         {
             return new HotelViewModel
@@ -48,6 +82,7 @@ namespace HotelsBookingSystem.Services
                 Description = hotel.Description,
                 ImageUrl = hotel.HotelImages.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
                 Rating = (Double)hotel.rating,
+                City = hotel.City,  
                 RoomCount = hotel.Rooms?.Count ?? 0,
                 Status = hotel.Status,
                 Longitude =Double.Parse(hotel.Longitude),

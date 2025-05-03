@@ -35,7 +35,7 @@ namespace HotelsBookingSystem.Controllers
 
                 foreach (var error in errors)
                 {
-                    ModelState.AddModelError(string.Empty, error);
+                    ModelState.AddModelError("", error);
                 }
             }
 
@@ -57,7 +57,6 @@ namespace HotelsBookingSystem.Controllers
                 var result = await accountService.LoginAsync(userVm);
                 if (result.Succeeded)
                 {
-                    Response.Cookies.Append("id", result.User.Id);
                     return result.IsAdmin ? RedirectToAction("Dashboard", "Admin")
                                           : RedirectToAction("Index", "Home");
                 }

@@ -1,12 +1,4 @@
-﻿body {
-    font-family: 'Nunito', sans-serif;
-    background-color: #f4f7fc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-}
+﻿
 
 .background-container {
     background: #ffffff;
@@ -15,6 +7,8 @@
     padding: 30px;
     max-width: 500px;
     width: 100%;
+    margin : auto;
+    margin-top:200px;
 }
 
 .form-container {
@@ -48,18 +42,13 @@
     transition: border 0.3s ease;
 }
 
-    .form-control:focus {
-        border-color: #4CAF50;
-        box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
-    }
-
 .text-danger {
     font-size: 12px;
     margin-top: 5px;
 }
 
 .btn-submit {
-    background-color: #4CAF50;
+    background-color: #f9a825;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -70,10 +59,12 @@
     transition: background-color 0.3s ease;
 }
 
-    .btn-submit:hover {
-        background-color: #45a049;
-    }
-
     .btn-submit:focus {
         outline: none;
     }
+
+
+.text-danger {
+    color: red;
+    font-size : 16px;
+}

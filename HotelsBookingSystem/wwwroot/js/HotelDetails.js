@@ -68,8 +68,14 @@
             validationSpan.textContent = message;
             validationSpan.style.display = 'block';
         } else {
-            // If validation span doesn't exist, show alert
-            alert(`${inputElement.id}: ${message}`);
+            // If validation span doesn't exist, create one
+            const parent = inputElement.parentElement;
+            const span = document.createElement('span');
+            span.id = inputElement.id + 'Validation';
+            span.className = 'validation-message text-danger';
+            span.textContent = message;
+            span.style.display = 'block';
+            parent.appendChild(span);
         }
     }
 
@@ -261,6 +267,22 @@
             if (!image.files || image.files.length === 0) {
                 showError(image, 'Room image is required');
                 isValid = false;
+            } else {
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                const fileType = image.files[0].type;
+
+                if (!allowedTypes.includes(fileType)) {
+                    showError(image, 'Only JPG, PNG and GIF images are allowed');
+                    isValid = false;
+                }
+
+                // Validate file size (max 5MB)
+                const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                if (image.files[0].size > maxSize) {
+                    showError(image, 'Image must be less than 5MB');
+                    isValid = false;
+                }
             }
         }
 
@@ -305,29 +327,6 @@
         } else if (price.value > 10000) {
             showError(price, 'Price cannot exceed $10,000');
             isValid = false;
-        }
-        const image = document.getElementById('image');
-        const isNewRoom = document.getElementById('roomId').value === '0';
-
-        if (isNewRoom && (!image.files || image.files.length === 0)) {
-            showError(image, 'Room image is required');
-            isValid = false;
-        } else if (image.files && image.files.length > 0) {
-            // Validate file type
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-            const fileType = image.files[0].type;
-
-            if (!allowedTypes.includes(fileType)) {
-                showError(image, 'Only JPG, PNG and GIF images are allowed');
-                isValid = false;
-            }
-
-            // Validate file size (max 5MB)
-            const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-            if (image.files[0].size > maxSize) {
-                showError(image, 'Image must be less than 5MB');
-                isValid = false;
-            }
         }
 
         return isValid;
@@ -446,7 +445,7 @@
             .then(data => {
                 if (data.success) {
                     closeAllModals();
-                    // Reload with active tab parameter
+                    // Force a full page reload
                     window.location.href = updateUrlWithActiveTab(window.location.href, 'rooms');
                 } else {
                     throw new Error(data.message || 'Failed to save room');
@@ -481,23 +480,42 @@
             submitButton.textContent = 'Saving...';
         }
 
+        // Log what we're sending (for debugging)
+        console.log("Service form data:");
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
         fetch(url, {
             method: 'POST',
             body: formData,
             headers: { 'RequestVerificationToken': token }
         })
             .then(response => {
-                if (!response.ok) {
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.message || 'Server error');
-                    });
-                }
-                return response.json();
+                // First log the raw response for debugging
+                return response.text().then(text => {
+                    console.log("Raw server response:", text);
+
+                    // Now try to parse as JSON if possible
+                    try {
+                        const data = JSON.parse(text);
+                        if (!response.ok) {
+                            throw new Error(data.message || 'Server error');
+                        }
+                        return data;
+                    } catch (e) {
+                        // If can't parse as JSON, handle the error
+                        if (!response.ok) {
+                            throw new Error('Server error: ' + response.status);
+                        }
+                        throw new Error('Invalid JSON response from server');
+                    }
+                });
             })
             .then(data => {
                 if (data.success) {
                     closeAllModals();
-                    // Reload with active tab parameter
+                    // Force a full page reload
                     window.location.href = updateUrlWithActiveTab(window.location.href, 'services');
                 } else {
                     throw new Error(data.message || 'Failed to save service');
@@ -549,7 +567,7 @@
                     });
                 }
                 closeAllModals();
-                // Reload with active tab parameter
+                // Force a full page reload
                 window.location.href = updateUrlWithActiveTab(window.location.href, 'rooms');
             })
             .catch(error => {
@@ -598,7 +616,7 @@
                     });
                 }
                 closeAllModals();
-                // Reload with active tab parameter
+                // Force a full page reload
                 window.location.href = updateUrlWithActiveTab(window.location.href, 'services');
             })
             .catch(error => {

@@ -14,10 +14,19 @@ namespace HotelsBookingSystem.Repository
         public async Task<List<ApplicationUser>> GetTopClientsAsync(int count)
         {
             return await _context.Users
+                .Include(u => u.Bookings)
                 .Where(u => u.Bookings.Count() != 0)
                 .OrderByDescending(u => u.Bookings.Count)
                 .Take(count)
                 .ToListAsync();
+        }
+
+        public async Task<int> GetTotalClientsCountAsync()
+        {
+            return await _context.Users
+                           .Include(u => u.Bookings)
+                           .Where(u => u.Bookings.Count() != 0)
+                           .CountAsync();
         }
         public async Task<int> GetTotalUsersCountAsync()
         {

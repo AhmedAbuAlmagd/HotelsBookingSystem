@@ -13,7 +13,6 @@ namespace HotelsBookingSystem.Models
         [StringLength(20, MinimumLength = 6)]
         [RegularExpression(@"^[A-Za-z0-9\-]{6,20}$", ErrorMessage = "Invalid National ID format.")]
         public string? NationalId { get; set; }
-
         public virtual Cart? Cart { get; set; }
         public virtual List<Review>? Reviews { get; set; } = new List<Review>();
         public virtual List<Booking>? Bookings { get; set; } = new List<Booking>();

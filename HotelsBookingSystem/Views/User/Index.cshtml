@@ -1,0 +1,221 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model List<ApplicationUser>
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    Layout = "_AdminLayout";
+
+    // Get pagination values from ViewBag
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    bool hasPreviousPage = currentPage > 1;
+    bool hasNextPage = currentPage < totalPages;
+
+    // Get filter values
+    string currentName = ViewBag.Name;
+    string currentCountry = ViewBag.Country;
+    string currentCity = ViewBag.City;
+}
+
+<link href="~/css/BookingsAd.css" rel="stylesheet" />
+
+<div class="bookings-dashboard">
+    <div class="dashboard-header mt-3">
+        <h1>Users Management</h1>
+    </div>
+
+    <div class="filter-container">
+        <div class="filter-header">
+            <i class="fas fa-filter"></i>
+            <span>Filter Users</span>
+        </div>
+        <form asp-action="Index" method="get" class="filter-form">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Name</label>
+                    <div class="input-wrapper">
+                        <i class="input-icon fas fa-user"></i>
+                        <input type="text" name="name" class="filter-input" placeholder="Search by name..." value="@currentName">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Country</label>
+                    <div class="input-wrapper">
+                        <i class="input-icon fas fa-globe"></i>
+                        <input type="text" name="country" class="filter-input" placeholder="Search by country..." value="@currentCountry">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>City</label>
+                    <div class="input-wrapper">
+                        <i class="input-icon fas fa-city"></i>
+                        <input type="text" name="city" class="filter-input" placeholder="Search by city..." value="@currentCity">
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button type="submit" class="filter-btn apply">
+                        <i class="fas fa-search"></i>Apply Filters
+                    </button>
+                    <a href="@Url.Action("Index")" class="filter-btn reset" style="text-decoration:none">
+                        <i class="fas fa-undo"></i>Reset
+                    </a>
+                </div>
+            </div>
+            <input type="hidden" name="page" value="1" />
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Location</th>
+                    <th>Bookings</th>
+                    <th>Current Role</th>
+                    <th style="width: 180px;">Change Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td class="client-name">
+                            <i class="fas fa-user"></i>
+                            @user.FullName
+                        </td>
+                        <td>@user.Email</td>
+                        <td>@user.City, @user.Country</td>
+                        <td>@user.Bookings.Count()</td>
+                        <td>
+                            @{
+                                var userRoles = await UserManager.GetRolesAsync(user);
+                                var role = userRoles.FirstOrDefault() ?? "User";
+                            }
+                            <span class="status-badge @(role == "Admin" ? "status-confirmed" : "status-pending")">
+                                @role
+                            </span>
+                        </td>
+                        <td>
+                            <form asp-controller="Roles" asp-action="ChangeRole" asp-route-id="@user.Id" method="post" style="display: flex; align-items: center; gap: 5px;">
+                                <select name="role" class="filter-select" style="flex: 1; min-width: 100px;">
+                                    
+
+                                    @foreach(var Role in ViewBag.Roles)
+                                    {
+                                        if(role == Role.ToString())
+                                        {
+                                            <option value="@Role" selected>@Role</option>
+
+                                        }
+                                        else
+                                        {
+                                            <option value="@Role">@Role</option>
+
+                                        }
+                                    }
+                                </select>
+                                <button type="submit" class="action-btn">
+                                    <i class="fas fa-user-shield"></i> Update
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination container -->
+    <div class="pagination-container">
+        <ul class="pagination">
+            @if (hasPreviousPage)
+            {
+                <li class="page-item">
+                    <a asp-action="Index"
+                       asp-route-page="@(currentPage - 1)"
+                       asp-route-name="@currentName"
+                       asp-route-country="@currentCountry"
+                       asp-route-city="@currentCity"
+                       class="page-link">Previous</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            }
+
+            @for (var i = 1; i <= totalPages; i++)
+            {
+                if (i == currentPage)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-name="@currentName"
+                           asp-route-country="@currentCountry"
+                           asp-route-city="@currentCity"
+                           class="page-link">@i</a>
+                    </li>
+                }
+            }
+
+            @if (hasNextPage)
+            {
+                <li class="page-item">
+                    <a asp-action="Index"
+                       asp-route-page="@(currentPage + 1)"
+                       asp-route-name="@currentName"
+                       asp-route-country="@currentCountry"
+                       asp-route-city="@currentCity"
+                       class="page-link">Next</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+<style>
+    /* Additional style for the roles dropdown and button */
+    .action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-weight: 500;
+    }
+
+    /* Fix input and select styles */
+    select.filter-select {
+        height: 38px;
+    }
+
+    .filter-select, .filter-input {
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+        .filter-select:focus, .filter-input:focus {
+            border-color: #f9a825;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(249, 168, 37, 0.25);
+        }
+</style>

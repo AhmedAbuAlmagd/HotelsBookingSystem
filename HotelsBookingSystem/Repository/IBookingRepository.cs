@@ -1,4 +1,5 @@
 ﻿using HotelsBookingSystem.Models;
+using HotelsBookingSystem.ViewModels;
 
 namespace HotelsBookingSystem.Repository
 {
@@ -7,5 +8,9 @@ namespace HotelsBookingSystem.Repository
         Task<List<Booking>> GetAllBookingsAsync();
         Task<int> GetTotalBookingsCountAsync();
         Task<List<Booking>> GetRecentBookingsAsync(int count);
+        Task<List<Booking>> GetByFilterAsync(BookingFilterViewModel filter);
+
+        void AddBooking(Booking booking);
+
     }
 }

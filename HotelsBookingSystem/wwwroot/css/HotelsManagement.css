@@ -1,11 +1,11 @@
 ﻿.add-hotel-btn {
-    background-color: var(--primary);
+    background-color: green;
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 10px 15px;
+    padding: 10px 20px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
     display: flex;
     align-items: center;
 }
@@ -14,9 +14,6 @@
         margin-right: 5px;
     }
 
-    .add-hotel-btn:hover {
-        background-color: #095a41;
-    }
 
 .filters-section {
     display: flex;
@@ -53,7 +50,7 @@
 }
 
     .view-btn.active {
-        background-color: var(--primary);
+        background-color: green;
         color: white;
         border-color: var(--primary);
 
@@ -101,7 +98,7 @@
 }
 
     .status-badge.active {
-        background-color: var(--primary);
+        background-color: green;
     }
 
     .status-badge.inactive {
@@ -451,6 +448,12 @@ textarea.form-control {
 
    
 }
+#.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
 
 .pagination {
     display: flex;
@@ -462,18 +465,18 @@ textarea.form-control {
         margin: 0 5px;
         padding: 8px 16px;
         text-decoration: none;
-        color: #007bff;
+        color: black;
         border: 1px solid #ddd;
         border-radius: 5px;
     }
 
         .pagination a.active {
-            background-color: #007bff;
+            background-color: #f9a825;
             color: white;
         }
 
         .pagination a:hover {
-            background-color: #f1f1f1;
+            background-color: #f9a825;
         }
 
 .action-btn.view {
@@ -493,5 +496,7 @@ textarea.form-control {
     color: #0077b6;
     text-decoration: none;
 }
+
+
 
 

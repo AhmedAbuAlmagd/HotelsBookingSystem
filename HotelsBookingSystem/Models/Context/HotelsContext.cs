@@ -27,6 +27,7 @@ namespace HotelsBookingSystem.Models.Context
         public virtual DbSet<Cart> Carts { get; set; }
         public virtual DbSet<CartItem> CartItems { get; set; }
         public virtual DbSet<BookingRoom> BookingRooms { get; set; }
+        public virtual DbSet<SelectedServices> SelectedServices { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -55,6 +56,8 @@ namespace HotelsBookingSystem.Models.Context
             });
             builder.Entity<Hotel_Service>()
     .HasKey(hs => new { hs.HotelId, hs.serviceId });
+              builder.Entity<SelectedServices>()
+             .HasKey(ss => new { ss.CartId, ss.ServiceID });
 
             // Admin User
             builder.Entity<ApplicationUser>().HasData(new ApplicationUser
@@ -91,6 +94,7 @@ namespace HotelsBookingSystem.Models.Context
                 NationalId = "98765432109876"
             });
 
+  
 
             // Assign Admin Role
             builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>

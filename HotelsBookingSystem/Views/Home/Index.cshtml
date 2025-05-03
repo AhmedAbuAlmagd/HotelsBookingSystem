@@ -26,8 +26,10 @@
                             <div class="p-3" style="max-width: 700px;">
                                 <h6 class="section-title text-white text-uppercase mb-3 animated slideInDown">Luxury Living</h6>
                                 <h1 class="display-3 text-white mb-4 animated slideInDown">Discover A Brand Luxurious Hotel</h1>
-                                <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Our Rooms</a>
-                                <a href="" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Book A Room</a>
+                                @* <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Our Rooms</a> *@
+                            <a href="@Url.Action("Index", "Room")" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Our Rooms</a>
+
+                            <a href="" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Book A Room</a>
                             </div>
                         </div>
                     </div>
@@ -37,7 +39,9 @@
                             <div class="p-3" style="max-width: 700px;">
                                 <h6 class="section-title text-white text-uppercase mb-3 animated slideInDown">Luxury Living</h6>
                                 <h1 class="display-3 text-white mb-4 animated slideInDown">Discover A Brand Luxurious Hotel</h1>
-                                <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Our Rooms</a>
+      
+                                <a href="@Url.Action("Index", "Room")" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Our Rooms</a>
+
                                 <a href="" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Book A Room</a>
                             </div>
                         </div>
@@ -188,7 +192,7 @@
                                 <div class="position-relative">
                                     @if (room.RoomImages != null && room.RoomImages.Count > 0)
                                     {
-                                        <img class="img-fluid" src="@room.RoomImages.FirstOrDefault()?.ImageUrl" alt="Room Image">
+                                        <img class="img-fluid" src="/images/@room.RoomImages.FirstOrDefault()?.ImageUrl" height="150px" width="100%" alt="Room Image">
                                     }
                                     else
                                     {
@@ -218,7 +222,9 @@
                                     <p class="text-body mb-3">@room.Description</p>
                                     <div class="d-flex justify-content-between">
                                         <a class="btn btn-sm btn-primary rounded py-2 px-4" href="/Room/Detail/@room.Id">View Detail</a>
-                                        <a class="btn btn-sm btn-dark rounded py-2 px-4" href="/Room/Book/@room.Id">Book Now</a>
+                                        <a class="btn btn-sm btn-dark rounded py-2 px-4" href="@Url.Action("AddToCart", "Cart", new { roomId = room.Id, checkIn = DateTime.Now, checkOut = DateTime.Now.AddDays(1) })">
+                                            Add To Cart
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -386,10 +392,11 @@
             <div class="row g-4">
                 @foreach (var hotel in ViewBag.TopRatedHotels)
                 {
+                   
                     <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                         <div class="rounded shadow overflow-hidden">
                             <div class="position-relative">
-                                <img class="img-fluid" src="@hotel.ImageUrl" alt="@hotel.Name">
+                            <img class="img-fluid" src="/images/@hotel.ImageUrl" height="150px" width="100%" alt="@hotel.Name">
                             </div>
                             <div class="text-center p-4 mt-3">
                                 <h5 class="fw-bold mb-1">@hotel.Name</h5>

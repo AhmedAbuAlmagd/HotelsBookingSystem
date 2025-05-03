@@ -11,7 +11,7 @@ namespace HotelsBookingSystem.Services
         void AddHotel(HotelFormViewModel model);
         void UpdateHotel(int id, HotelFormViewModel model);
         void DeleteHotel(int id);
-        int GetTotalHotelsCount();
-        List<HotelViewModel> GetHotelsPaged(int pageNumber, int pageSize);
+        int GetTotalHotelsCount(string searchTerm, string status, string city);
+        List<HotelViewModel> GetHotelsPaged(int pageNumber, int pageSize ,  string  searchTerm , string  status , string city);
     }
 }
