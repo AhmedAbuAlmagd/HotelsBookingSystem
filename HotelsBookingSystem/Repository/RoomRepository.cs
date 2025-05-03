@@ -124,7 +124,17 @@ namespace HotelsBookingSystem.Repository
         }
 
         #endregion
-
+        //public List<Room> GetAllroom()
+        //{
+        //    var rooms = _context.Rooms
+        //       .Where(r => r.Status == "available")
+        //       .Include(r => r.Hotel)
+        //       .Include(r => r.RoomImages)
+        //       .Include(r => r.BookingRooms)
+        //       .ThenInclude(r => r.booking)
+        //      .ToList();
+        //    return rooms;
+        //}
 
         #region Admin
         public async Task<List<Room>> GetAllRoomsAsync()
