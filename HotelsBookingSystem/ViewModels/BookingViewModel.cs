@@ -13,6 +13,15 @@
         public int HotelId { get; set; }
         public string UserId { get; set; }
 
+           
+            public int TotalNights => (CheckOut.HasValue && CheckIn.HasValue)
+                ? (CheckOut.Value - CheckIn.Value).Days
+                : 0;
+            public int TotalRooms { get; set; }
+            public decimal TotalAmount { get; set; }
+            public List<int> SelectedServiceIds { get; set; }
+        
+
 
 
 
