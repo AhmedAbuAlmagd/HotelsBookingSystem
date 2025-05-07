@@ -40,7 +40,7 @@ namespace HotelsBookingSystem.Controllers
 
         public IActionResult Index(int page = 1, string searchTerm = "", string status = "", string city = "")
         {
-            const int pageSize = 8;
+            const int pageSize = 6;
             status = string.IsNullOrWhiteSpace(status) ? null : status;
             city = string.IsNullOrWhiteSpace(city) ? null : city;
             searchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null : searchTerm;
