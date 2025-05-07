@@ -1,95 +1,110 @@
-﻿
-@model List<HotelsBookingSystem.ViewModels.HotelModelView>
+﻿@model HotelsBookingSystem.ViewModels.AdminViewModels.HotelsManagementViewModel
+
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = "Hotels Management";
 }
-<div class="container mt-4">
-    @foreach (var hotel in Model)
-    {
-        <div class="card mb-5 shadow">
-            <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">@hotel.Name</h2>
-                <p class="mb-0">@hotel.Address, @hotel.City</p>
-            </div>
 
-            <div class="card-body">
-                <p class="card-text">@hotel.Description</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
 
-              
-                <h3 class="mt-4">Hotel Images</h3>
-                <div id="hotelCarousel-@hotel.Id" class="carousel slide mb-4" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @for (int i = 0; i < hotel.HotelImages.Count; i++)
-                        {
-                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                <img src="/images/@hotel.HotelImages[i]" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="Hotel Image">
-                            </div>
-                        }
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#hotelCarousel-@hotel.Id" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#hotelCarousel-@hotel.Id" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
+    @* <link rel="stylesheet" href="@Url.Content("~/css/HotelsManage.css")" /> *@
+    @* <link rel="stylesheet" href="@Url.Content("~/css/HotelsManagement.css")" /> *@
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
 
-              @*   <!-- Rooms Section -->
-                <h3 class="mt-4">Available Rooms</h3>
-                <div class="row">
-                    @foreach (var room in hotel.hotelRooms)
-                    {
-                        <div class="col-md-6 mb-4">
-                            <div class="card h-100">
-                                <div class="card-header bg-secondary text-white">
-                                    <h4 class="mb-0">@room.Type</h4>
-                                </div>
-
-                                <!-- Room Images Carousel -->
-                                <div id="roomCarousel-@room.Id" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        @for (int i = 0; i < room.RoomImages.Count; i++)
-                                        {
-                                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                                <img src="@room.RoomImages[i].ImageUrl" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Room Image">
-                                            </div>
-                                        }
-                                    </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel-@room.Id" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel-@room.Id" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                </div>
-
-                                <div class="card-body">
-                                    <p class="card-text"><strong>Room ID:</strong> @room.Id</p>
-                                    <!-- Add more room details as needed -->
-                        </div>    *@     
-                            <a asp-action="ViewRooms" asp-route-hotelId="@hotel.Id" class="btn btn-outline-primary mt-3">View Rooms</a>
-                <a asp-action="Services" asp-route-hotelId="@hotel.Id" class="btn btn-outline-success mt-3">View Services</a>
-
-
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
+    <div class="container my-4">
+        <!-- Header -->
+        <div class="text-center my-5">
+            <h6 class="text-primary text-uppercase">Our Hotels</h6>
+            <h1 class="mb-3">Explore Our <span class="text-primary">Hotels</span></h1>
         </div>
-    }
-</div>
 
+        <!-- Filters -->
+        <form class="row g-3 mb-4" id="filterForm" method="get" action="@Url.Action("Index", "Hotel")">
+            <div class="col-md-5">
+                <input type="text" id="hotelSearch" name="searchTerm" class="form-control" placeholder="Search hotels..." value="@ViewBag.CurrentSearchTerm" />
+            </div>
+            <div class="col-md-4">
+                <select id="cityFilter" name="city" class="form-select">
+                    <option value="">All Cities</option>
+                    @foreach (var cityOption in Model.Hotels.Select(x => x.City).Distinct())
+                    {
+                        if (ViewBag.CurrentCity == cityOption)
+                        {
+                            <option value="@cityOption" selected>@cityOption</option>
+                        }
+                        else
+                        {
+                            <option value="@cityOption">@cityOption</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-warning w-100"><i class="fas fa-search"></i> Filter</button>
+                <a href="@Url.Action("Index", "Hotel")" class="btn btn-secondary w-100"><i class="fas fa-undo"></i> Clear</a>
+            </div>
+        </form>
 
-    <script>
-     
-        document.querySelectorAll('.carousel').forEach(carousel => {
-            new bootstrap.Carousel(carousel, {
-                interval: 3000, 
-                pause: 'hover'
-        });
-    </script>
+        <!-- Hotels Grid -->
+        <div class="row">
+            @foreach (var hotel in Model.Hotels)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@hotel.ImageUrl" class="card-img-top" alt="@hotel.Name" style="height: 200px; object-fit: cover;" />
+                        <div class="card-body">
+                            <h5 class="card-title">@hotel.Name</h5>
+                            <p class="card-text text-muted"><i class="fas fa-map-marker-alt"></i> @hotel.Location, @hotel.City</p>
+                            <p class="card-text"><i class="fas fa-bed"></i> @hotel.RoomCount rooms</p>
+                            <p class="card-text"><i class="fas fa-star text-warning"></i> @hotel.Rating stars</p>
+                            <p class="card-text">
+                                @(hotel.Description?.Length > 100 ? hotel.Description.Substring(0, 100) + "..." : hotel.Description)
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white border-0 text-center">
+                            <a asp-action="Index" asp-controller="Room" asp-route-hotelId="@hotel.Id"
+                               class="btn btn-warning w-100 text-white" style="background-color : #FEA116 ; width : 100%">
+                                View Rooms
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", "Hotel", new { page = Model.CurrentPage - 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity })">Previous</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", "Hotel", new { page = i, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity })">@i</a>
+                    </li>
+                }
+
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", "Hotel", new { page = Model.CurrentPage + 1, searchTerm = ViewBag.CurrentSearchTerm, city = ViewBag.CurrentCity })">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

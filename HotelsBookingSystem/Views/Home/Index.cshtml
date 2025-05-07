@@ -192,7 +192,7 @@
                                 <div class="position-relative">
                                     @if (room.RoomImages != null && room.RoomImages.Count > 0)
                                     {
-                                        <img class="img-fluid" src="/images/@room.RoomImages.FirstOrDefault()?.ImageUrl" height="150px" width="100%" alt="Room Image">
+                                        <img class="img-fluid" src="@room.RoomImages.FirstOrDefault()?.ImageUrl" height="150px" width="100%" alt="Room Image">
                                     }
                                     else
                                     {
@@ -396,7 +396,7 @@
                     <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                         <div class="rounded shadow overflow-hidden">
                             <div class="position-relative">
-                            <img class="img-fluid" src="/images/@hotel.ImageUrl" height="150px" width="100%" alt="@hotel.Name">
+                            <img class="img-fluid" src="@hotel.ImageUrl" height="150px" width="100%" alt="@hotel.Name">
                             </div>
                             <div class="text-center p-4 mt-3">
                                 <h5 class="fw-bold mb-1">@hotel.Name</h5>

@@ -37,52 +37,47 @@ namespace HotelsBookingSystem.Controllers
              Hotel hotel = new Hotel();
             return View("AddHolelForm",hotel);
         }
-        //public IActionResult Index()
-        //{
-        //    var hotels =hotelRepository.GetHotelsWithRoomsAndImages();
 
-        //    var hotelViewModels = hotels.Select(h => new HotelModelView
-        //    {
-        //        Id = h.Id,
-        //        Name = h.Name,
-        //        Address = h.Address,
-        //        Phone = h.Phone,
-        //        City = h.City,
-        //        Latitude = h.Latitude,
-        //        Longitude = h.Longitude,
-        //        Description = h.Description,
-        //        Status = h.Status,
-        //        HotelImages = h.HotelImages.Select(img => img.ImageUrl).ToList(),
-        //        hotelRooms = h.Rooms.ToList(),
-        //        roomimages = h.Rooms
-        //                        .SelectMany(r => r.RoomImages)
-        //                        .Select(img => img.ImageUrl)
-        //                        .ToList()
-        //    }).ToList();
-
-        //    return View("AllHotels", hotelViewModels);
-        //}
-
-
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, string searchTerm = "", string status = "", string city = "")
         {
-            var hotels = hotelRepository.GetHotelsWithRoomsAndImages(); 
-            var hotelViews = hotels.Select(h => new HotelModelView
+            const int pageSize = 6;
+            status = string.IsNullOrWhiteSpace(status) ? null : status;
+            city = string.IsNullOrWhiteSpace(city) ? null : city;
+            searchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null : searchTerm;
+
+            var hotels = _hotelService.GetHotelsPaged(page, pageSize, searchTerm, status, city);
+            var totalHotels = _hotelService.GetTotalHotelsCount(searchTerm, status, city);
+            var totalPages = (int)Math.Ceiling((double)totalHotels / pageSize);
+
+            ViewBag.CurrentSearchTerm = searchTerm;
+            ViewBag.CurrentStatus = status;
+            ViewBag.CurrentCity = city;
+
+            // Map your domain model to the view model
+            List<ViewModels.AdminViewModels.HotelViewModel> hotelViewModels = hotels.Select(h => new ViewModels.AdminViewModels.HotelViewModel
             {
+
                 Id = h.Id,
                 Name = h.Name,
-                Address = h.Address,
-                City = h.City,
-                Phone = h.Phone,
-                Services = h.HotelServices.Select(hs => hs.Service).ToList(),
                 Description = h.Description,
-                Latitude = h.Latitude,
-                Longitude = h.Longitude,
-                HotelImages = h.HotelImages.Select(img => img.ImageUrl).ToList()
-               
+                Location = h.Location,
+                ImageUrl = h.ImageUrl,
+                City = h.City,
+                Status = h.Status,
+                RoomCount = h.RoomCount,
+                Rating = h.Rating , 
+                Longitude = h.Longitude ,
+                Latitude = h.Latitude ,
             }).ToList();
 
-            return View("AllHotels", hotelViews);
+            var viewModel = new HotelsManagementViewModel
+            {
+                Hotels = hotelViewModels,
+                CurrentPage = page,
+                TotalPages = totalPages
+            };
+
+            return View("AllHotels", viewModel);
         }
 
         public IActionResult Services(int hotelId)

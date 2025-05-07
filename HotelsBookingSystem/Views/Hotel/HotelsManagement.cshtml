@@ -11,19 +11,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotels Management</title>
-    <link href="~/css/HotelsManage.css" rel="stylesheet" /> 
+    <link href="~/css/HotelsManage.css" rel="stylesheet" />
     <link href="~/css/HotelsManagement.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 <body>
     <div class="dashboard">
         <!-- Header Section -->
         <div class="header">
             <h1 class="title">Hotels Management</h1>
-           
+
         </div>
 
         <!-- Filters Section -->
@@ -191,6 +193,34 @@
                                   data-valmsg-for="Location" data-valmsg-replace="true"></span>
                         </div>
 
+                        <!-- Map Location -->
+                        <div class="form-group">
+                            <label>Map Location</label>
+                            <div class="form-row">
+                                <div class="form-group half">
+                                    @* <label for="Latitude">Latitude</label> *@
+                                    <input type="text" id="Latitude" name="Latitude" class="form-control"
+                                           required hidden
+                                           data-val="true" data-val-required="Latitude is required"
+                                           data-val-regex="Please enter a valid latitude"
+                                           data-val-regex-pattern="^-?([0-8]?[0-9]|90)(\.[0-9]{1,6})?$" />
+                                    <span class="text-danger field-validation-valid"
+                                          data-valmsg-for="Latitude" data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="form-group half">
+                                    @* <label for="Longitude">Longitude</label> *@
+                                    <input type="text" id="Longitude" name="Longitude" class="form-control"
+                                           required hidden
+                                           data-val="true" data-val-required="Longitude is required"
+                                           data-val-regex="Please enter a valid longitude"
+                                           data-val-regex-pattern="^-?((1?[0-7]?|[0-9]?)[0-9]|180)(\.[0-9]{1,6})?$" />
+                                    <span class="text-danger field-validation-valid"
+                                          data-valmsg-for="Longitude" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div id="locationMap" style="height: 300px; margin-top: 10px;"></div>
+                        </div>
+
                         <!-- Phone -->
                         <div class="form-group">
                             <label for="Phone">Phone</label>
@@ -294,6 +324,8 @@
             const deleteConfirmModal = document.getElementById('deleteConfirmModal');
             const formModalTitle = document.getElementById('formModalTitle');
             let currentHotelId = 0;
+            let locationMap;
+            let locationMarker;
 
             // Add Hotel button click
             document.getElementById('addHotelBtn').addEventListener('click', function() {
@@ -301,6 +333,9 @@
                 document.getElementById('hotelId').value = '0';
                 document.getElementById('hotelForm').reset();
                 openModal(hotelFormModal);
+
+                // Initialize map with default coordinates (e.g., Cairo)
+                setTimeout(initializeMap, 300, 30.0444, 31.2357);
             });
 
             // Event delegation for action buttons
@@ -340,7 +375,7 @@
                 hotelFormModal.style.display = 'none';
                 deleteConfirmModal.style.display = 'none';
             }
-       
+
             // Helper function to generate star icons based on rating
             function generateStars(rating) {
                 let stars = '';
@@ -349,6 +384,46 @@
                     stars += i <= ratingValue ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
                 }
                 return stars;
+            }
+
+            // Initialize map with coordinates
+            function initializeMap(lat, lng) {
+                // If the map already exists, remove it to prevent duplicates
+                if (locationMap) {
+                    locationMap.remove();
+                }
+
+                // Create a new map instance
+                locationMap = L.map('locationMap', {
+                    minZoom: 2,
+                    maxZoom: 18
+                }).setView([lat, lng], 13);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(locationMap);
+
+                // Add a draggable marker
+                locationMarker = L.marker([lat, lng], { draggable: true }).addTo(locationMap);
+
+                // Update form fields when marker is dragged
+                locationMarker.on('dragend', function() {
+                    const position = locationMarker.getLatLng();
+                    document.getElementById('Latitude').value = position.lat.toFixed(6);
+                    document.getElementById('Longitude').value = position.lng.toFixed(6);
+                });
+
+                // Update marker position when clicking on map
+                locationMap.on('click', function(e) {
+                    locationMarker.setLatLng(e.latlng);
+                    document.getElementById('Latitude').value = e.latlng.lat.toFixed(6);
+                    document.getElementById('Longitude').value = e.latlng.lng.toFixed(6);
+                });
+
+                // Resize map after rendering to ensure proper display
+                setTimeout(function() {
+                    locationMap.invalidateSize();
+                }, 200);
             }
 
             // Load hotel details for view
@@ -360,6 +435,10 @@
                 fetch(`/Hotel/GetHotel/${hotelId}`)
                     .then(response => response.json())
                     .then(data => {
+                        // Create the details content with location coordinates
+                        const locationInfo = data.latitude && data.longitude ?
+                            `<p><i class="fa fa-map-pin"></i> Coordinates: ${data.latitude}, ${data.longitude}</p>` : '';
+
                         detailsContent.innerHTML = `
                             <div class="hotel-detail-container">
                                 <div class="hotel-detail-image">
@@ -369,6 +448,7 @@
                                     <h3>${data.name}</h3>
                                     <p class="rating">${generateStars(data.rating)}</p>
                                     <p><i class="fa fa-map-marker"></i> ${data.location}, ${data.city}</p>
+                                    ${locationInfo}
                                     <p><i class="fa fa-phone"></i> ${data.phone}</p>
                                     <p><i class="fa fa-info-circle"></i> Status: <span class="status-badge ${data.status.toLowerCase()}">${data.status}</span></p>
                                     <div class="description">
@@ -403,7 +483,16 @@
                         document.getElementById('Description').value = data.description || '';
                         document.getElementById('Rating').value = data.rating || '';
                         document.getElementById('Status').value = data.status || '';
-                        // Note: File inputs can't be pre-filled due to security restrictions
+
+                        // Set latitude and longitude values
+                        const lat = data.latitude || 30.0444;
+                        const lng = data.longitude || 31.2357;
+                        document.getElementById('Latitude').value = lat;
+                        document.getElementById('Longitude').value = lng;
+
+                        // Initialize map with hotel's coordinates
+                        setTimeout(initializeMap, 300, lat, lng);
+
                         // Make the image field not required for editing
                         document.getElementById('image').removeAttribute('required');
                     })
@@ -486,10 +575,24 @@
                 saveHotel();
             });
 
+            // Update map when coordinates are manually changed
+            document.getElementById('Latitude').addEventListener('change', updateMapFromCoordinates);
+            document.getElementById('Longitude').addEventListener('change', updateMapFromCoordinates);
+
+            function updateMapFromCoordinates() {
+                const lat = parseFloat(document.getElementById('Latitude').value);
+                const lng = parseFloat(document.getElementById('Longitude').value);
+
+                if (!isNaN(lat) && !isNaN(lng) && locationMap && locationMarker) {
+                    locationMarker.setLatLng([lat, lng]);
+                    locationMap.setView([lat, lng], 13);
+                }
+            }
+
             // Close modals when clicking outside
             window.onclick = function(event) {
-                if (event.target === hotelDetailsModal || 
-                    event.target === hotelFormModal || 
+                if (event.target === hotelDetailsModal ||
+                    event.target === hotelFormModal ||
                     event.target === deleteConfirmModal) {
                     closeAllModals();
                 }
