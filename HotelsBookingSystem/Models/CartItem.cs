@@ -10,7 +10,7 @@ namespace HotelsBookingSystem.Models
         public int? CartId { get; set; }
         public virtual Cart? Cart { get; set; }
 
-        [ForeignKey ("Room")]
+        [ForeignKey("Room")]
         public int RoomId { get; set; }
         public virtual Room Room { get; set; }
 
@@ -19,8 +19,8 @@ namespace HotelsBookingSystem.Models
 
         [NotMapped]
         public int Nights => (CheckOut - CheckIn).Days;
+        public decimal TotalPrice { get; set; }
 
-       // public virtual List<Service>? Services { get; set; } = new List<Service>();
 
     }
 }
