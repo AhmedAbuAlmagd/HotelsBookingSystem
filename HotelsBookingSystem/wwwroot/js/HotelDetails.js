@@ -1,4 +1,295 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+    let currentImageId = 0;
+    let currentImageIndex = 0;
+    const carouselItems = document.querySelectorAll('.carousel-item');
+    const totalImages = carouselItems.length;
+
+    // Initialize carousel
+    function initCarousel() {
+        if (totalImages > 0) {
+            // Hide all slides
+            carouselItems.forEach(item => item.style.display = 'none');
+
+            // Find the active slide or use first
+            let activeIndex = 0;
+            carouselItems.forEach((item, index) => {
+                if (item.classList.contains('active')) {
+                    activeIndex = index;
+                }
+            });
+
+            // Show active slide
+            currentImageIndex = activeIndex;
+            carouselItems[currentImageIndex].style.display = 'block';
+        }
+    }
+
+    // Call init on page load
+    initCarousel();
+
+    // Carousel navigation
+    document.querySelector('.carousel-control.prev')?.addEventListener('click', function () {
+        if (totalImages > 0) {
+            currentImageIndex = (currentImageIndex - 1 + totalImages) % totalImages;
+            updateCarousel();
+        }
+    });
+
+    document.querySelector('.carousel-control.next')?.addEventListener('click', function () {
+        if (totalImages > 0) {
+            currentImageIndex = (currentImageIndex + 1) % totalImages;
+            updateCarousel();
+        }
+    });
+
+    function updateCarousel() {
+        carouselItems.forEach(item => item.style.display = 'none');
+        carouselItems[currentImageIndex].style.display = 'block';
+    }
+
+    // Add Hotel Image button
+    document.getElementById('addHotelImageBtn')?.addEventListener('click', function () {
+        document.getElementById('hotelImageModalTitle').textContent = 'Add Hotel Image';
+        document.getElementById('imageId').value = '0';
+        document.getElementById('hotelImageForm').reset();
+        openModal(document.getElementById('hotelImageModal'));
+    });
+
+    // Set image as primary
+    document.querySelectorAll('.image-action-btn.set-primary').forEach(button => {
+        button.addEventListener('click', function () {
+            const imageId = this.getAttribute('data-id');
+            setImageAsPrimary(imageId);
+        });
+    });
+
+    // Edit hotel image
+    document.querySelectorAll('.image-action-btn.edit-image').forEach(button => {
+        button.addEventListener('click', function () {
+            const imageId = this.getAttribute('data-id');
+            loadImageForEdit(imageId);
+        });
+    });
+
+    // Delete hotel image
+    document.querySelectorAll('.image-action-btn.delete-image').forEach(button => {
+        button.addEventListener('click', function () {
+            currentImageId = this.getAttribute('data-id');
+            openModal(document.getElementById('deleteImageConfirmModal'));
+        });
+    });
+
+    // Confirm delete image
+    document.getElementById('confirmDeleteImageBtn')?.addEventListener('click', function () {
+        if (currentImageId) deleteHotelImage(currentImageId);
+    });
+
+    // Hotel image form submission
+    document.getElementById('hotelImageForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (validateImageForm()) {
+            saveHotelImage();
+        }
+    });
+
+    // Validate hotel image form
+    function validateImageForm() {
+        let isValid = true;
+
+        // Reset validation
+        document.querySelectorAll('#hotelImageForm .validation-message').forEach(el => {
+            el.textContent = '';
+            el.style.display = 'none';
+        });
+
+        // Validate Image (only for new images)
+        if (document.getElementById('imageId').value === '0') {
+            const imageInput = document.getElementById('hotelImage');
+            if (!imageInput.files || imageInput.files.length === 0) {
+                showError(imageInput, 'Hotel image is required');
+                isValid = false;
+            } else {
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                const fileType = imageInput.files[0].type;
+
+                if (!allowedTypes.includes(fileType)) {
+                    showError(imageInput, 'Only JPG, PNG and GIF images are allowed');
+                    isValid = false;
+                }
+
+                // Validate file size (max 5MB)
+                const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                if (imageInput.files[0].size > maxSize) {
+                    showError(imageInput, 'Image must be less than 5MB');
+                    isValid = false;
+                }
+            }
+        }
+
+        return isValid;
+    }
+
+    // Load image for editing
+    function loadImageForEdit(imageId) {
+        document.getElementById('hotelImageModalTitle').textContent = 'Edit Hotel Image';
+        document.getElementById('imageId').value = imageId;
+        document.getElementById('hotelImageForm').reset();
+        openModal(document.getElementById('hotelImageModal'));
+
+        const formFields = document.querySelectorAll('#hotelImageForm input');
+        formFields.forEach(field => field.disabled = true);
+
+        // Need to implement a backend endpoint to get image details
+        fetch(`/HotelImage/GetImage/${imageId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                formFields.forEach(field => field.disabled = false);
+                document.getElementById('hotelImage').required = false; // Image optional on edit
+                document.getElementById('isPrimary').checked = data.isPrimary || false;
+                document.getElementById('caption').value = data.caption || '';
+            })
+            .catch(error => {
+                alert('Failed to load image data: ' + error.message);
+                formFields.forEach(field => field.disabled = false);
+                closeAllModals();
+            });
+    }
+
+    // Save hotel image
+    function saveHotelImage() {
+        const form = document.getElementById('hotelImageForm');
+        const formData = new FormData(form);
+        const imageId = document.getElementById('imageId').value;
+        const url = imageId === "0" ? "/HotelImage/Create" : `/HotelImage/Update/${imageId}`;
+
+        // Get token
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        // Show loading state
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Saving...';
+        }
+
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: { 'RequestVerificationToken': token }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || 'Server error');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    closeAllModals();
+                    // Force a full page reload
+                    window.location.href = updateUrlWithActiveTab(window.location.href, 'hotel-info');
+                } else {
+                    throw new Error(data.message || 'Failed to save image');
+                }
+            })
+            .catch(error => {
+                console.error('Save image error:', error);
+                alert('Error: ' + error.message);
+
+                // Reset submit button
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Save Image';
+                }
+            });
+    }
+
+    // Set image as primary
+    function setImageAsPrimary(imageId) {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        if (!token) {
+            alert('Security token not found.');
+            return;
+        }
+
+        fetch(`/HotelImage/SetAsPrimary/${imageId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Unknown error');
+                    });
+                }
+                // Reload the page to show updated primary image
+                window.location.href = updateUrlWithActiveTab(window.location.href, 'hotel-info');
+            })
+            .catch(error => {
+                console.error('Set primary image error:', error);
+                alert('Error: ' + error.message);
+            });
+    }
+
+    // Delete hotel image
+    function deleteHotelImage(imageId) {
+        if (!imageId) {
+            alert('No image selected for deletion');
+            return;
+        }
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        if (!token) {
+            alert('Security token not found.');
+            return;
+        }
+
+        // Show loading state
+        const deleteBtn = document.getElementById('confirmDeleteImageBtn');
+        if (deleteBtn) {
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = 'Deleting...';
+        }
+
+        fetch(`/HotelImage/Delete/${imageId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Unknown error');
+                    });
+                }
+                closeAllModals();
+                // Force a full page reload
+                window.location.href = updateUrlWithActiveTab(window.location.href, 'hotel-info');
+            })
+            .catch(error => {
+                console.error('Delete image error:', error);
+                alert('Error: ' + error.message);
+
+                // Reset delete button
+                if (deleteBtn) {
+                    deleteBtn.disabled = false;
+                    deleteBtn.textContent = 'Delete';
+                }
+            });
+    }
     let currentRoomId = 0;
     let currentServiceId = 0;
 
@@ -638,3 +929,9 @@
         return urlObj.toString();
     }
 });
+
+
+
+// Add this code to your HotelDetails.js file after the document.addEventListener('DOMContentLoaded', function () { line
+
+// Hotel Image Carousel Variables

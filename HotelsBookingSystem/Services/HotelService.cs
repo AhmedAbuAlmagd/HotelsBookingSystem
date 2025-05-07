@@ -81,6 +81,7 @@ namespace HotelsBookingSystem.Services
                 Location = hotel.Address,
                 Description = hotel.Description,
                 ImageUrl = hotel.HotelImages.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
+                AllImages = hotel.HotelImages.Select(img => img.ImageUrl).ToList(), 
                 Rating = (Double)hotel.rating,
                 City = hotel.City,  
                 RoomCount = hotel.Rooms?.Count ?? 0,

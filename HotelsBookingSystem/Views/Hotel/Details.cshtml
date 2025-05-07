@@ -32,23 +32,117 @@
             <!-- Hotel Info Tab -->
             <div id="hotel-info" class="tab-content active">
                 <div class="hotel-detail-wrapper">
-                    <img src="@Model.Hotel.HotelImages.FirstOrDefault(x => x.IsPrimary == true)?.ImageUrl" alt="@Model.Hotel.Name" class="hotel-image">
+                    <!-- Hotel Images Carousel -->
+                    <div class="hotel-carousel-container">
+                        <div class="hotel-carousel">
+                            @if (Model.Hotel.HotelImages != null && Model.Hotel.HotelImages.Any())
+                            {
+                                @foreach (var image in Model.Hotel.HotelImages)
+                                {
+                                    <div class="carousel-item @(image.IsPrimary ? "active" : "")">
+                                        <img src="@image.ImageUrl" alt="@Model.Hotel.Name" class="carousel-image">
+                                        <div class="image-actions">
+                                            <button class="image-action-btn set-primary" data-id="@image.ImageId" title="Set as primary">
+                                                <i class="fa fa-star"></i>
+                                            </button>
+                                            <button class="image-action-btn edit-image" data-id="@image.ImageId" title="Edit image">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="image-action-btn delete-image" data-id="@image.ImageId" title="Delete image">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="carousel-item active">
+                                    <img src="/images/hotel-placeholder.jpg" alt="Hotel placeholder" class="carousel-image">
+                                </div>
+                            }
+                        </div>
+                        <button class="carousel-control prev">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-control next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                        <button class="add-image-btn" id="addHotelImageBtn">
+                            <i class="fa fa-plus"></i> Add Image
+                        </button>
+                    </div>
                     <div class="hotel-info">
                         <h3>@Model.Hotel.Name</h3>
                         <p>
-                            <i class="fa fa-map-marker" style="font-size:18px; color : #2980b9; margin-right: 10px;vertical-align: middle;"></i> 
+                            <i class="fa fa-map-marker" style="font-size:18px; color : #2980b9; margin-right: 10px;vertical-align: middle;"></i>
                             @Model.Hotel.Address, @Model.Hotel.City
                         </p>
-                        <p >@for (int i = 0; i < Model.Hotel.rating; i++)
+                        <p>
+                            @for (int i = 0; i < Model.Hotel.rating; i++)
                             {
                                 <i class="fa fa-star" style="font-size:18px; color : #f0c251; margin-right: 10px;vertical-align: middle;"></i>
-                            } @Model.Hotel.rating Stars</p>
+                            } @Model.Hotel.rating Stars
+                        </p>
                         <p><i class="fa fa-phone" style="font-size:18px; color: #2980b9; margin-right: 10px;vertical-align: middle;"></i> @Model.Hotel.Phone</p>
                         <p><i class="fa fa-info-circle" style="font-size:18px; color : #2980b9; margin-right: 10px;vertical-align: middle;"></i> Status: @Model.Hotel.Status</p>
                     </div>
                     <div class="hotel-description">
                         <h4>Description</h4>
                         <p>@Model.Hotel.Description</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="hotelImageModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="hotelImageModalTitle">Add Hotel Image</h2>
+                        <span class="close-modal">×</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="hotelImageForm" method="post" enctype="multipart/form-data">
+                            <input type="hidden" id="imageId" name="Id" value="0">
+                            <input type="hidden" id="hotelId" name="HotelId" value="@Model.Hotel.Id">
+
+                            <div class="form-group">
+                                <label for="hotelImage">Hotel Image</label>
+                                <input type="file" id="hotelImage" name="Image" class="form-control" required>
+                                <span id="hotelImageValidation" class="text-danger validation-message"></span>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="isPrimary" name="IsPrimary">
+                                <label for="isPrimary">Set as primary image</label>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="caption">Caption (Optional)</label>
+                                <input type="text" id="caption" name="Caption" class="form-control" maxlength="100">
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn cancel-btn" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn save-btn">Save Image</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Add delete confirmation modal for hotel images -->
+            <div id="deleteImageConfirmModal" class="modal">
+                <div class="modal-content delete-modal">
+                    <div class="modal-header">
+                        <h2>Confirm Delete Image</h2>
+                        <span class="close-modal">×</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this image? This action cannot be undone.</p>
+                        <div class="form-actions">
+                            <button type="button" class="btn cancel-btn" data-dismiss="modal">Cancel</button>
+                            <button type="button" id="confirmDeleteImageBtn" class="btn delete-btn">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
