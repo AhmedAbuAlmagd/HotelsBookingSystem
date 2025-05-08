@@ -86,9 +86,19 @@ namespace HotelsBookingSystem.Repository
 
             return await query.ToListAsync();
         }
+        public void AddBookingRoom(BookingRoom bookingRoom)
+        {
+            _context.BookingRooms.Add(bookingRoom);
+        }
+
         void IBookingRepository.AddBooking(Booking booking)
         {
             _context.Bookings.Add(booking);
         }
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

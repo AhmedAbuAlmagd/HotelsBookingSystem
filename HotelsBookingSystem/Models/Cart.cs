@@ -11,6 +11,8 @@ namespace HotelsBookingSystem.Models
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
         public virtual List<CartItem>? CartItems { get; set; }
+        public DateTime? CheckInDate { get; set; } 
+        public DateTime? CheckOutDate { get; set; } 
         public virtual List<SelectedServices>? SelectedServices { get; set; } = new List<SelectedServices>();
 
     }

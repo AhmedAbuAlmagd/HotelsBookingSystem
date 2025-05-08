@@ -19,6 +19,58 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        /* Carousel Navigation Controls */
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            padding: 10px;
+        }
+
+        /* Carousel Indicators */
+        .carousel-indicators {
+            margin-bottom: 0;
+        }
+
+            .carousel-indicators [data-bs-target] {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background-color: rgba(255, 255, 255, 0.7);
+            }
+
+        /* Carousel Images */
+        .carousel-item img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        /* Hotel Carousel Container */
+        .hotel-carousel {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .hotel-carousel .carousel-indicators {
+                bottom: 0;
+            }
+
+        /* Improved Transitions */
+        .carousel-item {
+            transition: transform 0.8s ease-in-out;
+        }
+
+        /* Fade Effect */
+        .carousel-fade .carousel-item {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+            .carousel-fade .carousel-item.active {
+                opacity: 1;
+            }
+    </style>
 </head>
 <body>
     <div class="dashboard">
@@ -111,10 +163,14 @@
                     <div class="hotel-card-footer">
                         <a href="@Url.Action("Details", "Hotel", new { id = hotel.Id })"
                            class="action-btn view btn btn-info">
-                            View Details
+                            <i class="fas fa-eye"></i> View Details
                         </a>
-                        <button class="action-btn edit" data-id="@hotel.Id">Edit</button>
-                        <button class="action-btn delete" data-id="@hotel.Id">Delete</button>
+                        <button class="action-btn edit btn btn-warning" data-id="@hotel.Id">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="action-btn delete btn btn-danger" data-id="@hotel.Id">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
                     </div>
                 </div>
             }

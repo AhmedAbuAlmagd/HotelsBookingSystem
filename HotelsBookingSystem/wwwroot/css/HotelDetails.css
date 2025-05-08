@@ -690,4 +690,138 @@
         display: block;
     }
 
+.hotel-carousel-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.hotel-carousel {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease;
+    position: relative;
+}
+
+.carousel-item {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    display: none;
+}
+
+    .carousel-item.active {
+        display: block;
+    }
+
+.carousel-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    transition: background-color 0.3s;
+}
+
+    .carousel-control:hover {
+        background-color: rgba(0,0,0,0.8);
+    }
+
+    .carousel-control.prev {
+        left: 10px;
+    }
+
+    .carousel-control.next {
+        right: 10px;
+    }
+
+.add-image-btn {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    z-index: 5;
+    transition: background-color 0.3s;
+}
+
+    .add-image-btn:hover {
+        background-color: #2980b9;
+    }
+
+.image-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.image-action-btn {
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .image-action-btn:hover {
+        background-color: rgba(0,0,0,0.9);
+    }
+
+    .image-action-btn.set-primary {
+        color: #f0c251;
+    }
+
+    .image-action-btn.edit-image {
+        color: #3498db;
+    }
+
+    .image-action-btn.delete-image {
+        color: #e74c3c;
+    }
+
+/* Checkbox group styling */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+    .checkbox-group input[type="checkbox"] {
+        width: auto;
+        margin-right: 8px;
+    }
+
 
