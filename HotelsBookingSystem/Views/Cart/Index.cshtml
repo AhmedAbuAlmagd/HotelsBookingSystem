@@ -1,11 +1,11 @@
-﻿@model HotelsBookingSystem.Models.Cart
+﻿@model HotelsBookingSystem.ViewModels.CartViewModel
 
 @{
     ViewData["Title"] = "Cart";
-
     var hasItems = Model?.CartItems != null && Model.CartItems.Any();
     var hotels = hasItems
         ? Model.CartItems
+            .Where(ci => ci.Room != null && ci.Room.Hotel != null)
             .Select(ci => ci.Room.Hotel)
             .DistinctBy(h => h.Id)
             .ToList()
@@ -13,86 +13,125 @@
 }
 
 @section Styles {
-    <style>
-        .cart-btn {
-            background-color: var(--primary);
-            color: #FFFFFF;
-            border-radius: 5px;
-            padding: 12px 25px;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+<style>
+    :root {
+    --primary: #007bff;
+    --light: #f8f9fa;
+    }
 
-            .cart-btn:hover {
-                background-color: #FF9800;
-                transform: translateY(-2px);
-            }
+    body {
+    background-color: #f5f7fa;
+    }
 
-        .card {
-            border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        }
+    .cart-btn {
+    background-color: var(--primary);
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
 
-        .card-header {
-            background-color: var(--primary);
-            color: white;
-        }
+    .cart-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    }
 
-        .card-body {
-            padding: 20px;
-        }
+    .card {
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    border: none;
+    }
 
-        .cart-item-text, .price-per-night {
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
+    .card-header {
+    background-color: var(--primary);
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    }
 
-        input[type="date"] {
-            background-color: var(--light);
-            border: 1px solid var(--primary);
-            border-radius: 5px;
-            padding: 8px;
-            transition: border-color 0.3s ease;
-        }
+    .cart-item {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: 0.3s;
+    }
 
-            input[type="date"]:focus {
-                border-color: var(--primary);
-                outline: none;
-            }
+    .cart-item:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
 
-        .cart-item:hover {
-            transform: scale(1.02);
-            transition: transform 0.2s ease-in-out;
-        }
+    .bg-image img {
+    border-radius: 10px;
+    transition: 0.3s ease-in-out;
+    }
 
-        .bg-image:hover {
-            opacity: 0.8;
-        }
+    .bg-image:hover img {
+    transform: scale(1.05);
+    opacity: 0.9;
+    }
 
-        .cart-container {
-            background-color: var(--light);
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    .form-control {
+    border-radius: 8px;
+    }
 
-        .cart-item-text {
-            color: var(--dark);
-        }
+    input[type="date"] {
+    background-color: var(--light);
+    border: 1px solid #ced4da;
+    padding: 10px;
+    font-size: 1rem;
+    }
 
-        .cart-total {
-            color: var(--primary);
-            font-weight: bold;
-        }
-    </style>
+    input[type="date"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .price-per-night {
+    font-size: 1.05rem;
+    font-weight: 500;
+    }
+
+    .list-group-item {
+    font-size: 1rem;
+    font-weight: 500;
+    }
+
+    .form-check-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    }
+
+    .btn-danger {
+    border-radius: 6px;
+    padding: 6px 12px;
+    }
+
+    .alert-info {
+    font-size: 1.1rem;
+    padding: 15px;
+    border-radius: 10px;
+    }
+
+    .card-body img {
+    margin-right: 8px;
+    }
+
+    h5, h6 {
+    font-weight: 600;
+    }
+</style>
 }
 
 <section class="h-100 gradient-custom">
     <div class="container py-5">
         <div class="row d-flex justify-content-center my-4">
             <div class="col-md-8">
-
                 @if (hasItems)
                 {
                     <div class="card mb-4">
@@ -102,12 +141,12 @@
                         <div class="card-body">
                             @foreach (var item in Model.CartItems)
                             {
-                                <div class="row cart-item" id="cart-item-@item.Id">
-                                    <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                                        <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                                <div class="row cart-item" id="cart-item-@item.cartId">
+                                    <div class="col-lg-3 mb-4">
+                                        <div class="bg-image hover-overlay hover-zoom ripple rounded">
                                             @if (item.Room.RoomImages.Any())
                                             {
-                                                <img src="/images/@item.Room.RoomImages.FirstOrDefault().ImageUrl" class="w-100" alt="Room Image" />
+                                                <img src="/images/@item.Room.RoomImages.First().ImageUrl" class="w-100" alt="Room Image" />
                                             }
                                             else
                                             {
@@ -115,18 +154,14 @@
                                             }
                                         </div>
                                     </div>
-
-                                    <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                    <div class="col-lg-5">
                                         <p><strong>Room Type: @item.Room.Description</strong></p>
                                         <p>Hotel: @item.Room.Hotel.Name</p>
-                                        <p class="text-start text-md-center price-per-night">
-                                            <strong>Price/Night: $@item.Room.PricePerNight</strong><br />
-                                        </p>
+                                        <p class="price-per-night"><strong>Price/Night: $@item.Room.PricePerNight</strong></p>
                                     </div>
-
-                                    <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
-                                        <button class="btn btn-danger btn-sm" onclick="removeItemFromCart(@item.Id)">
-                                            <i class="fas fa-trash-alt"></i> Delete
+                                    <div class="col-lg-4">
+                                        <button class="btn btn-danger btn-sm" @* onclick="removeFromCart(@item.CartItemId)" *@>
+                                            <a style="text-decoration:none" class="text-light" asp-action="RemoveFromCart" asp-controller="Cart" asp-route-id="@item.CartItemId"><i class="fas fa-trash-alt"></i> Remove</a>
                                         </button>
                                     </div>
                                 </div>
@@ -134,10 +169,11 @@
                             }
 
                             <label for="checkInDate">Check-In:</label>
-                            <input type="date" id="checkInDate" class="form-control" onchange="updateTotalAmount()" />
+                            <input type="date" id="checkInDate" class="form-control" value="@Model.CheckIn.ToString("yyyy-MM-dd")" onchange="updateTotalAmount()" />
+
                             <br />
                             <label for="checkOutDate">Check-Out:</label>
-                            <input type="date" id="checkOutDate" class="form-control" onchange="updateTotalAmount()" />
+                            <input type="date" id="checkOutDate" class="form-control" value="@Model.CheckOut.ToString("yyyy-MM-dd")" onchange="updateTotalAmount()" />
 
                             <p id="totalNights">Total Nights: 0</p>
                             <p id="totalAmountText">Total: $0.00</p>
@@ -154,16 +190,16 @@
                                 @foreach (var hotel in hotels)
                                 {
                                     <h6>@hotel.Name</h6>
-                                    @if (hotel.HotelServices != null && hotel.HotelServices.Any())
+                                    @if (hotel.HotelServices?.Any() == true)
                                     {
                                         foreach (var service in hotel.HotelServices)
                                         {
                                             <div class="form-check">
                                                 <input class="form-check-input hotel-service-checkbox"
-                                                       type="checkbox"
-                                                       value="@service.Service.Price"
-                                                       id="hotel-service-@service.serviceId"
-                                                       onchange="updateTotalAmount()" />
+                                                type="checkbox"
+                                                value="@service.Service.Price"
+                                                id="hotel-service-@service.serviceId"
+                                                onchange="updateTotalAmount()" />
                                                 <label class="form-check-label" for="hotel-service-@service.serviceId">
                                                     @service.Service.Name - $@service.Service.Price per night
                                                 </label>
@@ -185,16 +221,15 @@
                     <div class="alert alert-info">Your cart is empty.</div>
                 }
 
-                <div class="card mb-4 mb-lg-0">
+                <div class="card mb-4">
                     <div class="card-body">
                         <p><strong>We accept</strong></p>
                         <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg" alt="Visa" />
-                        <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg" alt="American Express" />
+                        <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg" alt="Amex" />
                         <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg" alt="Mastercard" />
-                        <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce/includes/gateways/paypal/assets/images/paypal.webp" alt="PayPal" />
+                        <img class="me-2" width="45px" src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" alt="PayPal" />
                     </div>
                 </div>
-
             </div>
 
             @if (hasItems)
@@ -206,18 +241,26 @@
                         </div>
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                <li class="list-group-item d-flex justify-content-between">
                                     Total Rooms
-                                    <span id="totalRooms">@((Model?.CartItems?.Count() ?? 0))</span>
+                                    <span id="totalRooms">@Model.CartItems.Count()</span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <li class="list-group-item d-flex justify-content-between">
                                     Total Amount
                                     <span id="summaryTotalAmount">$0.00</span>
                                 </li>
                             </ul>
-                            <button type="button" class="btn btn-primary btn-lg btn-block mt-3">
-                                <a asp-action="Index" asp-controller="Payment" style="text-decoration:none;" class="text-light">Confirm Booking</a>
-                            </button>
+
+
+                            <form asp-controller="Payment" asp-action="CreatePayment" method="post">
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" name="CheckIn" id="formCheckInDate" />
+                                <input type="hidden" name="CheckOut" id="formCheckOutDate" />
+                                <input type="hidden" name="TotalAmount" id="totalAmountInput" />
+
+                                <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Confirm Booking</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -225,78 +268,102 @@
         </div>
     </div>
 </section>
+@section Scripts
+{
+<script>
+    function calculateTotalAmount() {
+              const checkIn = new Date(document.getElementById('checkInDate').value);
+              const checkOut = new Date(document.getElementById('checkOutDate').value);
+              const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
 
-@Html.AntiForgeryToken()
+              let total = 0;
 
-@section Scripts {
-    <script>
-        function updateTotalAmount() {
-            var checkInDate = document.getElementById("checkInDate").value;
-            var checkOutDate = document.getElementById("checkOutDate").value;
+    @foreach (var item in Model.CartItems)
+    {
+        @:total += @item.Room.PricePerNight * nights;
+    }
+              document.querySelectorAll('.hotel-service-checkbox:checked').forEach(checkbox => {
+                  total += parseFloat(checkbox.value) * nights;
+              });
 
-            if (checkInDate && checkOutDate) {
-                var checkIn = new Date(checkInDate);
-                var checkOut = new Date(checkOutDate);
+              return total.toFixed(2);
+          }
 
-                if (checkOut <= checkIn) {
-                    alert("Check-Out date must be after Check-In date.");
-                    return;
-                }
 
-                var nights = (checkOut - checkIn) / (1000 * 3600 * 24);
-                var totalAmount = 0;
+          function updateTotalAmount() {
+              const totalAmount = calculateTotalAmount();
+              document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
+              document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
+          }
 
-                var cartItems = document.querySelectorAll(".cart-item");
-                cartItems.forEach(function (item) {
-                    var pricePerNight = parseFloat(item.querySelector(".price-per-night").innerText.replace('Price/Night: $', ''));
-                    totalAmount += (pricePerNight * nights);
-                });
+          document.querySelector('form').addEventListener('submit', function(e) {
+              document.getElementById('formCheckInDate').value = document.getElementById('checkInDate').value;
+              document.getElementById('formCheckOutDate').value = document.getElementById('checkOutDate').value;
+              document.getElementById('totalAmountInput').value = calculateTotalAmount();
+          });
 
-                var hotelServiceCheckboxes = document.querySelectorAll(".hotel-service-checkbox");
-                hotelServiceCheckboxes.forEach(function (checkbox) {
-                    if (checkbox.checked) {
-                        var pricePerNight = parseFloat(checkbox.value);
-                        totalAmount += (pricePerNight * nights);
-                    }
-                });
 
-                document.getElementById("totalNights").innerText = "Total Nights: " + nights;
-                document.getElementById("totalAmountText").innerText = "Total: $" + totalAmount.toFixed(2);
-                document.getElementById("summaryTotalAmount").innerText = "$" + totalAmount.toFixed(2);
-            }
-        }
+          document.addEventListener('DOMContentLoaded', function() {
+              updateTotalAmount();
+          });
+      document.addEventListener('DOMContentLoaded', function () {
+          const today = new Date();
+          const tomorrow = new Date();
+          tomorrow.setDate(today.getDate() + 1);
 
-        function removeItemFromCart(itemId) {
-            if (confirm("Are you sure you want to remove this item from your cart?")) {
-                fetch('/Cart/RemoveFromCart', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'id=' + itemId + '&__RequestVerificationToken=' + encodeURIComponent(document.querySelector('input[name="__RequestVerificationToken"]').value)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        var cartItemElement = document.getElementById("cart-item-" + itemId);
-                        if (cartItemElement) {
-                            cartItemElement.remove();
-                        }
-                        var totalRooms = document.querySelectorAll(".cart-item").length;
-                        document.getElementById("totalRooms").innerText = totalRooms;
+          const todayStr = today.toISOString().split('T')[0];
+          const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-                        updateTotalAmount();
-                    } else {
-                        alert("Failed to remove item from cart.");
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            }
-        }
+          const checkInInput = document.getElementById('checkInDate');
+          const checkOutInput = document.getElementById('checkOutDate');
 
-        document.querySelector("form")?.addEventListener("submit", function (e) {
-            document.getElementById("checkInInput").value = document.getElementById("checkInDate").value;
-            document.getElementById("checkOutInput").value = document.getElementById("checkOutDate").value;
-            document.getElementById("totalAmountInput").value = document.getElementById("summaryTotalAmount").innerText.replace('$', '');
-        });
-    </script>
+         
+          checkInInput.value = todayStr;
+          checkInInput.setAttribute('min', todayStr);
+
+          checkOutInput.value = tomorrowStr;
+          checkOutInput.setAttribute('min', tomorrowStr);
+
+          
+          checkInInput.addEventListener('change', function () {
+              const selectedCheckIn = new Date(this.value);
+              const minCheckout = new Date(selectedCheckIn);
+              minCheckout.setDate(minCheckout.getDate() + 1);
+              const minCheckoutStr = minCheckout.toISOString().split('T')[0];
+
+              if (selectedCheckIn < today) {
+                  alert("Check-In date cannot be before today.");
+                  this.value = todayStr;
+                  return;
+              }
+
+              checkOutInput.setAttribute('min', minCheckoutStr);
+
+              if (new Date(checkOutInput.value) <= selectedCheckIn) {
+                  alert("Check-Out must be after Check-In.");
+                  checkOutInput.value = '';
+              }
+
+              updateTotalAmount();
+          });
+
+     
+          checkOutInput.addEventListener('change', function () {
+              const checkInDate = new Date(checkInInput.value);
+              const checkOutDate = new Date(this.value);
+
+              if (checkOutDate <= checkInDate) {
+                  alert("Check-Out must be after Check-In.");
+                  this.value = '';
+              }
+
+              updateTotalAmount();
+          });
+
+          updateTotalAmount();
+      });
+</script>
+
 }
+
+
