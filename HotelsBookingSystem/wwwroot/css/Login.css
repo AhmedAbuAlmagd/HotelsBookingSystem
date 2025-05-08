@@ -364,3 +364,12 @@ body {
 .password-wrapper input {
     padding-right: 40px; 
 }
+
+.forgot-password-link a {
+    font-size: 0.9rem;
+    color: #007bff;
+}
+
+    .forgot-password-link a:hover {
+        text-decoration: underline;
+    }
