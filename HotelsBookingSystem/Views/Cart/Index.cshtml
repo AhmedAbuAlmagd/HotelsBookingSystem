@@ -13,6 +13,7 @@
 }
 
 @section Styles {
+
 <style>
     :root {
     --primary: #007bff;
@@ -126,6 +127,7 @@
     font-weight: 600;
     }
 </style>
+
 }
 
 <section class="h-100 gradient-custom">
@@ -160,8 +162,10 @@
                                         <p class="price-per-night"><strong>Price/Night: $@item.Room.PricePerNight</strong></p>
                                     </div>
                                     <div class="col-lg-4">
+
                                         <button class="btn btn-danger btn-sm" @* onclick="removeFromCart(@item.CartItemId)" *@>
                                             <a style="text-decoration:none" class="text-light" asp-action="RemoveFromCart" asp-controller="Cart" asp-route-id="@item.CartItemId"><i class="fas fa-trash-alt"></i> Remove</a>
+
                                         </button>
                                     </div>
                                 </div>
@@ -364,6 +368,8 @@
       });
 </script>
 
+
 }
+
 
 

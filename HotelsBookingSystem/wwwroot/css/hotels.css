@@ -1,0 +1,149 @@
+﻿/* Shared Styles for Both Views */
+:root {
+    --primary: #3498db;
+    --secondary: #2ecc71;
+    --dark: #2c3e50;
+    --light: #ecf0f1;
+    --text: #34495e;
+    --border: #dfe6e9;
+}
+
+.filter-section {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+    .filter-section .form-control,
+    .filter-section .form-select {
+        border: 1px solid var(--border);
+        height: 45px;
+    }
+
+    .filter-section .btn-primary {
+        background: var(--primary);
+        border: none;
+        height: 45px;
+    }
+
+    .filter-section .btn-secondary {
+        background: var(--light);
+        color: var(--text);
+        border: none;
+        height: 45px;
+    }
+
+.card-item {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%;
+    margin-bottom: 1.5rem;
+}
+
+    .card-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
+
+.card-img-container {
+    height: 200px;
+    overflow: hidden;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.card-item:hover .card-img {
+    transform: scale(1.05);
+}
+
+.price-tag {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.card-features {
+    display: flex;
+    gap: 15px;
+    margin: 1rem 0;
+    color: var(--text);
+}
+
+    .card-features i {
+        color: var(--primary);
+        margin-right: 5px;
+    }
+
+.location-name {
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+}
+
+.card-description {
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-view {
+    background: var(--primary);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-action {
+    background: var(--secondary);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Pagination - Shared between views */
+.pagination-container {
+    margin-top: 2rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.pagination .page-link {
+    color: var(--primary);
+}

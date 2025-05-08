@@ -35,7 +35,7 @@ namespace HotelsBookingSystem.Controllers
             int hotelIdValue = string.IsNullOrEmpty(hotelId) ? 0 : int.Parse(hotelId);
             int ratingValue = string.IsNullOrEmpty(rating) ? 0 : int.Parse(rating);
 
-            var reviews = _ReviewRepository.GetAll(hotelIdValue, ratingValue);
+            var reviews = _ReviewRepository.GetAllReviews(hotelIdValue, ratingValue);
 
             int totalItems = reviews.Count();
             int pageSize = 10;

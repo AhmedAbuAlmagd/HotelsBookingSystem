@@ -96,7 +96,9 @@ namespace HotelsBookingSystem.Controllers
                 TotalPrice = (int)totalAmount,
                 CartItems = cart.CartItems.Select(item => new CartItemViewModel
                 {
+
                     CartItemId = item.Id,
+
                     RoomId = item.RoomId,
                     RoomType = item.Room.Type,
                     CheckIn = item.CheckIn,
@@ -113,6 +115,7 @@ namespace HotelsBookingSystem.Controllers
         }
 
 
+
         //[HttpPost]
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveFromCart(int id)
@@ -126,6 +129,7 @@ namespace HotelsBookingSystem.Controllers
             }
 
             return NotFound();
+
         }
 
     }

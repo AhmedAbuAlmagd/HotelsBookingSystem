@@ -30,6 +30,7 @@ public class PaymentController : Controller
         _userManager = userManager;
     }
 
+
     private BookingViewModel bookingViewModel;
 
 
@@ -56,6 +57,7 @@ public class PaymentController : Controller
             return RedirectToAction("Index", "Cart");
         }
 
+
         var totalPrice = cart.CartItems.Sum(ci => ci.Room.PricePerNight * ci.Nights);
 
         var model = new PaymentViewModel
@@ -67,6 +69,7 @@ public class PaymentController : Controller
 
         return View(model);
     }
+
     [HttpPost]
     public async Task<IActionResult> CreatePayment(PaymentViewModel paymentViewModel)
     {
@@ -78,6 +81,7 @@ public class PaymentController : Controller
             TempData["Error"] = "Your cart is empty.";
             return RedirectToAction("Index", "Cart");
         }
+
 
         var checkIn = paymentViewModel.CheckIn;
         var checkOut = paymentViewModel.CheckOut;
@@ -188,7 +192,33 @@ public class PaymentController : Controller
                 BookingId = booking.Id
             };
             _context.BookingRooms.Add(bookingRoom);
+
         }
+        var booking = new Booking
+        {
+            UserId = userId,
+            Status = "Confirmed",
+            Booking_date = DateTime.Now,
+            HotelId = 1,
+            TotalPrice = (int)(session.AmountTotal / 100),
+            CheckIn = cart.CartItems.First().CheckIn,
+            CheckOut = cart.CartItems.First().CheckOut,
+            GuestsCount = cart.CartItems.Count
+        };
+
+        _context.Bookings.Add(booking);
+        await _context.SaveChangesAsync();
+
+        foreach (var item in cart.CartItems)
+        {
+            var bookingRoom = new BookingRoom
+            {
+                RoomId = item.RoomId,
+                BookingId = booking.Id
+            };
+            _context.BookingRooms.Add(bookingRoom);
+        }
+
 
         var payment = new Payment
         {
@@ -212,12 +242,13 @@ public class PaymentController : Controller
         });
     }
 
-
     public IActionResult Success()
     {
         return View();
     }
+
 }
+
 
 
 
