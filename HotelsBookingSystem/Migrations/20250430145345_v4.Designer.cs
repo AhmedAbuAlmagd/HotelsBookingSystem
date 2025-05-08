@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-#nullable disable
+ 
 
 namespace HotelsBookingSystem.Migrations
 {
@@ -15,10 +15,10 @@ namespace HotelsBookingSystem.Migrations
     [Migration("20250430145345_v4")]
     partial class v4
     {
-        /// <inheritdoc />
+      
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
-#pragma warning disable 612, 618
+ 
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
@@ -953,7 +953,7 @@ namespace HotelsBookingSystem.Migrations
 
                     b.Navigation("HotelServices");
                 });
-#pragma warning restore 612, 618
+ 
         }
     }
 }
