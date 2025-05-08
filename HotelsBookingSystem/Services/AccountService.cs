@@ -67,5 +67,30 @@ namespace HotelsBookingSystem.Services
             await signInManager.SignOutAsync();
         }
 
+        public async Task<ApplicationUser> FindEmail(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if(user != null)
+                return user;
+            else 
+                return null;
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
+        {
+             return await userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+
+        public async Task<IdentityResult> ResetPasswordAsync(string email, string token, string password)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return IdentityResult.Success;
+            }
+
+            return await userManager.ResetPasswordAsync(user, token, password);
+        }
     }
 }

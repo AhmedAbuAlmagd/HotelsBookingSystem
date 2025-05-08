@@ -8,5 +8,6 @@ namespace HotelsBookingSystem.Controllers
         {
             return View();
         }
+       
     }
 }
