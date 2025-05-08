@@ -4,18 +4,21 @@ using HotelsBookingSystem.Models.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-#nullable disable
+ 
 
 namespace HotelsBookingSystem.Migrations
 {
     [DbContext(typeof(HotelsContext))]
-    partial class HotelsContextModelSnapshot : ModelSnapshot
+    [Migration("20250430145345_v4")]
+    partial class v4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+      
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
-#pragma warning disable 612, 618
+ 
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
@@ -254,12 +257,6 @@ namespace HotelsBookingSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CheckInDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CheckOutDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -294,9 +291,6 @@ namespace HotelsBookingSystem.Migrations
 
                     b.Property<int>("RoomId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -466,21 +460,6 @@ namespace HotelsBookingSystem.Migrations
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("HotelsBookingSystem.Models.SelectedServices", b =>
-                {
-                    b.Property<int>("CartId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceID")
-                        .HasColumnType("int");
-
-                    b.HasKey("CartId", "ServiceID");
-
-                    b.HasIndex("ServiceID");
-
-                    b.ToTable("SelectedServices");
-                });
-
             modelBuilder.Entity("HotelsBookingSystem.Models.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -497,10 +476,14 @@ namespace HotelsBookingSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Price")
+                        .HasColumnType("int");
 
+                    b.Property<int?>("cartItemId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("cartItemId");
 
                     b.ToTable("Services");
                 });
@@ -842,23 +825,13 @@ namespace HotelsBookingSystem.Migrations
                     b.Navigation("Hotel");
                 });
 
-            modelBuilder.Entity("HotelsBookingSystem.Models.SelectedServices", b =>
+            modelBuilder.Entity("HotelsBookingSystem.Models.Service", b =>
                 {
-                    b.HasOne("HotelsBookingSystem.Models.Cart", "Cart")
-                        .WithMany("SelectedServices")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("HotelsBookingSystem.Models.CartItem", "CartItem")
+                        .WithMany("Services")
+                        .HasForeignKey("cartItemId");
 
-                    b.HasOne("HotelsBookingSystem.Models.Service", "Service")
-                        .WithMany("SelectedServices")
-                        .HasForeignKey("ServiceID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("Service");
+                    b.Navigation("CartItem");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -945,8 +918,11 @@ namespace HotelsBookingSystem.Migrations
             modelBuilder.Entity("HotelsBookingSystem.Models.Cart", b =>
                 {
                     b.Navigation("CartItems");
+                });
 
-                    b.Navigation("SelectedServices");
+            modelBuilder.Entity("HotelsBookingSystem.Models.CartItem", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("HotelsBookingSystem.Models.Hotel", b =>
@@ -976,10 +952,8 @@ namespace HotelsBookingSystem.Migrations
                     b.Navigation("BookingServices");
 
                     b.Navigation("HotelServices");
-
-                    b.Navigation("SelectedServices");
                 });
-#pragma warning restore 612, 618
+ 
         }
     }
 }

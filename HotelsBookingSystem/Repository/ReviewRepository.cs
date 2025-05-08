@@ -57,10 +57,10 @@ namespace HotelsBookingSystem.Repository
             throw new NotImplementedException();
         }
         #endregion
-
-        public List<Review> GetAll(int hotelId = 0, int rating = 0)
+        
+         public List<Review> GetAllReviews(int hotelId = 0, int rating = 0)
         {
-            var query = _hotelsContext.Reviews
+            var query = _context.Reviews
                 .Include(r => r.Hotel)
                 .Include(r => r.User)
                 .AsQueryable();

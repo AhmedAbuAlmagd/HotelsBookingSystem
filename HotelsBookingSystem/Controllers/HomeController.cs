@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelsBookingSystem.Controllers
 {
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
