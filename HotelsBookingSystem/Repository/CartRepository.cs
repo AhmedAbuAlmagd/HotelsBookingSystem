@@ -29,6 +29,7 @@ namespace HotelsBookingSystem.Repository
                                 .ThenInclude(hs => hs.Service)
                 .Include(c => c.CartItems)
                     .ThenInclude(ci => ci.Room.RoomImages)
+                  .Include(c => c.SelectedServices)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 

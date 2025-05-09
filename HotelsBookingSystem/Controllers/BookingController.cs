@@ -25,6 +25,8 @@ namespace HotelsBookingSystem.Controllers
             _userManager = userManager;
         }
 
+
+        #region Admin
         [Authorize(Roles ="Admin")]
         public  async Task<IActionResult> Index(string status = "", int? hotelId = null,
                          DateTime? bookingDateFrom = null, DateTime? bookingDateTo = null,
@@ -61,6 +63,7 @@ namespace HotelsBookingSystem.Controllers
             ViewBag.TotalPages = totalPages;
             return View(bookings);
         }
+        #endregion
         [HttpPost]
         public async Task<IActionResult> ConfirmPayment(DateTime checkIn, DateTime checkOut, decimal totalAmount)
         {

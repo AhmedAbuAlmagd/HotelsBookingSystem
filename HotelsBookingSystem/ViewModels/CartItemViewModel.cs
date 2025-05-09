@@ -13,7 +13,7 @@ namespace HotelsBookingSystem.ViewModels
         public Room Room { get; set; }
         public int cartId { get; set; }
 
-            public int CartItemId { get; set; }  
+        public int CartItemId { get; set; }  
             
 
         public int TotalPrice { get; set; }

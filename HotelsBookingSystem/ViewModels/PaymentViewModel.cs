@@ -13,7 +13,8 @@ namespace HotelsBookingSystem.ViewModels
             public DateTime CheckOut { get; set; }
             public int GuestsCount { get; set; }
             public List<CartItem> CartItems { get; set; } = new List<CartItem>();
+            public string SelectedServiceIds { get; set; }
 
-        
+
     }
 }

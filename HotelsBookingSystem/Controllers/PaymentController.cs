@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
 using System.Security.Claims;
+using System.Text.Json;
 
 public class PaymentController : Controller
 {
@@ -17,10 +18,12 @@ public class PaymentController : Controller
     private readonly ICartRepository _cartRepository;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<PaymentController> _logger;
+    private readonly IServiceRepository _serviceRepository;
+
     HotelsContext _context;
 
     public PaymentController(IBookingRepository bookingRepository, HotelsContext context, IPaymentRepository paymentRepository, ICartRepository cartRepository,
-                             UserManager<ApplicationUser> userManager, ILogger<PaymentController> logger)
+                             UserManager<ApplicationUser> userManager, ILogger<PaymentController> logger, IServiceRepository serviceRepository)
     {
         _bookingRepository = bookingRepository;
         _paymentRepository = paymentRepository;
@@ -28,6 +31,7 @@ public class PaymentController : Controller
         _context = context;
         _logger = logger;
         _userManager = userManager;
+        _serviceRepository = serviceRepository;
     }
 
 
@@ -82,19 +86,22 @@ public class PaymentController : Controller
             return RedirectToAction("Index", "Cart");
         }
 
-
         var checkIn = paymentViewModel.CheckIn;
         var checkOut = paymentViewModel.CheckOut;
         var nights = (checkOut - checkIn).Days;
 
-        var serviceTotal = paymentViewModel.TotalPrice - cart.CartItems.Sum(c => c.Room.PricePerNight * nights);
-        var servicePerNight = serviceTotal > 0 ? serviceTotal / nights : 0;
+        var selectedServiceIds = string.IsNullOrEmpty(paymentViewModel.SelectedServiceIds)
+            ? new List<int>()
+            : JsonSerializer.Deserialize<List<int>>(paymentViewModel.SelectedServiceIds);
+
+        var roomTotal = cart.CartItems.Sum(item => item.Room.PricePerNight * nights);
+        decimal serviceTotal = 0;
 
         var lineItems = cart.CartItems.Select(item => new SessionLineItemOptions
         {
             PriceData = new SessionLineItemPriceDataOptions
             {
-                UnitAmount = (long)(item.Room.PricePerNight * 100),
+                UnitAmount = (long)(item.Room.PricePerNight * 100), 
                 Currency = "usd",
                 ProductData = new SessionLineItemPriceDataProductDataOptions
                 {
@@ -105,23 +112,31 @@ public class PaymentController : Controller
             Quantity = nights
         }).ToList();
 
-        if (serviceTotal > 0)
+        if (selectedServiceIds.Any())
         {
-            lineItems.Add(new SessionLineItemOptions
+            var services = await _serviceRepository.GetServicesByIdsAsync(selectedServiceIds);
+            serviceTotal = services.Sum(s => s.Price * nights);
+            foreach (var servicee in services)
             {
-                PriceData = new SessionLineItemPriceDataOptions
+                lineItems.Add(new SessionLineItemOptions
                 {
-                    UnitAmount = (long)(servicePerNight * 100),
-                    Currency = "usd",
-                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    PriceData = new SessionLineItemPriceDataOptions
                     {
-                        Name = "Additional Services",
-                        Description = "Selected hotel services"
-                    }
-                },
-                Quantity = nights
-            });
+                        UnitAmount = (long)(servicee.Price * 100),
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = servicee.Name,
+                            Description = $"Service for {nights} night(s)"
+                        }
+                    },
+                    Quantity = nights
+                });
+            }
         }
+
+        decimal calculatedTotal = roomTotal + serviceTotal;
+       
 
         var options = new SessionCreateOptions
         {
@@ -136,7 +151,7 @@ public class PaymentController : Controller
             { "UserId", userId },
             { "CheckIn", checkIn.ToString("o") },
             { "CheckOut", checkOut.ToString("o") },
-            { "TotalAmount", paymentViewModel.TotalPrice.ToString() }
+            { "TotalAmount", calculatedTotal.ToString() }
         }
         };
 
