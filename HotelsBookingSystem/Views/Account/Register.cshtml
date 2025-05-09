@@ -2,103 +2,126 @@
 
 @{
     ViewData["Title"] = "Register";
-    Layout = "";
 }
 
 <head>
-    <title>Login Form</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/Register.css">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 
+<body style="background-color: #edf5fd;">
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card shadow-lg p-4" style="max-width: 750px; width: 100%; border-radius: 12px;">
+            <!-- زودنا العرض من 650 لـ 750 -->
+            <div class="card-body">
+                <h3 class="text-center mb-4">
+                    <i class="fas fa-user-plus text-warning me-2"></i>
+                    <span class="fw-bold" style="color: #0d1b2a;">Create Account</span>
+                </h3>
 
-<div class="register-wrapper">
-    <div class="register-container" style="opacity:1">    
-        <form asp-action="Register" class="register-form">
-            <h2>Create Account</h2> 
-
-            <div class="form-grid">
-                <div class="input-group">
-                    <label asp-for="FullName"></label>
-                    <input asp-for="FullName" placeholder="Enter your full name" />
-                    <span asp-validation-for="FullName" class="text-danger"></span>
-                </div>
-
-                <div class="input-group">
-                    <label asp-for="UserName"></label>
-                    <input asp-for="UserName" placeholder="Choose a username" />
-                    <span asp-validation-for="UserName" class="text-danger"></span>
-                </div>
-
-                <div class="input-group">
-                    <label asp-for="Email"></label>
-                    <input type="text" asp-for="Email" placeholder="Enter your email" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-
-                <div class="input-group">
-                    <label asp-for="Password"></label>
-                    <div class="password-wrapper">
-                        <input type="password" asp-for="Password" id="Password" placeholder="Enter your password" />
-                        <span class="eye-icon" id="toggle-password" style="cursor: pointer;">
-                            <i class="fas fa-eye"></i>
-                        </span>
+                <form asp-action="Register" class="row g-4">
+                    <!-- بدل g-3 عملنا g-4 -->
+                    <!-- كل input هنا مثلا فيه padding أعلى وأسفل تلقائي من Bootstrap -->
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="FullName" class="form-label">
+                            <i class="fas fa-user text-secondary me-1"></i>Full Name
+                        </label>
+                        <input asp-for="FullName" class="form-control py-2" placeholder="Enter your full name" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
 
-                <div class="input-group">
-                    <label asp-for="Country"></label>
-                    <input asp-for="Country" placeholder="Your country" />
-                    <span asp-validation-for="Country" class="text-danger"></span>
-                </div>
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="UserName" class="form-label">
+                            <i class="fas fa-user-tag text-secondary me-1"></i>Username
+                        </label>
+                        <input asp-for="UserName" class="form-control py-2" placeholder="Choose a username" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
 
-                <div class="input-group">
-                    <label asp-for="ConfirmPassword"></label>
-                    <input asp-for="ConfirmPassword" placeholder="Confirm password" />
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                </div>
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="Email" class="form-label">
+                            <i class="fas fa-envelope text-secondary me-1"></i>Email
+                        </label>
+                        <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
 
-                <div class="input-group">
-                    <label asp-for="City"></label>
-                    <input asp-for="City" placeholder="Your city" />
-                    <span asp-validation-for="City" class="text-danger"></span>
-                </div>
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="Password" class="form-label">
+                            <i class="fas fa-lock text-secondary me-1"></i>Password
+                        </label>
+                        <div class="input-group">
+                            <input asp-for="Password" type="password" class="form-control" id="Password" placeholder="Enter your password" />
+                            <span class="input-group-text" id="toggle-password" style="cursor: pointer;">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
 
-                <div class="input-group">
-                    <label asp-for="NationalId"></label>
-                    <input asp-for="NationalId" placeholder="National ID" />
-                    <span asp-validation-for="NationalId" class="text-danger"></span>
-                </div>
+                   
+
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="Country" class="form-label">
+                            <i class="fas fa-globe text-secondary me-1"></i>Country
+                        </label>
+                        <input asp-for="Country" class="form-control" placeholder="Your country" />
+                        <span asp-validation-for="Country" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="ConfirmPassword" class="form-label">
+                            <i class="fas fa-check-double text-secondary me-1"></i>Confirm Password
+                        </label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="City" class="form-label">
+                            <i class="fas fa-city text-secondary me-1"></i>City
+                        </label>
+                        <input asp-for="City" class="form-control" placeholder="Your city" />
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="NationalId" class="form-label">
+                            <i class="fas fa-id-card text-secondary me-1"></i>National ID
+                        </label>
+                        <input asp-for="NationalId" class="form-control" placeholder="National ID" />
+                        <span asp-validation-for="NationalId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 ">
+                        <button type="submit" class="btn w-100 text-white py-2" style="background-color: #f4a100;">
+                            <i class="fas fa-user-plus me-1"></i>REGISTER NOW
+                        </button>
+                    </div>
+
+                    <div class="col-12 text-center mt-2">
+                        Already have an account?
+                        <a asp-action="Login" class="text-decoration-none" style="color: #f4a100;">Sign In</a>
+                    </div>
+                </form>
             </div>
-
-            <button type="submit" class="register-btn">Register Now</button>
-
-            <div class="login-link">
-                Already have an account? <a asp-action="Login">Sign In</a>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<script>
-    document.getElementById('toggle-password').addEventListener('click', function () {
-        var passwordInput = document.getElementById('Password');
-        var icon = this.querySelector('i');
+    <script>
+        document.getElementById('toggle-password').addEventListener('click', function () {
+            const passwordInput = document.getElementById('Password');
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    </script>
 
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    });
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+</body>

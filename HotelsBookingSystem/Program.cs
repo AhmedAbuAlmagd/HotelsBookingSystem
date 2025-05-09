@@ -11,17 +11,13 @@ using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-.AddGoogle(options =>
-{
-    IConfigurationSection googleAuthSection = builder.Configuration.GetSection("Authentication:Google");
-    options.ClientId = googleAuthSection["ClientId"];
-    options.ClientSecret = googleAuthSection["ClientSecret"];
-});
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        options.SaveTokens = true;
+    });
 
 // Add services to the container
 builder.Services.AddControllersWithViews().AddViewOptions(options =>
@@ -77,13 +73,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
-
-// Corrected MapStaticAssets to UseStaticFiles
-app.UseStaticFiles();
 
 app.MapControllerRoute(
     name: "default",

@@ -64,9 +64,10 @@ namespace HotelsBookingSystem.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = null)
         {
-            return View();
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(new LoginViewModel());
         }
 
         [HttpPost]
@@ -88,33 +89,96 @@ namespace HotelsBookingSystem.Controllers
             return View(userVm);
         }
 
+
+
         #region External Login
         [HttpPost]
-        [AllowAnonymous]
-        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider = "Google", string returnUrl = null)
         {
             var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return Challenge(properties, provider); 
+            if (provider == "Google")
+            {
+                properties.Items["prompt"] = "select_account";
+            }
+            return Challenge(properties, provider);
         }
 
-        [AllowAnonymous]
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
+
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
         {
-            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (remoteError != null)
+            {
+                _logger.LogError("External provider error: {Error}", remoteError);
+                ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
+                return View("Login", new LoginViewModel());
+            }
+
+            var info = await accountService.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToAction(nameof(Login));
+                _logger.LogError("Failed to retrieve external login info");
+                ModelState.AddModelError(string.Empty, "Error loading external login information.");
+                return View("Login", new LoginViewModel());
             }
 
-            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+            var result = await accountService.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (result.Succeeded)
             {
-                return RedirectToLocal(returnUrl);
+                _logger.LogInformation("User logged in with {Provider}", info.LoginProvider);
+                var myuser = await accountService.FindByExternalLoginAsync(info.LoginProvider, info.ProviderKey);
+                var isAdmin = await _userManager.IsInRoleAsync(myuser, "Admin");
+                return isAdmin ? RedirectToAction("Dashboard", "Admin")
+                               : RedirectToLocal(returnUrl);
             }
 
-            // Handle account registration or other actions
-            return RedirectToAction(nameof(Login));
+            var user = await accountService.FindByExternalLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (user == null)
+            {
+                var email = info.Principal.FindFirst(ClaimTypes.Email)?.Value;
+                var firstName = info.Principal.FindFirst(ClaimTypes.GivenName)?.Value;
+                var lastName = info.Principal.FindFirst(ClaimTypes.Surname)?.Value;
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    _logger.LogError("Email not provided by {Provider}", info.LoginProvider);
+                    ModelState.AddModelError(string.Empty, "Email not provided by external provider.");
+                    return View("Login", new LoginViewModel());
+                }
+
+                var newUser = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    FullName = firstName+' '+lastName
+                };
+
+                var createResult = await accountService.CreateExternalUserAsync(newUser, info);
+                if (createResult.Succeeded)
+                {
+                    _logger.LogInformation("New user created with {Provider}", info.LoginProvider);
+                    await accountService.SignInAsync(newUser, isPersistent: false);
+                    var isAdmin = await _userManager.IsInRoleAsync(newUser, "Admin");
+                    return isAdmin ? RedirectToAction("Dashboard", "Admin")
+                                   : RedirectToLocal(returnUrl);
+                }
+
+                foreach (var error in createResult.Errors)
+                {
+                    _logger.LogError("User creation error: {Error}", error.Description);
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            else
+            {
+                _logger.LogError("User exists but login failed for {Provider}", info.LoginProvider);
+                ModelState.AddModelError(string.Empty, "User already exists but login failed.");
+            }
+
+            return View("Login", new LoginViewModel());
         }
 
         private IActionResult RedirectToLocal(string returnUrl)
@@ -127,6 +191,7 @@ namespace HotelsBookingSystem.Controllers
         }
 
         #endregion
+
 
         public async Task<IActionResult> LogoutAsync ()
         {
