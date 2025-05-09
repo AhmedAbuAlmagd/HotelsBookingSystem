@@ -1,7 +1,9 @@
 ﻿using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Models.Results;
 using HotelsBookingSystem.ViewModels;
+using HotelsBookingSystem.ViewModels.AccountViewModels;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace HotelsBookingSystem.Services
 {
@@ -92,5 +94,39 @@ namespace HotelsBookingSystem.Services
 
             return await userManager.ResetPasswordAsync(user, token, password);
         }
-    }
+
+
+        #region External Login 
+        public async Task<ApplicationUser> FindByExternalLoginAsync(string provider, string providerKey)
+        {
+            return await userManager.FindByLoginAsync(provider, providerKey);
+        }
+
+        public async Task<IdentityResult> CreateExternalUserAsync(ApplicationUser user, ExternalLoginInfo loginInfo)
+        {
+            var result = await userManager.CreateAsync(user);
+            if (result.Succeeded)
+            {
+                return await userManager.AddLoginAsync(user, loginInfo);
+            }
+            return result;
+        }
+
+        public async Task<Microsoft.AspNetCore.Identity.SignInResult> ExternalLoginSignInAsync(string provider, string providerKey, bool isPersistent)
+        {
+            return await signInManager.ExternalLoginSignInAsync(provider, providerKey, isPersistent, bypassTwoFactor: true);
+        }
+
+        public async Task SignInAsync(ApplicationUser user, bool isPersistent)
+        {
+            await signInManager.SignInAsync(user, isPersistent);
+        }
+
+        public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync()
+        {
+            return await signInManager.GetExternalLoginInfoAsync();
+        }
+    
+    #endregion
+}
 }

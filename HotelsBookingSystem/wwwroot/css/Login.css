@@ -1,375 +1,146 @@
-﻿/* Login Form Styling */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f2f5;
-}
-
-.background-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100vh;
+﻿/* Login Page Styling with Hotel Theme */
+.login-container {
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1;
+    justify-content: center;
+    padding: 30px 15px;
+    background: url('https://images.unsplash.com/photo-1519167758481-83f550bbae20?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
 }
 
-    .background-wrapper::before {
-        content: "";
+    .login-container::before {
+        content: '';
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url('../images/background.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        opacity: 0.75;
-        z-index: -1;
+        background: rgba(0, 0, 0, 0.5); /* Dark overlay for better contrast */
     }
 
-.login-container {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    width: 400px;
-    padding: 40px;
+.card {
     position: relative;
-    overflow: hidden;
+    border: none;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    backdrop-filter: blur(5px); /* Glassmorphism effect */
 }
 
-    .login-container::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 5px;
-        background: #F9A825;
+.hotel-card {
+    border-left: 5px solid #d4af37; /* Gold accent for hotel theme */
+}
+
+.card-title {
+    font-size: 2rem;
+    color: #1a3c34; /* Deep teal for hospitality feel */
+    font-weight: 700;
+}
+
+.login-form .form-label {
+    color: #1a3c34;
+}
+
+.login-form .form-control {
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .login-form .form-control:focus {
+        border-color: #d4af37;
+        box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
     }
 
-.login-form h2 {
-    margin-bottom: 30px;
-    color: #0D152B;
-    font-weight: 700;
-    text-align: center;
-    font-size: 28px;
+.input-group-text.eye-icon {
+    background: transparent;
+    border: none;
+    color: #666;
+    padding: 0 15px;
 }
 
-.login-form label {
-    display: block;
-    margin-bottom: 8px;
-    color: #0D152B;
+.btn-primary {
+    background-color: #1a3c34;
+    border: none;
+    padding: 12px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    .btn-primary:hover {
+        background-color: #15312b;
+        transform: translateY(-2px);
+    }
+
+.btn-google {
+    background-color: #ffffff;
+    color: #333;
+    border: 1px solid #dadce0;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    .btn-google:hover {
+        background-color: #f8f9fa;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+
+.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+.alert {
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.register-link, .forgot-password-link {
+    color: #d4af37;
     font-weight: 500;
 }
 
-.login-form input[type="text"],
-.login-form input[type="password"] {
-    width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-}
-
-.login-form input:focus {
-    border-color: #F9A825;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(249, 168, 37, 0.2);
-}
-
-.remember-me {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.form-check-input {
-    margin-right: 8px;
-    cursor: pointer;
-}
-
-    .form-check-input:checked {
-        background-color: #F9A825;
-        border-color: #F9A825;
-    }
-
-.form-check-label {
-    cursor: pointer;
-    user-select: none;
-}
-
-.login-form button {
-    width: 100%;
-    padding: 14px;
-    background-color: #bf821f;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s;
-}
-
-    .login-form button:hover {
-        background-color: #cc8a1f;
-    }
-
-.register-link {
-    text-align: center;
-    margin-top: 20px;
-    color: #666;
-}
-
-    .register-link a {
-        color: #F9A825;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-
-.text-danger {
-    color: #dc3545;
-    font-size: 14px;
-    margin-top: -15px;
-    margin-bottom: 15px;
-    display: block;
-}
-
-@media (max-width: 500px) {
-    .login-container {
-        width: 90%;
-        padding: 25px;
-    }
-}
-
-/* Eye Icon Styling */
-.password-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.eye-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 18px;
-    color: #ccc;
-    cursor: pointer;
-    z-index: 10;
-}
-
-    .eye-icon:hover {
-        color: #F9A825;
-    }
-
-    .eye-icon i {
-        pointer-events: none; /* Prevent icon from blocking clicks */
-    }
-
-.password-wrapper input {
-    padding-right: 40px; /* Make space for the icon */
-}
-/* Login Form Styling */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f2f5;
-}
-
-.background-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1;
-}
-
-    .background-wrapper::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url('../images/background.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        opacity: 0.75;
-        z-index: -1;
-    }
-
-.login-container {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    width: 400px;
-    padding: 40px;
-    position: relative;
-    overflow: hidden;
-}
-
-    .login-container::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 5px;
-        background: #F9A825;
-    }
-
-.login-form h2 {
-    margin-bottom: 30px;
-    color: #0D152B;
-    font-weight: 700;
-    text-align: center;
-    font-size: 28px;
-}
-
-.login-form label {
-    display: block;
-    margin-bottom: 8px;
-    color: #0D152B;
-    font-weight: 500;
-}
-
-.login-form input[type="text"],
-.login-form input[type="password"] {
-    width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-}
-
-.login-form input:focus {
-    border-color: #F9A825;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(249, 168, 37, 0.2);
-}
-
-.remember-me {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.form-check-input {
-    margin-right: 8px;
-    cursor: pointer;
-}
-
-    .form-check-input:checked {
-        background-color: #F9A825;
-        border-color: #F9A825;
-    }
-
-.form-check-label {
-    cursor: pointer;
-    user-select: none;
-}
-
-.login-form button {
-    width: 100%;
-    padding: 14px;
-    background-color: #bf821f;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s;
-}
-
-    .login-form button:hover {
-        background-color: #cc8a1f;
-    }
-
-.register-link {
-    text-align: center;
-    margin-top: 20px;
-    color: #666;
-}
-
-    .register-link a {
-        color: #F9A825;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-
-.text-danger {
-    color: #dc3545;
-    font-size: 14px;
-    margin-top: -15px;
-    margin-bottom: 15px;
-    display: block;
-}
-
-@media (max-width: 500px) {
-    .login-container {
-        width: 90%;
-        padding: 25px;
-    }
-}
-
-/* Eye Icon Styling */
-.password-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.eye-icon {
-    position: absolute;
-    right: 15px;
-    top: 40%;
-    transform: translateY(-50%);
-    font-size: 18px;
-    color: #0F172B;
-    cursor: pointer;
-    z-index: 10;
-}
-
-    .eye-icon:hover {
-        color: #F9A825;
-    }
-
-    .eye-icon i {
-        pointer-events: none;
-    }
-
-.password-wrapper input {
-    padding-right: 40px; 
-}
-
-.forgot-password-link a {
-    font-size: 0.9rem;
-    color: #007bff;
-}
-
-    .forgot-password-link a:hover {
+    .register-link:hover, .forgot-password-link:hover {
+        color: #b89730;
         text-decoration: underline;
     }
+
+hr {
+    border-top: 1px solid #dee2e6;
+    opacity: 0.5;
+}
+
+@media (max-width: 576px) {
+    .card {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+    }
+
+    .login-form .form-control,
+    .btn-primary,
+    .btn-google {
+        font-size: 1rem;
+        padding: 10px;
+    }
+}
+
+/* Animate.css for animations */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');

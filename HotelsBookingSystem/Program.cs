@@ -3,10 +3,21 @@ using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Models.Context;
 using HotelsBookingSystem.Repository;
 using HotelsBookingSystem.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        options.SaveTokens = true;
+    });
 
 // Add services to the container
 builder.Services.AddControllersWithViews().AddViewOptions(options =>
@@ -32,12 +43,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+// Startup.cs or Program.cs
+
+
 // Configure Identity with default token providers
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<HotelsContext>()
     .AddDefaultTokenProviders(); // Added to resolve token provider error
 
-// Register services
+// Register services    
 builder.Services.AddScoped<IHotelRepository, HotelRepostory>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
@@ -64,13 +78,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
-
-// Corrected MapStaticAssets to UseStaticFiles
-app.UseStaticFiles();
 
 app.MapControllerRoute(
     name: "default",
