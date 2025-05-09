@@ -60,9 +60,9 @@
                     <option value="">-- Select City --</option>
                     <option value="All" selected="@(Model.FirstOrDefault()?.City == "All")">All</option>
 
-                    @foreach (var hotel in Model.FirstOrDefault()?.hotels ?? new List<Hotel>())
+                    @foreach (var city in Model.FirstOrDefault()?.hotels.Select(h => h.City).Distinct() ?? new List<string>())
                     {
-                        <option value="@hotel.City" selected="@(hotel.City == Model.FirstOrDefault()?.City)">@hotel.City</option>
+                        <option value="@city" selected="@(city == Model.FirstOrDefault()?.City)">@city</option>
                     }
                 </select>
             </div>
@@ -114,7 +114,7 @@
                                 <div class="position-relative">
                                     @if (i.RoomImages != null && i.RoomImages.Any())
                                     {
-                                        <img class="" src="~/images/Rooms/@i.RoomImages.FirstOrDefault()" height="150px" width="100%" alt="">
+                                        <img class="" src="@i.RoomImages.FirstOrDefault()" height="150px" width="100%" alt="">
                                     }
                                     else 
                                     {
