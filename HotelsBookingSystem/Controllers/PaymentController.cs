@@ -169,31 +169,6 @@ public class PaymentController : Controller
             return RedirectToAction("Index", "Cart");
         }
 
-        //var booking = new Booking
-        //{
-        //    UserId = userId,
-        //    Status = "Confirmed",
-        //    Booking_date = DateTime.Now,
-        //    HotelId = 1,
-        //    TotalPrice = (int)(session.AmountTotal / 100),
-        //    CheckIn = checkIn,
-        //    CheckOut = checkOut,
-        //    GuestsCount = cart.CartItems.Count
-        //};
-
-        //_context.Bookings.Add(booking);
-        //await _context.SaveChangesAsync();
-
-        //foreach (var item in cart.CartItems)
-        //{
-        //    var bookingRoom = new BookingRoom
-        //    {
-        //        RoomId = item.RoomId,
-        //        BookingId = booking.Id
-        //    };
-        //    _context.BookingRooms.Add(bookingRoom);
-
-        //}
         var booking = new Booking
         {
             UserId = userId,
@@ -201,8 +176,8 @@ public class PaymentController : Controller
             Booking_date = DateTime.Now,
             HotelId = 1,
             TotalPrice = (int)(session.AmountTotal / 100),
-            CheckIn = cart.CartItems.First().CheckIn,
-            CheckOut = cart.CartItems.First().CheckOut,
+            CheckIn = checkIn,
+            CheckOut = checkOut,
             GuestsCount = cart.CartItems.Count
         };
 
@@ -217,9 +192,8 @@ public class PaymentController : Controller
                 BookingId = booking.Id
             };
             _context.BookingRooms.Add(bookingRoom);
+
         }
-
-
         var payment = new Payment
         {
             BookingID = booking.Id,
