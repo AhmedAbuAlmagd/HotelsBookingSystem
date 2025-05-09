@@ -262,7 +262,7 @@
                                 <input type="hidden" name="CheckIn" id="formCheckInDate" />
                                 <input type="hidden" name="CheckOut" id="formCheckOutDate" />
                                 <input type="hidden" name="TotalAmount" id="totalAmountInput" />
-
+                                <input type="hidden" name="SelectedServiceIds" id="selectedServicesInput" />
                                 <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Confirm Booking</button>
                             </form>
                         </div>
@@ -275,30 +275,35 @@
 @section Scripts
 {
 <script>
-    function calculateTotalAmount() {
-              const checkIn = new Date(document.getElementById('checkInDate').value);
-              const checkOut = new Date(document.getElementById('checkOutDate').value);
-              const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+           function calculateTotalAmount() {
+            const checkIn = new Date(document.getElementById('checkInDate').value);
+            const checkOut = new Date(document.getElementById('checkOutDate').value);
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
 
-              let total = 0;
+            let total = 0;
+        @foreach (var item in Model.CartItems)
+        {
+            @:total += @item.Room.PricePerNight * nights;
+        }
+            document.querySelectorAll('.hotel-service-checkbox:checked').forEach(checkbox => {
+                total += parseFloat(checkbox.value) * nights;
+            });
 
-    @foreach (var item in Model.CartItems)
-    {
-        @:total += @item.Room.PricePerNight * nights;
-    }
-              document.querySelectorAll('.hotel-service-checkbox:checked').forEach(checkbox => {
-                  total += parseFloat(checkbox.value) * nights;
-              });
-
-              return total.toFixed(2);
-          }
+            return total.toFixed(2);
+        }
 
 
-          function updateTotalAmount() {
-              const totalAmount = calculateTotalAmount();
-              document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
-              document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
-          }
+                        function updateTotalAmount() {
+            const totalAmount = calculateTotalAmount();
+            document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
+            document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
+            document.getElementById('totalAmountInput').value = totalAmount;
+
+            const selectedServices = Array.from(
+                document.querySelectorAll('.hotel-service-checkbox:checked')
+            ).map(checkbox => parseInt(checkbox.id.replace('hotel-service-', '')));
+            document.getElementById('selectedServicesInput').value = JSON.stringify(selectedServices);
+        }
 
           document.querySelector('form').addEventListener('submit', function(e) {
               document.getElementById('formCheckInDate').value = document.getElementById('checkInDate').value;
@@ -365,6 +370,18 @@
           });
 
           updateTotalAmount();
+
+                  function updateTotalAmount() {
+            const totalAmount = calculateTotalAmount();
+            document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
+            document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
+            document.getElementById('totalAmountInput').value = totalAmount;
+
+            const selectedServices = Array.from(
+                document.querySelectorAll('.hotel-service-checkbox:checked')
+            ).map(checkbox => checkbox.id.replace('hotel-service-', ''));
+            document.getElementById('selectedServicesInput').value = JSON.stringify(selectedServices);
+        }
       });
 </script>
 
