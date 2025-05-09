@@ -27,15 +27,14 @@
             .star-rating label:hover ~ label {
                 color: gold;
             }
+
+
+    html {
+        scroll-behavior: smooth;
+    }
 </style>
 
-@* @if (ViewData["Message"] != null) *@
-@* { *@
-@*     <div class="alert alert-warning"> *@
-@*         @ViewData["Message"] *@
-@*     </div> *@
-@* } *@
-
+ 
 
 
 <div class="   mb-5  ">
@@ -45,59 +44,13 @@
             <div class="container text-center pb-5">
                 <h1 class="display-3 text-white mb-3 animated slideInDown">Contact</h1>
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center text-uppercase">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                        <li class="breadcrumb-item text-white active" aria-current="page">Contact</li>
-                    </ol>
+                     
                 </nav>
             </div>
         </div>
     </div>
     <!-- Page Header End -->
-    <!-- Booking Start -->
-    <div class="container-fluid booking pb-5 wow fadeIn" data-wow-delay="0.1s">
-        <div class="container">
-            <div class="bg-white shadow" style="padding: 35px;">
-                <div class="row g-2">
-                    <div class="col-md-10">
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <div class="date" id="date1" data-target-input="nearest">
-                                    <input type="text" class="form-control datetimepicker-input"
-                                           placeholder="Check in" data-target="#date1" data-toggle="datetimepicker" />
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="date" id="date2" data-target-input="nearest">
-                                    <input type="text" class="form-control datetimepicker-input" placeholder="Check out" data-target="#date2" data-toggle="datetimepicker" />
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-select">
-                                    <option selected>Adult</option>
-                                    <option value="1">Adult 1</option>
-                                    <option value="2">Adult 2</option>
-                                    <option value="3">Adult 3</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-select">
-                                    <option selected>Child</option>
-                                    <option value="1">Child 1</option>
-                                    <option value="2">Child 2</option>
-                                    <option value="3">Child 3</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary w-100">Submit</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+   
     <!-- Booking End -->
     <!-- Contact Start -->
     <div class="my-5">
@@ -112,15 +65,15 @@
                         <div class="row gy-4">
                             <div class="col-md-4">
                                 <h6 class="section-title text-start text-primary text-uppercase">Booking</h6>
-                                <p><i class="fa fa-envelope-open text-primary me-2"></i>book@example.com</p>
+                                <p><i class="fa fa-envelope-open text-primary me-2"></i>bookHotelier@gmail.com</p>
                             </div>
                             <div class="col-md-4">
                                 <h6 class="section-title text-start text-primary text-uppercase">General</h6>
-                                <p><i class="fa fa-envelope-open text-primary me-2"></i>info@example.com</p>
+                                <p><i class="fa fa-envelope-open text-primary me-2"></i>infoHotelier@gmail.com</p>
                             </div>
                             <div class="col-md-4">
                                 <h6 class="section-title text-start text-primary text-uppercase">Technical</h6>
-                                <p><i class="fa fa-envelope-open text-primary me-2"></i>tech@example.com</p>
+                                <p><i class="fa fa-envelope-open text-primary me-2"></i>techHotelier@gmail.com</p>
                             </div>
                         </div>
                     </div>
@@ -128,9 +81,11 @@
                         <div class="my-5 w-75 m-auto" id="map" style="height: 300px;"></div>
 
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" >
                         <div class="wow fadeInUp" data-wow-delay="0.2s">
-
+                                <div class=" text-center">
+								<h4 class="mb-4">Leave a Review</h4>
+                                </div>
                            
                             <form asp-action="Create" asp-controller="Reviews" method="post">
                                 @Html.AntiForgeryToken()
@@ -161,7 +116,9 @@
                                             <span asp-validation-for="Comment" class="text-danger"></span>
                                         </div>
                                     </div>
-
+                                    <div id ="reviews">
+                                      
+                                    </div>
                                     <div class="form-group">
                                         <label asp-for="Rating">Rate the Hotel:</label>
                                         <div class="star-rating">
@@ -192,19 +149,20 @@
                                 </div>
                             </form>
 
-                            
+                            @if (TempData["ReviewMessage"] != null)
+                            {
+                                <div id="reviewMessage" class="alert alert-success my-3">
+                                    @TempData["ReviewMessage"]
+                                </div>
+                            }
                         </div>
                     </div>
 
 
-
+                  
                     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-                    <script>
-                        // var map = L.map('map').setView([26.8206, 30.8025], 6); Egypt center
-
-                        // L.tileLayer('https:{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        //     maxZoom: 19,
-                        // }).addTo(map);
+                    <script  >
+                        
 
                      var map = L.map('map', {
                             minZoom: 4,
@@ -237,7 +195,7 @@
                         }
 
                            //id="hotelDropdown"
-                            document.getElementById("hotelDropdown").addEventListener("change", function () {
+                        document.getElementById("hotelDropdown").addEventListener("change", function () {
                             var selectedOption = this.options[this.selectedIndex];
 
                             var lat = parseFloat(selectedOption.getAttribute("data-lat"));
@@ -247,6 +205,36 @@
                                 map.setView([lat, lng],15);
                             }
                         });
+
+
+ 
+                            var msg = document.getElementById("reviewMessage");
+							  // console.log(msg);
+                            if (msg) {
+                               
+                               // msg.style.visibility = "visible";
+                                msg.style.transition = "opacity 1s ease, visibility 0s 1s";
+
+                                setTimeout(function () {
+                                    msg.style.opacity = "0";
+
+                                    setTimeout(function () {
+                                        msg.style.visibility = "hidden";
+                                        msg.style.display = "none";
+                                    }, 1000);
+                                }, 5000);
+                            }
+
+ 
+                            var shouldScroll = '@ViewBag.ScrollToReviews' === 'True' ;
+
+                            if (shouldScroll) {
+                                var el = document.getElementById("reviews");
+                                if (el) {
+                                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                                }
+                            }
+                     
                     </script>
                 </div>
             </div>
@@ -263,26 +251,7 @@
 
 
 
-        <!-- Contact End -->
-
-
-        @* <!-- Newsletter Start --> *@
-        @* <div class="container newsletter mt-5 wow fadeIn" data-wow-delay="0.1s"> *@
-        @*     <div class="row justify-content-center"> *@
-        @*         <div class="col-lg-10 border rounded p-1"> *@
-        @*             <div class="border rounded text-center p-1"> *@
-        @*                 <div class="bg-white rounded text-center p-5"> *@
-        @*                     <h4 class="mb-4">Subscribe Our <span class="text-primary text-uppercase">Newsletter</span></h4> *@
-        @*                     <div class="position-relative mx-auto" style="max-width: 400px;"> *@
-        @*                         <input class="form-control w-100 py-3 ps-4 pe-5" type="text" placeholder="Enter your email"> *@
-        @*                         <button type="button" class="btn btn-primary py-2 px-3 position-absolute top-0 end-0 mt-2 me-2">Submit</button> *@
-        @*                     </div> *@
-        @*                 </div> *@
-        @*             </div> *@
-        @*         </div> *@
-        @*     </div> *@
-        @* </div> *@
-        <!-- Newsletter Start -->
+         
 
 
 
