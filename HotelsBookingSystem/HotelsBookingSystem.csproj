@@ -17,7 +17,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Owin.Security.Google" Version="4.2.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
-    <PackageReference Include="Stripe.net" Version="48.0.2" />
+    <PackageReference Include="Stripe.net" Version="48.1.0" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="10.5.7" />
   </ItemGroup>
 

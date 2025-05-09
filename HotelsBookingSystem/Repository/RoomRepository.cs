@@ -103,7 +103,7 @@ namespace HotelsBookingSystem.Repository
         }
         public List<Hotel> GetAllhotels()
         {
-           var hotels= _context.Hotels.Where(h=>h.Status.ToLower()== "available")
+           var hotels= _context.Hotels.Where(h=>h.Status.ToLower()== "active")
                 .Include(h => h.Rooms)
                 .Include(h => h.HotelImages)
                 .Include(h => h.Reviews)
