@@ -9,18 +9,31 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using HotelsBookingSystem.ViewModels.AccountViewModels;
 using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace HotelsBookingSystem.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IAccountService accountService;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<AccountController> _logger;
         private readonly IConfiguration configuration;
 
-        public AccountController(IAccountService accountService , IConfiguration configuration)
+        public AccountController(IAccountService accountService , IConfiguration configuration , SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        ILogger<AccountController> logger)
         {
             this.accountService = accountService;
             this.configuration = configuration;
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -75,11 +88,52 @@ namespace HotelsBookingSystem.Controllers
             return View(userVm);
         }
 
+        #region External Login
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(properties, provider); 
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+            if (result.Succeeded)
+            {
+                return RedirectToLocal(returnUrl);
+            }
+
+            // Handle account registration or other actions
+            return RedirectToAction(nameof(Login));
+        }
+
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        #endregion
+
         public async Task<IActionResult> LogoutAsync ()
         {
             await accountService.LogoutAsync();
             return RedirectToAction("Index", "Home");
         }
+
 
         [HttpGet]
         public IActionResult ForgotPassword()

@@ -1,7 +1,9 @@
 ﻿using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Models.Results;
 using HotelsBookingSystem.ViewModels;
+using HotelsBookingSystem.ViewModels.AccountViewModels;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace HotelsBookingSystem.Services
 {
@@ -92,5 +94,92 @@ namespace HotelsBookingSystem.Services
 
             return await userManager.ResetPasswordAsync(user, token, password);
         }
+
+        #region External Login 
+        public async Task<ExternalLoginResult> ProcessExternalLoginAsync(ClaimsPrincipal principal)
+        {
+            var email = principal.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email))
+            {
+                return new ExternalLoginResult
+                {
+                    Succeeded = false,
+                    ErrorMessage = "Email claim not received from the provider."
+                };
+            }
+
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new ApplicationUser { UserName = email, Email = email };
+                var createResult = await userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    return new ExternalLoginResult
+                    {
+                        Succeeded = false,
+                        ErrorMessage = string.Join(", ", createResult.Errors.Select(e => e.Description))
+                    };
+                }
+            }
+
+            var loginInfo = await signInManager.GetExternalLoginInfoAsync();
+            if (loginInfo == null)
+            {
+                return new ExternalLoginResult
+                {
+                    Succeeded = false,
+                    ErrorMessage = "Failed to retrieve external login info."
+                };
+            }
+
+            // Try to sign in
+            var signInResult = await signInManager.ExternalLoginSignInAsync(
+                loginInfo.LoginProvider,
+                loginInfo.ProviderKey,
+                isPersistent: false);
+
+            if (!signInResult.Succeeded)
+            {
+                // Add the external login if missing
+                var addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
+                if (addLoginResult.Succeeded)
+                {
+                    await signInManager.SignInAsync(user, isPersistent: false);
+                    return new ExternalLoginResult { Succeeded = true, Email = email };
+                }
+                else
+                {
+                    return new ExternalLoginResult
+                    {
+                        Succeeded = false,
+                        ErrorMessage = "Failed to link external login."
+                    };
+                }
+            }
+
+            return new ExternalLoginResult { Succeeded = true, Email = email };
+        }
+
+        public async Task<IdentityResult> CreateExternalUserAsync(ExternalLoginViewModel model)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                FullName = $"{model.FirstName} {model.LastName}"
+            };
+
+            var result = await userManager.CreateAsync(user);
+
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, "User");
+                await signInManager.SignInAsync(user, isPersistent: false);
+            }
+
+            return result;
+        }
+        #endregion
     }
 }

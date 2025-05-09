@@ -3,10 +3,25 @@ using HotelsBookingSystem.Models;
 using HotelsBookingSystem.Models.Context;
 using HotelsBookingSystem.Repository;
 using HotelsBookingSystem.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddGoogle(options =>
+{
+    IConfigurationSection googleAuthSection = builder.Configuration.GetSection("Authentication:Google");
+    options.ClientId = googleAuthSection["ClientId"];
+    options.ClientSecret = googleAuthSection["ClientSecret"];
+});
 
 // Add services to the container
 builder.Services.AddControllersWithViews().AddViewOptions(options =>
@@ -32,12 +47,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+// Startup.cs or Program.cs
+
+
 // Configure Identity with default token providers
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<HotelsContext>()
     .AddDefaultTokenProviders(); // Added to resolve token provider error
 
-// Register services
+// Register services    
 builder.Services.AddScoped<IHotelRepository, HotelRepostory>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();

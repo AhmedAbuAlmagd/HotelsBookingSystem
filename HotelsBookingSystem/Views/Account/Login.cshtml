@@ -47,8 +47,23 @@
                 <div class="register-link">
                     <p>Don't have an account? <a asp-action="Register">Register</a></p>
                 </div>
+               
             </form>
+            <div class="external-login">
+                <h4>Use another service to log in.</h4>
+                <form asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                    <div class="social-login-buttons">
+                        <button type="submit" class="btn btn-google" name="provider" value="Google" title="Log in using your Google account">
+                            <i class="fab fa-google"></i> Google
+                        </button>
+                        <button type="submit" class="btn btn-facebook" name="provider" value="Facebook" title="Log in using your Facebook account">
+                            <i class="fab fa-facebook"></i> Facebook
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
+       
     </div>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
