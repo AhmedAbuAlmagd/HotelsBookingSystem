@@ -1,0 +1,146 @@
+﻿/* Login Page Styling with Hotel Theme */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 15px;
+    background: url('https://images.unsplash.com/photo-1519167758481-83f550bbae20?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+    .login-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Dark overlay for better contrast */
+    }
+
+.card {
+    position: relative;
+    border: none;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    backdrop-filter: blur(5px); /* Glassmorphism effect */
+}
+
+.hotel-card {
+    border-left: 5px solid #d4af37; /* Gold accent for hotel theme */
+}
+
+.card-title {
+    font-size: 2rem;
+    color: #1a3c34; /* Deep teal for hospitality feel */
+    font-weight: 700;
+}
+
+.login-form .form-label {
+    color: #1a3c34;
+}
+
+.login-form .form-control {
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .login-form .form-control:focus {
+        border-color: #d4af37;
+        box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+    }
+
+.input-group-text.eye-icon {
+    background: transparent;
+    border: none;
+    color: #666;
+    padding: 0 15px;
+}
+
+.btn-primary {
+    background-color: #1a3c34;
+    border: none;
+    padding: 12px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    .btn-primary:hover {
+        background-color: #15312b;
+        transform: translateY(-2px);
+    }
+
+.btn-google {
+    background-color: #ffffff;
+    color: #333;
+    border: 1px solid #dadce0;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    .btn-google:hover {
+        background-color: #f8f9fa;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+
+.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+.alert {
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.register-link, .forgot-password-link {
+    color: #d4af37;
+    font-weight: 500;
+}
+
+    .register-link:hover, .forgot-password-link:hover {
+        color: #b89730;
+        text-decoration: underline;
+    }
+
+hr {
+    border-top: 1px solid #dee2e6;
+    opacity: 0.5;
+}
+
+@media (max-width: 576px) {
+    .card {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+    }
+
+    .login-form .form-control,
+    .btn-primary,
+    .btn-google {
+        font-size: 1rem;
+        padding: 10px;
+    }
+}
+
+/* Animate.css for animations */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
