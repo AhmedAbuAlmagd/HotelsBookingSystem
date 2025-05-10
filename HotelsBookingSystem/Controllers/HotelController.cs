@@ -53,7 +53,6 @@ namespace HotelsBookingSystem.Controllers
             ViewBag.CurrentStatus = status;
             ViewBag.CurrentCity = city;
 
-            // Map your domain model to the view model
             List<ViewModels.AdminViewModels.HotelViewModel> hotelViewModels = hotels.Select(h => new ViewModels.AdminViewModels.HotelViewModel
             {
 
@@ -62,6 +61,7 @@ namespace HotelsBookingSystem.Controllers
                 Description = h.Description,
                 Location = h.Location,
                 ImageUrl = h.ImageUrl,
+                AllImages = h.AllImages,
                 City = h.City,
                 Status = h.Status,
                 RoomCount = h.RoomCount,
@@ -77,7 +77,7 @@ namespace HotelsBookingSystem.Controllers
                 TotalPages = totalPages
             };
 
-            return View("AllHotels", viewModel);
+            return View(viewModel);
         }
 
         public IActionResult Services(int hotelId)

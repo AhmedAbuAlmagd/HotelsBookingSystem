@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HotelsBookingSystem.Controllers
 {
-    [Authorize]
 
+    [Authorize]
     public class ReviewsController : Controller
     {
         private readonly IReviewRepository reviewRepository;
@@ -48,7 +48,7 @@ namespace HotelsBookingSystem.Controllers
 
         #region create
         [HttpPost]
-      
+       
         [ValidateAntiForgeryToken]
 
         public async Task<IActionResult> Create( ReviewViewModel reviewVM)

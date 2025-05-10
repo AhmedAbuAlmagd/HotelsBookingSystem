@@ -13,71 +13,121 @@
 }
 
 @section Styles {
-    <style>
-        .cart-btn {
-            background-color: var(--primary);
-            color: #FFFFFF;
-            border-radius: 5px;
-            padding: 12px 25px;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
 
-            .cart-btn:hover {
-                background-color: #FF9800;
-                transform: translateY(-2px);
-            }
+<style>
+    :root {
+    --primary: #007bff;
+    --light: #f8f9fa;
+    }
 
-        .card {
-            border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        }
+    body {
+    background-color: #f5f7fa;
+    }
 
-        .card-header {
-            background-color: var(--primary);
-            color: white;
-        }
+    .cart-btn {
+    background-color: var(--primary);
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
 
-        .cart-item-text, .price-per-night {
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
+    .cart-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    }
 
-        input[type="date"] {
-            background-color: var(--light);
-            border: 1px solid var(--primary);
-            border-radius: 5px;
-            padding: 8px;
-            transition: border-color 0.3s ease;
-        }
+    .card {
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    border: none;
+    }
 
-            input[type="date"]:focus {
-                border-color: var(--primary);
-                outline: none;
-            }
+    .card-header {
+    background-color: var(--primary);
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    }
 
-        .cart-item:hover {
-            transform: scale(1.02);
-            transition: transform 0.2s ease-in-out;
-        }
+    .cart-item {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: 0.3s;
+    }
 
-        .bg-image:hover {
-            opacity: 0.8;
-        }
+    .cart-item:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
 
-        .cart-container {
-            background-color: var(--light);
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    .bg-image img {
+    border-radius: 10px;
+    transition: 0.3s ease-in-out;
+    }
 
-        .cart-total {
-            color: var(--primary);
-            font-weight: bold;
-        }
-    </style>
+    .bg-image:hover img {
+    transform: scale(1.05);
+    opacity: 0.9;
+    }
+
+    .form-control {
+    border-radius: 8px;
+    }
+
+    input[type="date"] {
+    background-color: var(--light);
+    border: 1px solid #ced4da;
+    padding: 10px;
+    font-size: 1rem;
+    }
+
+    input[type="date"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .price-per-night {
+    font-size: 1.05rem;
+    font-weight: 500;
+    }
+
+    .list-group-item {
+    font-size: 1rem;
+    font-weight: 500;
+    }
+
+    .form-check-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    }
+
+    .btn-danger {
+    border-radius: 6px;
+    padding: 6px 12px;
+    }
+
+    .alert-info {
+    font-size: 1.1rem;
+    padding: 15px;
+    border-radius: 10px;
+    }
+
+    .card-body img {
+    margin-right: 8px;
+    }
+
+    h5, h6 {
+    font-weight: 600;
+    }
+</style>
+
 }
 
 <section class="h-100 gradient-custom">
@@ -112,8 +162,10 @@
                                         <p class="price-per-night"><strong>Price/Night: $@item.Room.PricePerNight</strong></p>
                                     </div>
                                     <div class="col-lg-4">
-                                        <button class="btn btn-danger btn-sm" onclick="removeFromCart(@item.CartItemId)">
-                                            <i class="fas fa-trash-alt"></i> Remove
+
+                                        <button class="btn btn-danger btn-sm" @* onclick="removeFromCart(@item.CartItemId)" *@>
+                                            <a style="text-decoration:none" class="text-light" asp-action="RemoveFromCart" asp-controller="Cart" asp-route-id="@item.CartItemId"><i class="fas fa-trash-alt"></i> Remove</a>
+
                                         </button>
                                     </div>
                                 </div>
@@ -148,10 +200,10 @@
                                         {
                                             <div class="form-check">
                                                 <input class="form-check-input hotel-service-checkbox"
-                                                       type="checkbox"
-                                                       value="@service.Service.Price"
-                                                       id="hotel-service-@service.serviceId"
-                                                       onchange="updateTotalAmount()" />
+                                                type="checkbox"
+                                                value="@service.Service.Price"
+                                                id="hotel-service-@service.serviceId"
+                                                onchange="updateTotalAmount()" />
                                                 <label class="form-check-label" for="hotel-service-@service.serviceId">
                                                     @service.Service.Name - $@service.Service.Price per night
                                                 </label>
@@ -179,7 +231,7 @@
                         <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg" alt="Visa" />
                         <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg" alt="Amex" />
                         <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg" alt="Mastercard" />
-                        <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce/includes/gateways/paypal/assets/images/paypal.webp" alt="PayPal" />
+                        <img class="me-2" width="45px" src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" alt="PayPal" />
                     </div>
                 </div>
             </div>
@@ -210,7 +262,7 @@
                                 <input type="hidden" name="CheckIn" id="formCheckInDate" />
                                 <input type="hidden" name="CheckOut" id="formCheckOutDate" />
                                 <input type="hidden" name="TotalAmount" id="totalAmountInput" />
-
+                                <input type="hidden" name="SelectedServiceIds" id="selectedServicesInput" />
                                 <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Confirm Booking</button>
                             </form>
                         </div>
@@ -220,16 +272,15 @@
         </div>
     </div>
 </section>
-
-@section Scripts {
-    <script>
-        function calculateTotalAmount() {
+@section Scripts
+{
+<script>
+           function calculateTotalAmount() {
             const checkIn = new Date(document.getElementById('checkInDate').value);
             const checkOut = new Date(document.getElementById('checkOutDate').value);
             const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
 
             let total = 0;
-        
         @foreach (var item in Model.CartItems)
         {
             @:total += @item.Room.PricePerNight * nights;
@@ -242,22 +293,100 @@
         }
 
 
-        function updateTotalAmount() {
+                        function updateTotalAmount() {
             const totalAmount = calculateTotalAmount();
             document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
             document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
+            document.getElementById('totalAmountInput').value = totalAmount;
+
+            const selectedServices = Array.from(
+                document.querySelectorAll('.hotel-service-checkbox:checked')
+            ).map(checkbox => parseInt(checkbox.id.replace('hotel-service-', '')));
+            document.getElementById('selectedServicesInput').value = JSON.stringify(selectedServices);
         }
 
-        document.querySelector('form').addEventListener('submit', function(e) {
-            document.getElementById('formCheckInDate').value = document.getElementById('checkInDate').value;
-            document.getElementById('formCheckOutDate').value = document.getElementById('checkOutDate').value;
-            document.getElementById('totalAmountInput').value = calculateTotalAmount();
-        });
+          document.querySelector('form').addEventListener('submit', function(e) {
+              document.getElementById('formCheckInDate').value = document.getElementById('checkInDate').value;
+              document.getElementById('formCheckOutDate').value = document.getElementById('checkOutDate').value;
+              document.getElementById('totalAmountInput').value = calculateTotalAmount();
+          });
 
-    
-        document.addEventListener('DOMContentLoaded', function() {
-            updateTotalAmount();
-        });
-    </script>
+
+          document.addEventListener('DOMContentLoaded', function() {
+              updateTotalAmount();
+          });
+      document.addEventListener('DOMContentLoaded', function () {
+          const today = new Date();
+          const tomorrow = new Date();
+          tomorrow.setDate(today.getDate() + 1);
+
+          const todayStr = today.toISOString().split('T')[0];
+          const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+          const checkInInput = document.getElementById('checkInDate');
+          const checkOutInput = document.getElementById('checkOutDate');
+
+         
+          checkInInput.value = todayStr;
+          checkInInput.setAttribute('min', todayStr);
+
+          checkOutInput.value = tomorrowStr;
+          checkOutInput.setAttribute('min', tomorrowStr);
+
+          
+          checkInInput.addEventListener('change', function () {
+              const selectedCheckIn = new Date(this.value);
+              const minCheckout = new Date(selectedCheckIn);
+              minCheckout.setDate(minCheckout.getDate() + 1);
+              const minCheckoutStr = minCheckout.toISOString().split('T')[0];
+
+              if (selectedCheckIn < today) {
+                  alert("Check-In date cannot be before today.");
+                  this.value = todayStr;
+                  return;
+              }
+
+              checkOutInput.setAttribute('min', minCheckoutStr);
+
+              if (new Date(checkOutInput.value) <= selectedCheckIn) {
+                  alert("Check-Out must be after Check-In.");
+                  checkOutInput.value = '';
+              }
+
+              updateTotalAmount();
+          });
+
+     
+          checkOutInput.addEventListener('change', function () {
+              const checkInDate = new Date(checkInInput.value);
+              const checkOutDate = new Date(this.value);
+
+              if (checkOutDate <= checkInDate) {
+                  alert("Check-Out must be after Check-In.");
+                  this.value = '';
+              }
+
+              updateTotalAmount();
+          });
+
+          updateTotalAmount();
+
+                  function updateTotalAmount() {
+            const totalAmount = calculateTotalAmount();
+            document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
+            document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
+            document.getElementById('totalAmountInput').value = totalAmount;
+
+            const selectedServices = Array.from(
+                document.querySelectorAll('.hotel-service-checkbox:checked')
+            ).map(checkbox => checkbox.id.replace('hotel-service-', ''));
+            document.getElementById('selectedServicesInput').value = JSON.stringify(selectedServices);
+        }
+      });
+</script>
+
 
 }
+
+
+

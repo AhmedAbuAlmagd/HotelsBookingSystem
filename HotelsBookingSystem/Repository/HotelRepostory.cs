@@ -22,14 +22,7 @@ namespace HotelsBookingSystem.Repository
                 .FirstOrDefault(h => h.Id == hotelId);
         }
 
-        //public List<Hotel> GetHotelsWithRoomsAndImages()
-        //{
-        //    return con.Hotels
-        //       .Include(h => h.HotelImages)
-        //        .Include(h => h.Rooms)
-        //            .ThenInclude(r => r.RoomImages)
-        //        .ToList();
-        //}
+
         public List<Hotel> GetHotelsWithRoomsAndImages()
         {
             return con.Hotels

@@ -47,7 +47,7 @@ namespace HotelsBookingSystem.Services
             if (pageNumber < 1) 
                 pageNumber = 1;
 
-            var query = _hotelRepository.GetHotelsWithRoomsAndImages().Where(x => x.Status == "Active").AsQueryable();
+            var query = _hotelRepository.GetHotelsWithRoomsAndImages().Where(x => x.Status.ToLower() == "active").AsQueryable();
 
             if (!string.IsNullOrEmpty(searchTerm))
             {
@@ -81,6 +81,7 @@ namespace HotelsBookingSystem.Services
                 Location = hotel.Address,
                 Description = hotel.Description,
                 ImageUrl = hotel.HotelImages.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
+                AllImages = hotel.HotelImages.Select(img => img.ImageUrl).ToList(), 
                 Rating = (Double)hotel.rating,
                 City = hotel.City,  
                 RoomCount = hotel.Rooms?.Count ?? 0,

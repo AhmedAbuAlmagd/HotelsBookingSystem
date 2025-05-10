@@ -40,7 +40,7 @@
 
 <div class="   mb-5  ">
     <!-- Page Header Start -->
-    <div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-1.jpg);">
+    <div class="container-fluid page-header mb-5 p-0" style="background-image: url(/images/carousel-1.jpg);">
         <div class="container-fluid page-header-inner py-5">
             <div class="container text-center pb-5">
                 <h1 class="display-3 text-white mb-3 animated slideInDown">Contact</h1>
@@ -138,11 +138,12 @@
                                     <!-- Hotel Dropdown -->
                                     <div class="col-12">
                                         <div class="form-floating">
-                                            <select asp-for="HotelId" class="form-select" required>
+                                            <select id="hotelDropdown"  asp-for="HotelId" class="form-select" required>
                                                 <option value="">-- Select Hotel --</option>
                                                 @foreach (var hotel in Model.hotels ?? new List<Hotel>())
                                                 {
-                                                    <option value="@hotel.Id" selected="@(hotel.Id == Model.HotelId)">
+                                                    <option value="@hotel.Id" selected="@(hotel.Id == Model.HotelId)" data-lat="@hotel.Latitude.Replace(",", ".")"
+                                                            data-lng="@hotel.Longitude.Replace(",", ".")" >
                                                         @hotel.Name
                                                     </option>
                                                 }
@@ -199,11 +200,53 @@
 
                     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
                     <script>
-                        var map = L.map('map').setView([26.8206, 30.8025], 6); // Egypt center
+                        // var map = L.map('map').setView([26.8206, 30.8025], 6); Egypt center
 
+                        // L.tileLayer('https:{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        //     maxZoom: 19,
+                        // }).addTo(map);
+
+                     var map = L.map('map', {
+                            minZoom: 4,
+                            maxZoom: 15
+                        }).setView([30.0444, 31.2357], 6);
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                            maxZoom: 19,
+                            attribution: ''
                         }).addTo(map);
+
+                                            var bounds=[];
+
+                        @foreach (var h in Model.hotels)
+                        {
+                            if (h != null &&
+                                !string.IsNullOrEmpty(h.Latitude) &&
+                                !string.IsNullOrEmpty(h.Longitude))
+                            {
+
+                                <text>
+                                                    var lat = parseFloat('@h.Latitude'.replace(',', '.'));
+                                                    var lng = parseFloat('@h.Longitude'.replace(',', '.'));
+
+                                                    if (!isNaN(lat) && !isNaN(lng)) {
+                                                        var marker = L.marker([lat, lng]).addTo(map)
+                                                            .bindPopup(`@h.Name`);
+                                                        bounds.push([lat, lng]);
+                                                    }
+                                </text>
+                            }
+                        }
+
+                           //id="hotelDropdown"
+                            document.getElementById("hotelDropdown").addEventListener("change", function () {
+                            var selectedOption = this.options[this.selectedIndex];
+
+                            var lat = parseFloat(selectedOption.getAttribute("data-lat"));
+                            var lng = parseFloat(selectedOption.getAttribute("data-lng"));
+
+                            if (!isNaN(lat) && !isNaN(lng)) {
+                                map.setView([lat, lng],15);
+                            }
+                        });
                     </script>
                 </div>
             </div>
