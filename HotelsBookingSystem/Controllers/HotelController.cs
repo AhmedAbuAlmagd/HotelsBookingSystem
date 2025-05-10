@@ -38,19 +38,19 @@ namespace HotelsBookingSystem.Controllers
             return View("AddHolelForm",hotel);
         }
 
-        public IActionResult Index(int page = 1, string searchTerm = "", string status = "", string city = "")
+        public IActionResult Index(int page = 1, string searchTerm = "", string city = "")
         {
             const int pageSize = 6;
-            status = string.IsNullOrWhiteSpace(status) ? null : status;
+            //status = string.IsNullOrWhiteSpace(status) ? null : status;
             city = string.IsNullOrWhiteSpace(city) ? null : city;
             searchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null : searchTerm;
 
-            var hotels = _hotelService.GetHotelsPaged(page, pageSize, searchTerm, status, city);
-            var totalHotels = _hotelService.GetTotalHotelsCount(searchTerm, status, city);
+            var hotels = _hotelService.GetHotelsPaged(page, pageSize, searchTerm, "active", city);
+            var totalHotels = _hotelService.GetTotalHotelsCount(searchTerm, "active", city);
             var totalPages = (int)Math.Ceiling((double)totalHotels / pageSize);
 
             ViewBag.CurrentSearchTerm = searchTerm;
-            ViewBag.CurrentStatus = status;
+            ViewBag.CurrentStatus = "active";
             ViewBag.CurrentCity = city;
 
             List<ViewModels.AdminViewModels.HotelViewModel> hotelViewModels = hotels.Select(h => new ViewModels.AdminViewModels.HotelViewModel
