@@ -19,7 +19,7 @@ namespace HotelsBookingSystem.Controllers
         private readonly IRoomRepository roomRepository;
         private readonly ILogger<RoomController> logger;
         private readonly IWebHostEnvironment webHostEnvironment;
-        public RoomController(IRoomRepository roomRepo , ILogger<RoomController> logger , IWebHostEnvironment webHostEnvironment)
+        public RoomController(IRoomRepository roomRepo, ILogger<RoomController> logger, IWebHostEnvironment webHostEnvironment)
         {
             roomRepository = roomRepo;
             this.logger = logger;
@@ -82,16 +82,35 @@ namespace HotelsBookingSystem.Controllers
             int pageSize = 3;
             int totalPeople = adults + children;
 
-            var allRooms = roomRepository.GetAllroom();
 
+            var allRooms = roomRepository.GetAllroom()
+
+                .ToList();
+
+            var allHotels = allRooms
+                .Select(r => r.Hotel)
+                .Where(h => h != null)
+                .Distinct()
+                .ToList();
 
             var availableRooms = allRooms
-               .Where(room => !room.BookingRooms
-              .Any(b =>
-             b.booking.CheckIn.HasValue && b.booking.CheckOut.HasValue &&
-             b.booking.CheckIn.Value <= checkOut &&
-             b.booking.CheckOut.Value >= checkIn));
+                .Where(room => !room.BookingRooms
+                    .Any(b =>
+                        b.booking.CheckIn.HasValue &&
+                        b.booking.CheckOut.HasValue &&
+                        b.booking.CheckIn.Value <= checkOut &&
+                        b.booking.CheckOut.Value >= checkIn))
+                .Where(room => room.NumberOfBeds >= totalPeople)
+                .ToList();
 
+            var roomTypes = allRooms.Select(r => r.Type).Distinct().ToList();
+            var cities = allHotels.Select(h => h.City).Distinct().ToList();
+
+            ViewBag.CheckIn = checkIn;
+            ViewBag.CheckOut = checkOut;
+            ViewBag.Adults = adults;
+            ViewBag.Children = children;
+            ViewBag.TotalPeople = totalPeople;
 
             var roomViewModels = availableRooms.Select(r => new RoomViewModel
             {
@@ -102,7 +121,12 @@ namespace HotelsBookingSystem.Controllers
                 PricePerNight = r.PricePerNight,
                 RoomImages = r.RoomImages?.Select(img => img.ImageUrl).ToList(),
                 hotel = r.Hotel,
-                hotels = roomRepository.GetAllhotels()
+                hotels = allHotels,
+                typslist = roomTypes,
+                NumberOfBeds = r.NumberOfBeds,
+                RoomNumber = r.RoomNumber,
+
+                citys = cities
             }).ToPagedList(page, pageSize);
 
             return View("Index", roomViewModels);
@@ -248,7 +272,7 @@ namespace HotelsBookingSystem.Controllers
         {
             try
             {
-                var room =  roomRepository.GetById(id);
+                var room = roomRepository.GetById(id);
                 if (room == null)
                 {
                     return NotFound(new { success = false, message = "Room not found" });
@@ -273,7 +297,7 @@ namespace HotelsBookingSystem.Controllers
             }
         }
 
-      
+
 
 
         [HttpPost]
@@ -448,12 +472,12 @@ namespace HotelsBookingSystem.Controllers
             }
         }
 
-       
+
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult CheckRoomNumber(int hotelId, int roomNumber, int? roomId = null)
         {
-            bool exists =  roomRepository.RoomNumberExists(hotelId, roomNumber, roomId);
+            bool exists = roomRepository.RoomNumberExists(hotelId, roomNumber, roomId);
             return Json(new { exists });
         }
 

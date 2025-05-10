@@ -278,9 +278,16 @@
 {
     <script>
         function calculateTotalAmount() {
+
             const checkIn = new Date(document.getElementById('checkInDate').value);
             const checkOut = new Date(document.getElementById('checkOutDate').value);
-            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const diffTime = Math.abs(checkOut - checkIn);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        function calculateTotalAmount() {
+            const nights = calculateTotalNights();
 
             let total = 0;
 
@@ -297,6 +304,10 @@
         }
 
         function updateTotalAmount() {
+
+            const totalNights = calculateTotalNights();
+            document.getElementById('totalNights').textContent = `Total Nights: ${totalNights}`;
+
             const totalAmount = calculateTotalAmount();
             document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
             document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
@@ -370,6 +381,7 @@
                     this.value = '';
                 }
 
+
                 updateTotalAmount();
             });
 
@@ -378,3 +390,4 @@
     </script>
 
 }
+
