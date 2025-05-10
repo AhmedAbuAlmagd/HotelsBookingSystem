@@ -1,4 +1,4 @@
-﻿@model HotelsBookingSystem.ViewModels.CartViewModel
+﻿﻿@model HotelsBookingSystem.ViewModels.CartViewModel
 
 @{
     ViewData["Title"] = "Cart";
@@ -14,119 +14,119 @@
 
 @section Styles {
 
-    <style>
-        :root {
-            --primary: #007bff;
-            --light: #f8f9fa;
-        }
+<style>
+    :root {
+    --primary: #007bff;
+    --light: #f8f9fa;
+    }
 
-        body {
-            background-color: #f5f7fa;
-        }
+    body {
+    background-color: #f5f7fa;
+    }
 
-        .cart-btn {
-            background-color: var(--primary);
-            color: #fff;
-            border-radius: 8px;
-            padding: 12px 25px;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-        }
+    .cart-btn {
+    background-color: var(--primary);
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
 
-            .cart-btn:hover {
-                background-color: #0056b3;
-                transform: translateY(-2px);
-            }
+    .cart-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    }
 
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-            border: none;
-        }
+    .card {
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    border: none;
+    }
 
-        .card-header {
-            background-color: var(--primary);
-            color: white;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
+    .card-header {
+    background-color: var(--primary);
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    }
 
-        .cart-item {
-            background-color: #ffffff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            transition: 0.3s;
-        }
+    .cart-item {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: 0.3s;
+    }
 
-            .cart-item:hover {
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            }
+    .cart-item:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
 
-        .bg-image img {
-            border-radius: 10px;
-            transition: 0.3s ease-in-out;
-        }
+    .bg-image img {
+    border-radius: 10px;
+    transition: 0.3s ease-in-out;
+    }
 
-        .bg-image:hover img {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
+    .bg-image:hover img {
+    transform: scale(1.05);
+    opacity: 0.9;
+    }
 
-        .form-control {
-            border-radius: 8px;
-        }
+    .form-control {
+    border-radius: 8px;
+    }
 
-        input[type="date"] {
-            background-color: var(--light);
-            border: 1px solid #ced4da;
-            padding: 10px;
-            font-size: 1rem;
-        }
+    input[type="date"] {
+    background-color: var(--light);
+    border: 1px solid #ced4da;
+    padding: 10px;
+    font-size: 1rem;
+    }
 
-            input[type="date"]:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-            }
+    input[type="date"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
 
-        .price-per-night {
-            font-size: 1.05rem;
-            font-weight: 500;
-        }
+    .price-per-night {
+    font-size: 1.05rem;
+    font-weight: 500;
+    }
 
-        .list-group-item {
-            font-size: 1rem;
-            font-weight: 500;
-        }
+    .list-group-item {
+    font-size: 1rem;
+    font-weight: 500;
+    }
 
-        .form-check-label {
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
+    .form-check-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    }
 
-        .btn-danger {
-            border-radius: 6px;
-            padding: 6px 12px;
-        }
+    .btn-danger {
+    border-radius: 6px;
+    padding: 6px 12px;
+    }
 
-        .alert-info {
-            font-size: 1.1rem;
-            padding: 15px;
-            border-radius: 10px;
-        }
+    .alert-info {
+    font-size: 1.1rem;
+    padding: 15px;
+    border-radius: 10px;
+    }
 
-        .card-body img {
-            margin-right: 8px;
-        }
+    .card-body img {
+    margin-right: 8px;
+    }
 
-        h5, h6 {
-            font-weight: 600;
-        }
-    </style>
+    h5, h6 {
+    font-weight: 600;
+    }
+</style>
 
 }
 
@@ -200,12 +200,10 @@
                                         {
                                             <div class="form-check">
                                                 <input class="form-check-input hotel-service-checkbox"
-                                                       type="checkbox"
-                                                       value="@service.Service.Price"
-                                                       id="hotel-service-@service.serviceId"
-                                                       data-hotel-id="@hotel.Id"
-                                                       data-service-id="@service.Service.Id"
-                                                       onchange="updateTotalAmount()" />
+                                                type="checkbox"
+                                                value="@service.Service.Price"
+                                                id="hotel-service-@service.serviceId"
+                                                onchange="updateTotalAmount()" />
                                                 <label class="form-check-label" for="hotel-service-@service.serviceId">
                                                     @service.Service.Name - $@service.Service.Price per night
                                                 </label>
@@ -277,8 +275,7 @@
 @section Scripts
 {
     <script>
-        function calculateTotalAmount() {
-
+        function calculateTotalNights() {
             const checkIn = new Date(document.getElementById('checkInDate').value);
             const checkOut = new Date(document.getElementById('checkOutDate').value);
             const diffTime = Math.abs(checkOut - checkIn);
@@ -290,7 +287,6 @@
             const nights = calculateTotalNights();
 
             let total = 0;
-
         @foreach (var item in Model.CartItems)
         {
             @:total += @item.Room.PricePerNight * nights;
@@ -304,36 +300,21 @@
         }
 
         function updateTotalAmount() {
-
             const totalNights = calculateTotalNights();
-            document.getElementById('totalNights').textContent = `Total Nights: ${totalNights}`;
+            document.getElementById('totalNights').textContent = Total Nights: ${totalNights};
 
             const totalAmount = calculateTotalAmount();
-            document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
-            document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
+            document.getElementById('totalAmountText').textContent = Total: $${totalAmount};
+            document.getElementById('summaryTotalAmount').textContent = $${totalAmount};
             document.getElementById('totalAmountInput').value = totalAmount;
 
-                  const servicesByHotel = {};
-        document.querySelectorAll('.hotel-service-checkbox:checked').forEach(checkbox => {
-            const hotelId = checkbox.getAttribute('data-hotel-id');
-            const serviceId = parseInt(checkbox.getAttribute('data-service-id'));
-
-            if (!servicesByHotel[hotelId]) {
-                servicesByHotel[hotelId] = [];
-            }
-            servicesByHotel[hotelId].push(serviceId);
-        });
-
-        document.getElementById('selectedServicesInput').value = JSON.stringify(servicesByHotel);
+            const selectedServices = Array.from(
+                document.querySelectorAll('.hotel-service-checkbox:checked')
+            ).map(checkbox => parseInt(checkbox.id.replace('hotel-service-', '')));
+            document.getElementById('selectedServicesInput').value = JSON.stringify(selectedServices);
         }
 
-        document.querySelector('form').addEventListener('submit', function (e) {
-            document.getElementById('formCheckInDate').value = document.getElementById('checkInDate').value;
-            document.getElementById('formCheckOutDate').value = document.getElementById('checkOutDate').value;
-            document.getElementById('totalAmountInput').value = calculateTotalAmount();
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
             const tomorrow = new Date();
             tomorrow.setDate(today.getDate() + 1);
@@ -350,7 +331,7 @@
             checkOutInput.value = tomorrowStr;
             checkOutInput.setAttribute('min', tomorrowStr);
 
-            checkInInput.addEventListener('change', function () {
+            checkInInput.addEventListener('change', function() {
                 const selectedCheckIn = new Date(this.value);
                 const minCheckout = new Date(selectedCheckIn);
                 minCheckout.setDate(minCheckout.getDate() + 1);
@@ -372,22 +353,26 @@
                 updateTotalAmount();
             });
 
-            checkOutInput.addEventListener('change', function () {
+            checkOutInput.addEventListener('change', function() {
                 const checkInDate = new Date(checkInInput.value);
                 const checkOutDate = new Date(this.value);
 
                 if (checkOutDate <= checkInDate) {
                     alert("Check-Out must be after Check-In.");
                     this.value = '';
+                    return;
                 }
-
 
                 updateTotalAmount();
             });
 
             updateTotalAmount();
         });
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            document.getElementById('formCheckInDate').value = document.getElementById('checkInDate').value;
+            document.getElementById('formCheckOutDate').value = document.getElementById('checkOutDate').value;
+            document.getElementById('totalAmountInput').value = calculateTotalAmount();
+        });
     </script>
-
 }
-

@@ -17,7 +17,7 @@ namespace HotelsBookingSystem.Controllers
         private readonly ICartRepository _cartRepository;
         HotelsContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly  IRoomRepository _roomRepository;
+        private readonly IRoomRepository _roomRepository;
 
         public CartController(HotelsContext context, ICartRepository cartRepository, IRoomRepository roomRepository, UserManager<ApplicationUser> userManager)
         {
@@ -135,4 +135,3 @@ namespace HotelsBookingSystem.Controllers
     }
 
 }
-
