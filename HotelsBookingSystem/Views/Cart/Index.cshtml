@@ -1,4 +1,4 @@
-﻿﻿@model HotelsBookingSystem.ViewModels.CartViewModel
+﻿@model HotelsBookingSystem.ViewModels.CartViewModel
 
 @{
     ViewData["Title"] = "Cart";
@@ -301,11 +301,11 @@
 
         function updateTotalAmount() {
             const totalNights = calculateTotalNights();
-            document.getElementById('totalNights').textContent = Total Nights: ${totalNights};
+            document.getElementById('totalNights').textContent = `TotalNights: ${totalNights}`;
 
             const totalAmount = calculateTotalAmount();
-            document.getElementById('totalAmountText').textContent = Total: $${totalAmount};
-            document.getElementById('summaryTotalAmount').textContent = $${totalAmount};
+            document.getElementById('totalAmountText').textContent = `Total: ${totalAmount}`;
+            document.getElementById('summaryTotalAmount').textContent = `${totalAmount}`;
             document.getElementById('totalAmountInput').value = totalAmount;
 
             const selectedServices = Array.from(
