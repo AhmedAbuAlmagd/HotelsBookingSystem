@@ -274,17 +274,24 @@
 </section>
 @section Scripts
 {
-<script>
-           function calculateTotalAmount() {
+    <script>
+        function calculateTotalNights() {
             const checkIn = new Date(document.getElementById('checkInDate').value);
             const checkOut = new Date(document.getElementById('checkOutDate').value);
-            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const diffTime = Math.abs(checkOut - checkIn);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        function calculateTotalAmount() {
+            const nights = calculateTotalNights();
 
             let total = 0;
         @foreach (var item in Model.CartItems)
         {
             @:total += @item.Room.PricePerNight * nights;
         }
+
             document.querySelectorAll('.hotel-service-checkbox:checked').forEach(checkbox => {
                 total += parseFloat(checkbox.value) * nights;
             });
@@ -292,8 +299,10 @@
             return total.toFixed(2);
         }
 
+        function updateTotalAmount() {
+            const totalNights = calculateTotalNights();
+            document.getElementById('totalNights').textContent = `Total Nights: ${totalNights}`;
 
-                        function updateTotalAmount() {
             const totalAmount = calculateTotalAmount();
             document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
             document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
@@ -305,88 +314,67 @@
             document.getElementById('selectedServicesInput').value = JSON.stringify(selectedServices);
         }
 
-          document.querySelector('form').addEventListener('submit', function(e) {
-              document.getElementById('formCheckInDate').value = document.getElementById('checkInDate').value;
-              document.getElementById('formCheckOutDate').value = document.getElementById('checkOutDate').value;
-              document.getElementById('totalAmountInput').value = calculateTotalAmount();
-          });
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const tomorrow = new Date();
+            tomorrow.setDate(today.getDate() + 1);
 
+            const todayStr = today.toISOString().split('T')[0];
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-          document.addEventListener('DOMContentLoaded', function() {
-              updateTotalAmount();
-          });
-      document.addEventListener('DOMContentLoaded', function () {
-          const today = new Date();
-          const tomorrow = new Date();
-          tomorrow.setDate(today.getDate() + 1);
+            const checkInInput = document.getElementById('checkInDate');
+            const checkOutInput = document.getElementById('checkOutDate');
 
-          const todayStr = today.toISOString().split('T')[0];
-          const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            checkInInput.value = todayStr;
+            checkInInput.setAttribute('min', todayStr);
 
-          const checkInInput = document.getElementById('checkInDate');
-          const checkOutInput = document.getElementById('checkOutDate');
+            checkOutInput.value = tomorrowStr;
+            checkOutInput.setAttribute('min', tomorrowStr);
 
-         
-          checkInInput.value = todayStr;
-          checkInInput.setAttribute('min', todayStr);
+            checkInInput.addEventListener('change', function() {
+                const selectedCheckIn = new Date(this.value);
+                const minCheckout = new Date(selectedCheckIn);
+                minCheckout.setDate(minCheckout.getDate() + 1);
+                const minCheckoutStr = minCheckout.toISOString().split('T')[0];
 
-          checkOutInput.value = tomorrowStr;
-          checkOutInput.setAttribute('min', tomorrowStr);
+                if (selectedCheckIn < today) {
+                    alert("Check-In date cannot be before today.");
+                    this.value = todayStr;
+                    return;
+                }
 
-          
-          checkInInput.addEventListener('change', function () {
-              const selectedCheckIn = new Date(this.value);
-              const minCheckout = new Date(selectedCheckIn);
-              minCheckout.setDate(minCheckout.getDate() + 1);
-              const minCheckoutStr = minCheckout.toISOString().split('T')[0];
+                checkOutInput.setAttribute('min', minCheckoutStr);
 
-              if (selectedCheckIn < today) {
-                  alert("Check-In date cannot be before today.");
-                  this.value = todayStr;
-                  return;
-              }
+                if (new Date(checkOutInput.value) <= selectedCheckIn) {
+                    alert("Check-Out must be after Check-In.");
+                    checkOutInput.value = '';
+                }
 
-              checkOutInput.setAttribute('min', minCheckoutStr);
+                updateTotalAmount();
+            });
 
-              if (new Date(checkOutInput.value) <= selectedCheckIn) {
-                  alert("Check-Out must be after Check-In.");
-                  checkOutInput.value = '';
-              }
+            checkOutInput.addEventListener('change', function() {
+                const checkInDate = new Date(checkInInput.value);
+                const checkOutDate = new Date(this.value);
 
-              updateTotalAmount();
-          });
+                if (checkOutDate <= checkInDate) {
+                    alert("Check-Out must be after Check-In.");
+                    this.value = '';
+                    return;
+                }
 
-     
-          checkOutInput.addEventListener('change', function () {
-              const checkInDate = new Date(checkInInput.value);
-              const checkOutDate = new Date(this.value);
+                updateTotalAmount();
+            });
 
-              if (checkOutDate <= checkInDate) {
-                  alert("Check-Out must be after Check-In.");
-                  this.value = '';
-              }
+            updateTotalAmount();
+        });
 
-              updateTotalAmount();
-          });
-
-          updateTotalAmount();
-
-                  function updateTotalAmount() {
-            const totalAmount = calculateTotalAmount();
-            document.getElementById('totalAmountText').textContent = `Total: $${totalAmount}`;
-            document.getElementById('summaryTotalAmount').textContent = `$${totalAmount}`;
-            document.getElementById('totalAmountInput').value = totalAmount;
-
-            const selectedServices = Array.from(
-                document.querySelectorAll('.hotel-service-checkbox:checked')
-            ).map(checkbox => checkbox.id.replace('hotel-service-', ''));
-            document.getElementById('selectedServicesInput').value = JSON.stringify(selectedServices);
-        }
-      });
-</script>
-
-
+        document.querySelector('form').addEventListener('submit', function(e) {
+            document.getElementById('formCheckInDate').value = document.getElementById('checkInDate').value;
+            document.getElementById('formCheckOutDate').value = document.getElementById('checkOutDate').value;
+            document.getElementById('totalAmountInput').value = calculateTotalAmount();
+        });
+    </script>
 }
-
 
 

@@ -83,16 +83,14 @@ namespace HotelsBookingSystem.Controllers
             int totalPeople = adults + children;
 
             var allRooms = roomRepository.GetAllroom();
-
-
             var availableRooms = allRooms
-               .Where(room => !room.BookingRooms
-              .Any(b =>
-             b.booking.CheckIn.HasValue && b.booking.CheckOut.HasValue &&
-             b.booking.CheckIn.Value <= checkOut &&
-             b.booking.CheckOut.Value >= checkIn));
-
-
+                .Where(room => !room.BookingRooms
+                    .Any(b =>
+                        b.booking.CheckIn.HasValue && b.booking.CheckOut.HasValue &&
+                        b.booking.CheckIn.Value <= checkOut &&
+                        b.booking.CheckOut.Value >= checkIn));
+      
+            var roomTypes = allRooms.Select(r => r.Type).Distinct().ToList();
             var roomViewModels = availableRooms.Select(r => new RoomViewModel
             {
                 Id = r.Id,
@@ -102,7 +100,8 @@ namespace HotelsBookingSystem.Controllers
                 PricePerNight = r.PricePerNight,
                 RoomImages = r.RoomImages?.Select(img => img.ImageUrl).ToList(),
                 hotel = r.Hotel,
-                hotels = roomRepository.GetAllhotels()
+                hotels = roomRepository.GetAllhotels(),
+                typslist = roomTypes
             }).ToPagedList(page, pageSize);
 
             return View("Index", roomViewModels);
