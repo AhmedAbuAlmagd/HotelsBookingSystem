@@ -19,7 +19,7 @@ namespace HotelsBookingSystem.Repository
         {
             return _context.Hotel_Service.Where(hs => hs.HotelId == hotelId).Count();
         }
-
+    
         public List<Service> GetPagedByHotelId(int hotelId, int pageNumber, int pageSize)
         {
             return _context.Hotel_Service
