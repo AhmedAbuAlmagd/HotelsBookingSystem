@@ -75,6 +75,8 @@ namespace HotelsBookingSystem.Controllers
             {
                 ModelState.AddModelError("Rating", "Please select a rating .");
                 ViewBag.Message = "Please select a rating ";
+                ViewBag.ScrollToReviews = true;
+
                 return View("index",reviewVM);
             }
             #region hotel dropdown
@@ -105,15 +107,22 @@ namespace HotelsBookingSystem.Controllers
             #endregion
             if (ModelState.IsValid)
             {
-
                 reviewRepository.Add(review);
                 reviewRepository.SaveChanges();
-                return RedirectToAction("Index");
+                TempData["ReviewMessage"] = "Your review has been saved successfully!";
+                 
+                return Redirect("/Reviews/Index#reviews");
+
+                // return RedirectToAction("Index");
+
             }
 
+            ViewBag.ScrollToReviews = true;
+            return View("Index", reviewVM);
 
-            return View(reviewVM);
-             
+
+
+
         }
 
         #endregion
