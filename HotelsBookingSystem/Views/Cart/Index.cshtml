@@ -23,7 +23,6 @@
     body {
     background-color: #f5f7fa;
     }
-
     .cart-btn {
     background-color: var(--primary);
     color: #fff;
@@ -148,7 +147,7 @@
                                         <div class="bg-image hover-overlay hover-zoom ripple rounded">
                                             @if (item.Room.RoomImages.Any())
                                             {
-                                                <img src="/images/@item.Room.RoomImages.First().ImageUrl" class="w-100" alt="Room Image" />
+                                                <img src="@item.Room.RoomImages.First().ImageUrl" class="w-100" alt="Room Image" />
                                             }
                                             else
                                             {
