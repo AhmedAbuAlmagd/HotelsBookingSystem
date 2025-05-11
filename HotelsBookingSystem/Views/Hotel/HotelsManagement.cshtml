@@ -76,7 +76,7 @@
     <div class="dashboard">
         <!-- Header Section -->
         <div class="header">
-            <h1 class="title">Hotels Management</h1>
+         <h1 class="title">🏨 Hotels Management</h1>
 
         </div>
 
@@ -154,7 +154,7 @@
                         <div class="hotel-card-info">
                             <p><i class="fa fa-map-marker"></i> @hotel.Location , @hotel.City</p>
                             <p><i class="fa fa-bed"></i> @hotel.RoomCount rooms</p>
-                            <p><i class="fa fa-star"></i> 5 stars</p>
+                            <p><i class="fa fa-star"></i> @hotel.Rating star@(hotel.Rating > 1 ? "s" : "")</p>
                         </div>
                         <div class="hotel-card-description">
                             @(hotel.Description?.Length > 100 ? hotel.Description.Substring(0, 100) + "..." : hotel.Description)
@@ -548,6 +548,7 @@
                         document.getElementById('Rating').value = data.rating || '';
                         document.getElementById('Status').value = data.status || '';
 
+
                         // Set latitude and longitude values
                         const lat = data.latitude || 30.0444;
                         const lng = data.longitude || 31.2357;
@@ -566,43 +567,82 @@
                     });
             }
 
-            function saveHotel() {
-                const form = $("#hotelForm")[0];
-                $.validator.unobtrusive.parse($("#hotelForm"));
+                  function saveHotel() {
+            const form = $("#hotelForm")[0];
+            $.validator.unobtrusive.parse($("#hotelForm"));
 
-                if (!$("#hotelForm").valid()) return;
+            if (!$("#hotelForm").valid()) return;
 
-                const saveBtn = $(form).find('.save-btn');
-                saveBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+            const saveBtn = $(form).find('.save-btn');
+            saveBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
 
-                const formData = new FormData(form);
-                const hotelId = $("#hotelId").val();
-                const url = hotelId === "0" ? "/Hotel/Create" : `/Hotel/Update/${hotelId}`;
+            const hotelId = $("#hotelId").val();
+            const formData = new FormData(form);
+            const url = hotelId === "0" ? "/Hotel/Create" : `/Hotel/Update/${hotelId}`; // Define url here
 
-                $.ajax({
-                    url: url,
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    headers: {
-                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            closeAllModals();
-                            location.reload();
-                        } else {
-                            displayValidationErrors(response.errors || {});
-                            saveBtn.prop('disabled', false).text('Save Hotel');
+            // Check if we're editing and no new image is uploaded
+            if (hotelId !== "0") {
+                const imageInput = document.getElementById('image');
+                if (imageInput.files.length === 0) {
+                    // Attempt to fetch the existing image URL
+                    fetch(`/Hotel/GetHotel/${hotelId}`, {
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                         }
-                    },
-                    error: function() {
-                        alert('An error occurred while saving the hotel.');
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Fetched hotel data:', data);
+                            formData.delete('image'); // Remove the empty image field
+                            formData.append('existingImageUrl', data.imageUrl || ''); // Send the existing image URL
+                            submitHotelForm(url, formData, saveBtn); // Proceed with form submission
+                        })
+                        .catch(error => {
+                            console.error('Fetch error:', error.message);
+                            alert('Failed to fetch existing hotel data: ' + error.message + '. Proceeding with existing image.');
+                            formData.delete('image'); // Remove the empty image field and let backend retain existing image
+                            submitHotelForm(url, formData, saveBtn); // Proceed with form submission anyway
+                        });
+                } else {
+                    // If a new image is uploaded, proceed directly
+                    submitHotelForm(url, formData, saveBtn);
+                }
+            } else {
+                // If creating a new hotel, proceed directly
+                submitHotelForm(url, formData, saveBtn);
+            }
+        }
+
+        function submitHotelForm(url, formData, saveBtn) {
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        closeAllModals();
+                        location.reload();
+                    } else {
+                        displayValidationErrors(response.errors || {});
                         saveBtn.prop('disabled', false).text('Save Hotel');
                     }
-                });
-            }
+                },
+                error: function() {
+                    alert('An error occurred while saving the hotel.');
+                    saveBtn.prop('disabled', false).text('Save Hotel');
+                }
+            });
+        }
 
                   function showErrorModal(message) {
             const errorModal = document.getElementById('errorModal');
@@ -611,7 +651,7 @@
             openModal(errorModal);
         }
 
-        function deleteHotel(hotelId) {
+               function deleteHotel(hotelId) {
             fetch(`/Hotel/Delete/${hotelId}`, {
                 method: 'POST',
                 headers: {
@@ -619,17 +659,18 @@
                     'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
                 }
             })
-            .then(response => {
-                if (response.ok) {
+            .then(response => response.json()) 
+            .then(data => {
+                if (data.success) {
                     closeAllModals();
                     document.querySelector(`.hotel-card[data-id="${hotelId}"]`)?.remove();
                     alert('Hotel deleted successfully');
                 } else {
-                    throw new Error('Hotel cannot be deleted at this time. Please try again later.');
+                    throw new Error(data.message || 'Hotel cannot be deleted at this time. Please try again later.');
                 }
             })
             .catch(error => {
-                showErrorModal(error.message); 
+                showErrorModal(error.message);
             });
         }
 

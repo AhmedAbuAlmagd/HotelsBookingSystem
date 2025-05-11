@@ -33,9 +33,9 @@ namespace HotelsBookingSystem.Services
             var totalBookings = await _bookingRepository.GetTotalBookingsCountAsync();
             var totalClients = await _userRepository.GetTotalClientsCountAsync();
             var recentBookings = await _bookingRepository.GetRecentBookingsAsync(8);
-            var topHotels = await _hotelRepository.GetTopHotelsAsync(10);
-            var topRooms = await _roomRepository.GetTopRoomsAsync(10);
-            var topClients = await _userRepository.GetTopClientsAsync(10);
+            var topHotels = await _hotelRepository.GetTopHotelsAsync(8);
+            var topRooms = await _roomRepository.GetTopRoomsAsync(8);
+           var topClients = await _userRepository.GetTopClientsAsync(8);
 
 
 

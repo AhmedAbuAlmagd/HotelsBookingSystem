@@ -8,6 +8,7 @@ using HotelsBookingSystem.ViewModels.AdminViewModels.HotelDetails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelsBookingSystem.Controllers
 {
@@ -38,7 +39,7 @@ namespace HotelsBookingSystem.Controllers
             return View("AddHolelForm",hotel);
         }
 
-        public IActionResult Index(int page = 1, string searchTerm = "", string city = "")
+        public IActionResult Index(int page = 1 , string searchTerm = "", string city = "")
         {
             const int pageSize = 6;
             //status = string.IsNullOrWhiteSpace(status) ? null : status;
@@ -123,7 +124,7 @@ namespace HotelsBookingSystem.Controllers
         #region Admin
 
         [Authorize(Roles = "Admin")]
-        public IActionResult HotelsManagement(int page = 1, string searchTerm = "", string status = "", string city = "")
+        public IActionResult HotelsManagement(int page = 1, string searchTerm = "", string status = "all", string city = "")
         {
             const int pageSize = 8;
 
@@ -196,8 +197,9 @@ namespace HotelsBookingSystem.Controllers
                 phone = hotel.Phone,
                 description = hotel.Description,
                 rating = hotel.rating,
-                status = hotel.Status
-                
+                status = hotel.Status,
+                Longitude = hotel.Longitude,
+                Latitude = hotel.Latitude 
             });
         }
 
@@ -256,13 +258,24 @@ namespace HotelsBookingSystem.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Update(int id ,HotelFormViewModel hotel , IFormFile image)
         {
+            if (image == null)
+            {
+                ModelState.Remove("image");
+                Hotel existingHotel = hotelRepository.GetById(hotel.Id);
+                hotel.ImageUrl = existingHotel.HotelImages.FirstOrDefault(x => x.IsPrimary == true).ImageUrl;
+            }
+            
             if (ModelState.IsValid)
             {
-                string uploadsPhoto = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Hotels");
-                string filePath = Path.Combine(uploadsPhoto, image.FileName);
-                var fileStream = new FileStream(filePath, FileMode.Create);
-                image.CopyTo(fileStream);
-                hotel.ImageUrl = "/images/Hotels/" + image.FileName;
+                if(image != null)
+                {
+                    string uploadsPhoto = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Hotels");
+                    string filePath = Path.Combine(uploadsPhoto, image.FileName);
+                    var fileStream = new FileStream(filePath, FileMode.Create);
+                    image.CopyTo(fileStream);
+                    hotel.ImageUrl = "/images/Hotels/" + image.FileName;
+                }
+               
                 _hotelService.UpdateHotel(id, hotel);
 
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -295,6 +308,13 @@ namespace HotelsBookingSystem.Controllers
         {
             try
             {
+
+                int rooms = _roomRepository.GetCountByHotelId(id);
+   
+                if (rooms != 0)
+                {
+                    return BadRequest(new { success = false, message = "This hotel cannot be deleted because it has associated rooms." });
+                }
                 _hotelService.DeleteHotel(id);
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {

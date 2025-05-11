@@ -14,7 +14,6 @@ namespace HotelsBookingSystem.Repository
         {
             _context = context;
         }
-
         public int GetCountByHotelId(int hotelId)
         {
             return _context.Hotel_Service.Where(hs => hs.HotelId == hotelId).Count();
