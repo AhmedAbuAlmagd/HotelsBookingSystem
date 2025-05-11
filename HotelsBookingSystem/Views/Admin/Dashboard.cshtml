@@ -15,134 +15,133 @@
     <link href="~/css/AdminDashboard.css" rel="stylesheet" />
 </head>
 <body>
-            <h1 class="dashboard-title">Dashboard Overview</h1>
+    <h1 class="dashboard-title">📊 Dashboard Overview</h1>
 
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon hotels">🏨</div>
-                    <div class="stat-details">
-                        <div class="stat-value">@Model.TotalHotels</div>
-                        <div class="stat-label">Total Hotels</div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon rooms">🛏️</div>
-                    <div class="stat-details">
-                        <div class="stat-value">@Model.TotalRooms</div>
-                        <div class="stat-label">Total Rooms</div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon clients">👥</div>
-                    <div class="stat-details">
-                        <div class="stat-value">@Model.ActiveClients</div>
-                        <div class="stat-label">Active Clients</div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon bookings">📅</div>
-                    <div class="stat-details">
-                        <div class="stat-value">@Model.TotalBookings</div>
-                        <div class="stat-label">Total Bookings</div>
-                    </div>
-                </div>
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon hotels">🏨</div>
+            <div class="stat-details">
+                <div class="stat-value">@Model.TotalHotels</div>
+                <div class="stat-label">Total Hotels</div>
             </div>
+        </div>
 
-            <!-- Recent Bookings Section -->
-            <div class="dashboard-section">
-                <div class="section-header">
-                    <h2 class="section-title">Recent Bookings</h2>
-                    <a asp-controller="booking" asp-action="index" class="view-all">View All →</a>
-                </div>
-
-
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Client</th>
-                                <th>Hotel</th>
-                                <th>Room</th>
-                                <th>Check In</th>
-                                <th>Check Out</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var booking in Model.RecentBookings)
-                            {
-                                <tr>
-                                    <td>@booking.ClientName</td>
-                                    <td>@booking.HotelName</td>
-                                    <td>@booking.MainRoomDisplay</td>
-                                    <td>@booking.CheckInDate</td>
-                                    <td>@booking.CheckOutDate</td>
-                                    <td>
-                                        <span class="status @(booking.Status.ToLower())">
-                                            @booking.Status
-                                        </span>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+        <div class="stat-card">
+            <div class="stat-icon rooms">🛏️</div>
+            <div class="stat-details">
+                <div class="stat-value">@Model.TotalRooms</div>
+                <div class="stat-label">Total Rooms</div>
             </div>
+        </div>
 
-            <!-- Hotels Section -->
-            <div class="dashboard-section">
-                <div class="section-header">
-                    <h2 class="section-title">Hotels</h2>
-                    <a href="#" class="view-all">View All →</a>
-                </div>
+        <div class="stat-card">
+            <div class="stat-icon clients">👥</div>
+            <div class="stat-details">
+                <div class="stat-value">@Model.ActiveClients</div>
+                <div class="stat-label">Active Clients</div>
+            </div>
+        </div>
 
+        <div class="stat-card">
+            <div class="stat-icon bookings">📅</div>
+            <div class="stat-details">
+                <div class="stat-value">@Model.TotalBookings</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+        </div>
+    </div>
 
-                <div class="grid-container">
-                    @foreach (var hotel in Model.Hotels)
+    <!-- Recent Bookings Section -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Recent Bookings</h2>
+            <a asp-controller="booking" asp-action="index" class="view-all">View All →</a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Hotel</th>
+                        <th>Room</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model.RecentBookings)
                     {
-                        <div class="grid-item">
-                            <img src="@hotel.ImageUrl" alt="@hotel.Name" class="item-image">
-                            <div class="item-content">
-                                <h3 class="item-title">@hotel.Name</h3>
-                                <p class="item-info">@hotel.Location • @hotel.RoomCount rooms</p>
-                                <div class="item-footer">
-                                    <span class="status @(hotel.Status.ToLower())">@hotel.Status</span>
-                                    <button class="action-btn view">View Details</button>
-                                </div>
-                            </div>
-                        </div>
+                        <tr>
+                            <td>@booking.ClientName</td>
+                            <td>@booking.HotelName</td>
+                            <td>@booking.MainRoomDisplay</td>
+                            <td>@booking.CheckInDate</td>
+                            <td>@booking.CheckOutDate</td>
+                            <td>
+                                <span class="status @(booking.Status.ToLower())">
+                                    @booking.Status
+                                </span>
+                            </td>
+                        </tr>
                     }
-                </div>
-            </div>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-            <!-- Rooms Section -->
-            <div class="dashboard-section">
-                <div class="section-header">
-                    <h2 class="section-title">Rooms</h2>
-                </div>
+    <!-- Hotels Section -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Hotels</h2>
+            <a asp-action="HotelsManagement" asp-controller="Hotel" class="view-all">View All →</a>
+        </div>
 
-
-                <div class="grid-container">
-                    @foreach (var room in Model.Rooms)
-                    {
-                        <div class="grid-item">
-                            <img src="@room.ImageUrl" alt="@room.Type" class="item-image">
-                            <div class="item-content">
-                                <h3 class="item-title">@room.Type</h3>
-                                <p class="item-info">@room.HotelName • @room.PricePerNight/night</p>
-                                <div class="item-footer">
-                                    <span class="status @(room.Status.ToLower())">@room.Status</span>
-                                    <button class="action-btn view">View Details</button>
-                                </div>
-                            </div>
+        <div class="grid-container">
+            @foreach (var hotel in Model.Hotels)
+            {
+                <div class="grid-item">
+                    <div class="image-wrapper">
+                        <img src="@hotel.ImageUrl" alt="@hotel.Name" class="item-image">
+                        <span class="status @(hotel.Status.ToLower())">@hotel.Status</span>
+                    </div>
+                    <div class="item-content">
+                        <h3 class="item-title">@hotel.Name</h3>
+                        <p class="item-info">@hotel.Location • @hotel.RoomCount rooms</p>
+                        <div class="item-footer">
                         </div>
-                    }
+                    </div>
                 </div>
-            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Rooms Section -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Rooms</h2>
+        </div>
+
+        <div class="grid-container">
+            @foreach (var room in Model.Rooms)
+            {
+                <div class="grid-item">
+                    <div class="image-wrapper">
+                        <img src="@room.ImageUrl" alt="@room.Type" class="item-image">
+                        <span class="status @(room.Status.ToLower())">@room.Status</span>
+                    </div>
+                    <div class="item-content">
+                        <h3 class="item-title">@room.Type</h3>
+                        <p class="item-info">@room.HotelName • @room.PricePerNight/night</p>
+                        <div class="item-footer">
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 
     <div class="overlay" id="overlay"></div>
 </body>

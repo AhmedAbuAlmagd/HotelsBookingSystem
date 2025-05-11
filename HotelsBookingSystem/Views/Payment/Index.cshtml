@@ -1,42 +1,29 @@
 ﻿@{
     ViewData["Title"] = "Cart";
 }
+<div class="container py-5 d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4 w-100" style="max-width: 550px; border-radius: 20px;">
+        <h2 class="text-center mb-4 text-primary">Payment Details</h2>
 
-
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 20px;">
-        <h2 class="text-center mb-4">Payment Details</h2>
-
-        <form id="payment-form">
-            <div class="form-group mb-3">
-                <label for="card-element" class="mb-2 fw-bold">Credit or Debit Card</label>
-                <div id="card-element" class="form-control p-3" style="height: auto; min-height: 50px;">
-                 
-                </div>
-                <div id="card-errors" class="text-danger mt-2" role="alert"></div>
-            </div>
-
-            <div class="d-flex justify-content-between mt-4">
-                <button type="button" class="btn btn-success w-48" id="payButton">Confirm Payment</button>
-                <button type="reset" class="btn btn-outline-secondary w-48">Reset</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-@{
-    ViewData["Title"] = "Cart";
-}
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 20px;">
-        <h2 class="text-center mb-4">Payment Details</h2>
+        <div class="mb-4">
+            <h5 class="fw-semibold">Booking Summary</h5>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Number of Nights</span>
+                    <span class="fw-bold">@ViewBag.TotalNights</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total Amount</span>
+                    <span class="fw-bold text-success">$@ViewBag.TotalAmount</span>
+                </li>
+            </ul>
+        </div>
 
         <form id="payment-form">
             <div class="form-group mb-3">
                 <label for="card-element" class="mb-2 fw-bold">Credit or Debit Card</label>
-                <div id="card-element" class="form-control p-3" style="height: auto; min-height: 50px;">
-          
-                </div>
+                <div id="card-element" class="form-control p-3" style="min-height: 50px;"></div>
+
                 <div id="card-errors" class="text-danger mt-2" role="alert"></div>
             </div>
 
@@ -56,13 +43,9 @@
     const card = elements.create('card');
     card.mount('#card-element');
 
-    card.addEventListener('change', function(event) {
-      var displayError = document.getElementById('card-errors');
-      if (event.error) {
-        displayError.textContent = event.error.message;
-      } else {
-        displayError.textContent = '';
-      }
+    card.addEventListener('change', function (event) {
+        const displayError = document.getElementById('card-errors');
+        displayError.textContent = event.error ? event.error.message : '';
     });
 
     document.getElementById('payButton').addEventListener('click', async () => {
@@ -70,17 +53,13 @@
         const paymentData = await response.json();
 
         const result = await stripe.confirmCardPayment(paymentData.clientSecret, {
-            payment_method: {
-                card: card
-            }
+            payment_method: { card: card }
         });
 
         if (result.error) {
             alert(result.error.message);
-        } else {
-            if (result.paymentIntent.status === 'succeeded') {
-                window.location.href = '/Payment/Success';
-            }
+        } else if (result.paymentIntent.status === 'succeeded') {
+            window.location.href = '/Payment/Success';
         }
     });
 </script>

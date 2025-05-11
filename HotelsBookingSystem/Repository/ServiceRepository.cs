@@ -14,12 +14,11 @@ namespace HotelsBookingSystem.Repository
         {
             _context = context;
         }
-
         public int GetCountByHotelId(int hotelId)
         {
             return _context.Hotel_Service.Where(hs => hs.HotelId == hotelId).Count();
         }
-
+    
         public List<Service> GetPagedByHotelId(int hotelId, int pageNumber, int pageSize)
         {
             return _context.Hotel_Service
@@ -74,5 +73,15 @@ namespace HotelsBookingSystem.Repository
         {
           return _context.SaveChanges();
         }
+
+
+        #region for Payment
+        public async Task<List<Service>> GetServicesByIdsAsync(IEnumerable<int> serviceIds)
+        {
+            return await _context.Services
+                .Where(s => serviceIds.Contains(s.Id))
+                .ToListAsync();
+        }
+        #endregion
     }
 }

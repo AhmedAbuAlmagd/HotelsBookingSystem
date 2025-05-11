@@ -109,6 +109,7 @@ namespace HotelsBookingSystem.Models.Context
                 UserId = normalUserId,
                 RoleId = userRoleId
             });
+
         }
 
 

@@ -11,6 +11,7 @@ namespace HotelsBookingSystem.Repository
         Task<List<Booking>> GetByFilterAsync(BookingFilterViewModel filter);
         void AddBookingRoom(BookingRoom bookingRoom);
         void AddBooking(Booking booking);
+        Task AddBookingServiceAsync(BookingService bookingService);
         Task SaveAsync();
     }
 }

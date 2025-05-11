@@ -95,6 +95,11 @@ namespace HotelsBookingSystem.Repository
         {
             _context.Bookings.Add(booking);
         }
+        public async Task AddBookingServiceAsync(BookingService bookingService)
+        {
+            _context.BookingServices.Add(bookingService);
+        }
+
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();

@@ -17,7 +17,7 @@ namespace HotelsBookingSystem.Controllers
         private readonly ICartRepository _cartRepository;
         HotelsContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly  IRoomRepository _roomRepository;
+        private readonly IRoomRepository _roomRepository;
 
         public CartController(HotelsContext context, ICartRepository cartRepository, IRoomRepository roomRepository, UserManager<ApplicationUser> userManager)
         {
@@ -26,6 +26,7 @@ namespace HotelsBookingSystem.Controllers
             _userManager = userManager;
             _context = context;
         }
+
         public async Task<IActionResult> AddToCart(int roomId, DateTime checkIn, DateTime checkOut)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -74,6 +75,7 @@ namespace HotelsBookingSystem.Controllers
         }
 
 
+
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -94,6 +96,9 @@ namespace HotelsBookingSystem.Controllers
                 TotalPrice = (int)totalAmount,
                 CartItems = cart.CartItems.Select(item => new CartItemViewModel
                 {
+
+                    CartItemId = item.Id,
+
                     RoomId = item.RoomId,
                     RoomType = item.Room.Type,
                     CheckIn = item.CheckIn,
@@ -109,28 +114,24 @@ namespace HotelsBookingSystem.Controllers
             return View(cartViewModel);
         }
 
-    
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveFromCart(int id)  
+
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveFromCart(int id)
         {
-            try
+            var item = await _cartRepository.GetCartItemByIdAsync(id);
+            if (item != null)
             {
-                var item = await _cartRepository.GetCartItemByIdAsync(id);
-                if (item != null)
-                {
-                    await _cartRepository.DeleteCartItem(item);
-                    return Ok(new { success = true });
-                }
-                return NotFound(new { success = false, message = "Item not found" });
+                await _cartRepository.DeleteCartItem(item);
+                await _cartRepository.SaveAsync();
+                return RedirectToAction("Index");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
+
+            return NotFound();
+
         }
 
     }
 
 }
-

@@ -46,8 +46,7 @@ namespace HotelsBookingSystem.Services
         {
             if (pageNumber < 1) 
                 pageNumber = 1;
-
-            var query = _hotelRepository.GetHotelsWithRoomsAndImages().Where(x => x.Status == "Active").AsQueryable();
+            var query = _hotelRepository.GetHotelsWithRoomsAndImages().AsQueryable();
 
             if (!string.IsNullOrEmpty(searchTerm))
             {

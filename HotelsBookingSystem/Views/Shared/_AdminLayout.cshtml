@@ -7,16 +7,17 @@
     <meta charset="utf-8" />
     <title>@ViewData["Title"] - Hotel Booking Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="~/css/AdminDashboard.css" rel="stylesheet" /> 
+    <link href="~/css/AdminDashboard.css" rel="stylesheet" />
+  
 </head>
 <body>
     <div class="layout">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar" style="background-color : #0f172b">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
                     <span class="logo-icon">🏨</span>
-                    <span class="logo-text">HotelBooking</span>
+                    <span class="logo-text">HOTELIER Admin</span>
                 </div>
             </div>
 
@@ -41,11 +42,10 @@
                     <span class="nav-link-icon">⭐</span>
                     <span class="nav-link-text">Reviews</span>
                 </a>
-                 <a asp-action="Index" asp-controller="Roles" class="nav-link">
+                <a asp-action="Index" asp-controller="Roles" class="nav-link">
                     <span class="nav-link-icon">🔒</span>
                     <span class="nav-link-text">Roles</span>
-                   
-                 </a> 
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -75,6 +75,6 @@
 
     <div class="overlay" id="overlay"></div>
 
-    <script src="~/js/Admin.js"></script> 
+    <script src="~/js/Admin.js"></script>
 </body>
 </html>
