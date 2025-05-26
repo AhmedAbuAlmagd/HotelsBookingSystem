@@ -102,7 +102,7 @@ The system uses Google Maps API for location services. Add your API key in `apps
 ```
 
 
-#  Made with ❤️ for learning.*
+#  Made with ❤️ for learning 
  ## 👥 Contributors 
 - Ahmed Abu-elmagd
 - Ahmed Hatem
