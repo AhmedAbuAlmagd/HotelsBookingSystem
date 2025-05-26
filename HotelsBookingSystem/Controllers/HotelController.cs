@@ -316,11 +316,9 @@ namespace HotelsBookingSystem.Controllers
                     return BadRequest(new { success = false, message = "This hotel cannot be deleted because it has associated rooms." });
                 }
                 _hotelService.DeleteHotel(id);
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new { success = true });
-                }
-                return RedirectToAction(nameof(HotelsManagement));
+         
+                return Json(new { success = true });
+                
             }
             catch (Exception ex)
             {
@@ -328,7 +326,6 @@ namespace HotelsBookingSystem.Controllers
                 {
                     return Json(new { success = false, message = ex.Message });
                 }
-                // Handle non-AJAX request error
                 TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction(nameof(HotelsManagement));
             }

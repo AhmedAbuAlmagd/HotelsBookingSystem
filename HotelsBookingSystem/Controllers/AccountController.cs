@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Google;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 namespace HotelsBookingSystem.Controllers
 {
@@ -148,6 +151,31 @@ namespace HotelsBookingSystem.Controllers
                     return View("Login", new LoginViewModel());
                 }
 
+                // Check if user with this email already exists
+                var existingUser = await _userManager.FindByEmailAsync(email);
+                if (existingUser != null)
+                {
+                    // Link the external login to the existing user
+                    var addLoginResult = await _userManager.AddLoginAsync(existingUser, info);
+                    if (addLoginResult.Succeeded)
+                    {
+                        await accountService.SignInAsync(existingUser, isPersistent: false);
+                        var isAdmin = await _userManager.IsInRoleAsync(existingUser, "Admin");
+                        return isAdmin ? RedirectToAction("Dashboard", "Admin")
+                                       : RedirectToLocal(returnUrl);
+                    }
+                    else
+                    {
+                        foreach (var error in addLoginResult.Errors)
+                        {
+                            _logger.LogError("Failed to link external login: {Error}", error.Description);
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        return View("Login", new LoginViewModel());
+                    }
+                }
+
+                // If no existing user found, create a new one
                 var newUser = new ApplicationUser
                 {
                     UserName = email,
@@ -228,46 +256,117 @@ namespace HotelsBookingSystem.Controllers
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, protocol: Request.Scheme);
 
                 var smtpSettings = configuration.GetSection("SmtpSettings");
-                using var smtpClient = new SmtpClient(smtpSettings["Host"])
+
+                var email = new MimeMessage();
+                email.From.Add(new MailboxAddress(smtpSettings["FromName"], smtpSettings["FromEmail"]));
+                email.To.Add(new MailboxAddress("", model.Email));
+                email.Subject = "Reset Your Password";
+
+                var builder = new BodyBuilder();
+                builder.HtmlBody = $@"
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset='utf-8'>
+                        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                        <style>
+                            body {{
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                line-height: 1.6;
+                                color: #333333;
+                                margin: 0;
+                                padding: 0;
+                            }}
+                            .container {{
+                                max-width: 600px;
+                                margin: 0 auto;
+                                padding: 20px;
+                            }}
+                            .header {{
+                                background-color: #4a90e2;
+                                color: white;
+                                padding: 20px;
+                                text-align: center;
+                                border-radius: 5px 5px 0 0;
+                            }}
+                            .content {{
+                                background-color: #ffffff;
+                                padding: 30px;
+                                border: 1px solid #e0e0e0;
+                                border-radius: 0 0 5px 5px;
+                            }}
+                            .button {{
+                                display: inline-block;
+                                background-color: #4a90e2;
+                                color: white;
+                                text-decoration: none;
+                                padding: 12px 24px;
+                                border-radius: 5px;
+                                margin: 20px 0;
+                                font-weight: bold;
+                            }}
+                            .footer {{
+                                text-align: center;
+                                margin-top: 20px;
+                                color: #666666;
+                                font-size: 14px;
+                            }}
+                            .warning {{
+                                background-color: #fff3cd;
+                                border: 1px solid #ffeeba;
+                                color: #856404;
+                                padding: 15px;
+                                border-radius: 5px;
+                                margin: 20px 0;
+                            }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class='container'>
+                            <div class='header'>
+                                <h1>Password Reset Request</h1>
+                            </div>
+                            <div class='content'>
+                                <h2>Hello,</h2>
+                                <p>We received a request to reset your password for your Hotels Booking System account. If this was you, please click the button below to reset your password:</p>
+                                
+                                <div style='text-align: center;'>
+                                    <a href='{callbackUrl}' class='button'>Reset Password</a>
+                                </div>
+
+                                <p>Or copy and paste this link into your browser:</p>
+                                <p style='word-break: break-all; color: #4a90e2;'>{callbackUrl}</p>
+
+                                <div class='warning'>
+                                    <strong>Note:</strong> This password reset link will expire in 24 hours. If you didn't request a password reset, please ignore this email or contact support if you have concerns.
+                                </div>
+
+                                <p>Thank you,<br>
+                                <strong>The Hotels Booking System Team</strong></p>
+                            </div>
+                            <div class='footer'>
+                                <p>This is an automated message, please do not reply to this email.</p>
+                                <p>&copy; {DateTime.Now.Year} Hotels Booking System. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>";
+
+                email.Body = builder.ToMessageBody();
+
+                using (var smtp = new MailKit.Net.Smtp.SmtpClient())
                 {
-                    Port = int.Parse(smtpSettings["Port"]),
-                    Credentials = new NetworkCredential(smtpSettings["Username"], smtpSettings["Password"]),
-                    EnableSsl = true,
-                };
+                    await smtp.ConnectAsync(smtpSettings["Host"], int.Parse(smtpSettings["Port"]), MailKit.Security.SecureSocketOptions.StartTls);
+                    await smtp.AuthenticateAsync(smtpSettings["Username"], smtpSettings["Password"]);
+                    await smtp.SendAsync(email);
+                    await smtp.DisconnectAsync(true);
+                }
 
-                using var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(smtpSettings["FromEmail"], smtpSettings["FromName"]),
-                    Subject = "Reset Your Password",
-                    IsBodyHtml = true,
-                };
-                string htmlBody = $@"
-                               <html>
-                               <body>
-                                   <h2>Hotels Booking System - Password Reset</h2>
-                                   <p>Hello,</p>
-                                   <p>We received a request to reset your password. If this was you, click the link below:</p>
-                                   <p><a href='{callbackUrl}'>Reset your password</a></p>
-                                   <p>If you didn’t request a password reset, please ignore this email.</p>
-                                   <p>Thank you,<br>The Hotels Booking System Team</p>
-                               </body>
-                               </html>";
-
-                mailMessage.Body = htmlBody;
-                mailMessage.To.Add(model.Email);
-
-
-                await smtpClient.SendMailAsync(mailMessage);
                 TempData["Message"] = "If an account with that email exists, a password reset link has been sent.";
-            }
-            catch (SmtpException ex)
-            {
-                ModelState.AddModelError("", "An error occurred while sending the password reset email. Please try again later.");
-                return View(model);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "An unexpected error occurred. Please try again later.");
+                ModelState.AddModelError("", "An error occurred while sending the password reset email. Please try again later.");
                 return View(model);
             }
 

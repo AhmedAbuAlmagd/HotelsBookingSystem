@@ -27,7 +27,7 @@ namespace HotelsBookingSystem.Services
 
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                query = query.Where(h => h.Name.Contains(searchTerm));
+                query = query.Where(h => h.Name.ToLower().Contains(searchTerm.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(status) && status.ToLower() != "all")

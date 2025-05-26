@@ -30,7 +30,7 @@ namespace HotelsBookingSystem.Controllers
             var totalRooms = await _roomRepository.GetTotalRoomsCountAsync();
             var totalUsers = await _userRepository.GetTotalUsersCountAsync();
             var topRooms = await _roomRepository.GetTopRoomsAsync(3);
-            var topRatedHotels = await _hotelRepository.GetTopRatedHotelsAsync(4);
+            var topRatedHotels = await _hotelRepository.GetTopRatedHotelsAsync(3);
             var reviews = await _hotelRepository.GetRecentReviewsAsync(5);
             ViewBag.TopRatedHotels = topRatedHotels;
             ViewBag.TotalUsers = totalUsers;

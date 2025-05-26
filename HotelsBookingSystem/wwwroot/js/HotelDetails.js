@@ -140,7 +140,6 @@
         const formFields = document.querySelectorAll('#hotelImageForm input');
         formFields.forEach(field => field.disabled = true);
 
-        // Need to implement a backend endpoint to get image details
         fetch(`/HotelImage/GetImage/${imageId}`)
             .then(response => {
                 if (!response.ok) {
@@ -150,7 +149,7 @@
             })
             .then(data => {
                 formFields.forEach(field => field.disabled = false);
-                document.getElementById('hotelImage').required = false; // Image optional on edit
+                document.getElementById('hotelImage').required = false; 
                 document.getElementById('isPrimary').checked = data.isPrimary || false;
                 document.getElementById('caption').value = data.caption || '';
             })

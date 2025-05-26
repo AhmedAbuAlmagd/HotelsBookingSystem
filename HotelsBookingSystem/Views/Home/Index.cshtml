@@ -25,7 +25,6 @@
                         <div class="p-3" style="max-width: 700px;">
                             <h6 class="section-title text-white text-uppercase mb-3 animated slideInDown">Luxury Living</h6>
                             <h1 class="display-3 text-white mb-4 animated slideInDown">Discover A Brand Luxurious Hotel</h1>
-                            @* <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Our Rooms</a> *@
                             <a href="@Url.Action("Index", "Room")" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Our Rooms</a>
 
                             <a href="" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Book A Room</a>
@@ -197,7 +196,7 @@
                                 <div class="position-relative">
                                     @if (room.RoomImages != null && room.RoomImages.Count > 0)
                                     {
-                                        <img class="img-fluid" src="@room.RoomImages.FirstOrDefault()?.ImageUrl" height="150px" width="100%" alt="Room Image">
+                                        <img src="@room.RoomImages.FirstOrDefault()?.ImageUrl" height="265px" width="100%" alt="Room Image">
                                     }
                                     else
                                     {
@@ -210,15 +209,15 @@
                                 <div class="p-4 mt-2">
                                     <div class="d-flex justify-content-between mb-3">
                                         <h5 class="mb-0">@room.Type</h5>
-                                        <div class="ps-2">
-                                            @for (int i = 0; i < 5; i++)
-                                            {
+                                        @* <div class="ps-2"> *@
+                                        @*     @for (int i = 0; i < 5; i++) *@
+                                        @*     { *@
 
-                                                <small class="fa fa-star text-primary"></small>
+                                        @*         <small class="fa fa-star text-primary"></small> *@
 
 
-                                            }
-                                        </div>
+                                        @*     } *@
+                                        @* </div> *@
                                     </div>
                                     <div class="d-flex mb-3">
                                         <small class="border-end me-3 pe-3"><i class="fa fa-bed text-primary me-2"></i>@room.NumberOfBeds Bed</small>
@@ -300,43 +299,32 @@
         <div class="row g-4">
             @foreach (var hotel in ViewBag.TopRatedHotels)
             {
-
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="rounded shadow overflow-hidden">
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="room-item shadow rounded overflow-hidden">
                         <div class="position-relative">
-                            <img src="@hotel.ImageUrl" height="150px" width="100%" alt="@hotel.Name">
+                             <img src="@hotel.ImageUrl" height="265px" width="100%" alt="@hotel.Name">
                         </div>
-                        <div class="text-center p-4 mt-3">
-                            <h5 class="fw-bold mb-1">@hotel.Name</h5>
-                            <small class="d-block mb-2">@hotel.Location</small>
-                            <div class="mb-2">
-                                @for (int i = 1; i <= 5; i++)
-                                {
-                                    if (i <= Math.Floor(hotel.Rating))
+                        <div class="p-4 mt-2">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h5 class="mb-0">@hotel.Name</h5>
+                                <div class="ps-2">
+                                    @for (int i = 0; i < hotel.Rating; i++)
                                     {
-                                        <i class="fa fa-star text-warning"></i>
+                                        <small class="fa fa-star text-primary"></small>
                                     }
-                                    else if (i - hotel.Rating < 1)
-                                    {
-                                        <i class="fa fa-star-half-alt text-warning"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="fa fa-star text-secondary"></i>
-                                    }
-
-
-                                }
+                                </div>
                             </div>
 
+                            <p class="text-body mb-3">@hotel.City, @hotel.Location</p>
+                            <p class="text-body mb-3">@hotel.Description</p>
+                            <div class="d-flex justify-content-center pb-3">
+                                <a class="btn btn-primary text-decoration-none text-light" asp-action="Index" asp-controller="Room" asp-route-hotelId="@hotel.Id">View Rooms</a>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-center pb-3">
-                            <a class="btn btn-primary text-decoration-none text-light" asp-controller="Hotel" asp-action="Index">View Details</a>
-                        </div>
-
-
                     </div>
                 </div>
+
+               
             }
         </div>
     </div>

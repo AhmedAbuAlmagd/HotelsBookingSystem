@@ -1,96 +1,106 @@
 # Hotel Booking System
 
-This is a simple **Hotel Booking System** built using **ASP.NET MVC**, **Entity Framework (Code First)**, and **Bootstrap**. It is intended as a **learning/demo project**.
+A comprehensive hotel booking system built with ASP.NET Core MVC that allows users to book hotels, manage reservations, and provides administrative features for hotel management.
 
-## 🛠 Technologies Used
+## Features
 
-- **ASP.NET MVC** – for building the web application.
-- **Entity Framework (Code First)** – for ORM and database interactions.
-- **SQL Server** – as the backend database.
-- **Bootstrap** (with Bootswatch) – for responsive UI design.
-- **ASP.NET Identity** – for authentication and role-based authorization (User/Admin).
-- **Stripe** – as the payment gateway for booking payments.
+### User Features
+- User registration and authentication
+- External login support (Google)
+- Password reset functionality with email confirmation
+- Hotel search and filtering
+- Room availability checking
+- Booking management
+- Review and rating system
+- Interactive map integration for hotel locations
+- Payment integration
+- Booking history
 
-## ✨ Features
+### Admin Features
+- Hotel management (CRUD operations)
+- Room management
+- Booking management
+- User management
+- Review moderation
 
-- User registration and login with role-based access (User, Admin).
-- Browse available hotels and rooms.
-- Make and manage bookings.
-- Admin dashboard to manage hotels and bookings.
-- Payment integration via Stripe.
-- Responsive UI using Bootstrap themes.
 
-## 🧑‍💻 How to Run
+### Technical Features
+- Responsive design
+- Real-time availability updates
+- Secure payment processing
+- Email service integration
+- Map integration for location services
+- Role-based authorization
+- Data validation and sanitization
+- Error logging and monitoring
 
-1. Clone the repository.
-2. Open the solution in Visual Studio.
-3. Set the appropriate connection string in `appsettings.json`.
-4. Run database migrations (if any) or let EF create the DB.
-5. Register as a user or admin.
-6. Start booking!
+## Prerequisites
 
-## 📦 Purpose
+- .NET 7.0 SDK or later
+- SQL Server
+- SMTP server for email functionality
+- Google Maps API key (for location services)
+- Payment gateway account (for payment processing)
 
-This project is made for **educational purposes**. It helps understand how to:
+## Getting Started
 
-- Build a complete web application using ASP.NET MVC.
-- Use Entity Framework Code First.
-- Implement user authentication and authorization.
-- Integrate third-party payment systems (Stripe).
+1. Clone the repository
+```bash
+git clone [repository-url]
+```
 
-## 📄 License
+2. Update the connection string in `appsettings.json` with your database details
 
-This project is open-source and free to use for learning.
+3. Update the following settings in `appsettings.json`:
+   - Email configuration
+   - Google Maps API key
+   - Payment gateway credentials
+   - External login credentials
 
----
+4. Run the following commands in the Package Manager Console:
+```bash
+Update-Database
+```
 
-*Made with ❤️ for learning.*
-## Contributors
-# Hotel Booking System
+5. Run the application:
+```bash
+dotnet run
+```
 
-This is a simple **Hotel Booking System** built using **ASP.NET MVC**, **Entity Framework (Code First)**, and **Bootstrap**. It is intended as a **learning/demo project**.
+## Default Admin Account
+- UserName: admin@site.com
+- Password: Admin@123
 
-## 🛠 Technologies Used
+## External Login Setup
+1. Configure Google OAuth:
+   - Go to Google Cloud Console
+   - Create a new project
+   - Enable Google+ API
+   - Create OAuth 2.0 credentials
+   - Add authorized redirect URIs
 
-- **ASP.NET MVC** – for building the web application.
-- **Entity Framework (Code First)** – for ORM and database interactions.
-- **SQL Server** – as the backend database.
-- **Bootstrap** (with Bootswatch) – for responsive UI design.
-- **ASP.NET Identity** – for authentication and role-based authorization (User/Admin).
-- **Stripe** – as the payment gateway for booking payments.
 
-## ✨ Features
+## Email Configuration
+The system uses SMTP for sending emails. Configure the following in `appsettings.json`:
+```json
+"EmailSettings": {
+  "SmtpServer": "smtp.gmail.com",
+  "Port": 587,
+  "Username": "your-email@gmail.com",
+  "Password": "your-app-password",
+  "FromEmail": "your-email@gmail.com",
+  "FromName": "Hotel Booking System"
+}
+```
 
-- User registration and login with role-based access (User, Admin).
-- Browse available hotels and rooms.
-- Make and manage bookings.
-- Admin dashboard to manage hotels and bookings.
-- Payment integration via Stripe.
-- Responsive UI using Bootstrap themes.
+## Map Integration
+The system uses Google Maps API for location services. Add your API key in `appsettings.json`:
+```json
+"GoogleMaps": {
+  "ApiKey": "your-api-key"
+}
+```
 
-## 🧑‍💻 How to Run
-
-1. Clone the repository.
-2. Open the solution in Visual Studio.
-3. Set the appropriate connection string in `appsettings.json`.
-4. Run database migrations (if any) or let EF create the DB.
-5. Register as a user or admin.
-6. Start booking!
-
-## 📦 Purpose
-
-This project is made for **educational purposes**. It helps understand how to:
-
-- Build a complete web application using ASP.NET MVC.
-- Use Entity Framework Code First.
-- Implement user authentication and authorization.
-- Integrate third-party payment systems (Stripe).
-
-## 📄 License
-
-This project is open-source and free to use for learning.
-
----
 
 *Made with ❤️ for learning.*
 ## Contributors

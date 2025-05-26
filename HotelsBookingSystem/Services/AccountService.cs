@@ -71,11 +71,16 @@ namespace HotelsBookingSystem.Services
 
         public async Task<ApplicationUser> FindEmail(string email)
         {
-            var user = await userManager.FindByEmailAsync(email);
-            if(user != null)
-                return user;
-            else 
-                return null;
+            try
+            {
+                return await userManager.FindByEmailAsync(email);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (assuming you inject a logger into the service)
+                // This helps with debugging if the lookup fails due to a database issue
+                throw new InvalidOperationException($"Failed to find user by email: {email}", ex);
+            }
         }
 
         public async Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)

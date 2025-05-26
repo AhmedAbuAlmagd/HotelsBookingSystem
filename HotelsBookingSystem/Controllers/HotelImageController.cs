@@ -82,33 +82,11 @@ namespace HotelsBookingSystem.Controllers
                     return Json(new { success = false, message = "No image uploaded" });
                 }
 
-                if (model.IsPrimary== true)
-                {
-                    var primaryImages = await _context.HotelImages
-                        .Where(i => i.HotelId == model.HotelId && i.IsPrimary)
-                        .ToListAsync();
-
-                    foreach (var img in primaryImages)
-                    {
-                        img.IsPrimary = false;
-                    }
-                }
-                else
-                {
-                    bool hasPrimary = await _context.HotelImages
-                        .AnyAsync(i => i.HotelId == model.HotelId && i.IsPrimary);
-
-                    if (!hasPrimary)
-                    {
-                        model.IsPrimary = true;
-                    }
-                }
-
                 var hotelImage = new HotelImage
                 {
                     HotelId = model.HotelId,
                     ImageUrl = "/images/Hotels/" + uniqueFileName,
-                    IsPrimary = model.IsPrimary,
+                    IsPrimary = false,
                     Caption = model.Caption
                 };
 
@@ -132,6 +110,7 @@ namespace HotelsBookingSystem.Controllers
                 return Json(new { success = false, message = "ID mismatch" });
             }
 
+            ModelState.Remove("IsPrimary");
             if (!ModelState.IsValid)
             {
                 return Json(new { success = false, message = "Invalid form data" });
@@ -168,19 +147,8 @@ namespace HotelsBookingSystem.Controllers
                     hotelImage.ImageUrl = "/images/Hotels/" + uniqueFileName;
                 }
 
-                if (model.IsPrimary && !hotelImage.IsPrimary)
-                {
-                    var primaryImages = await _context.HotelImages
-                        .Where(i => i.HotelId == hotelImage.HotelId && i.IsPrimary)
-                        .ToListAsync();
+              
 
-                    foreach (var img in primaryImages)
-                    {
-                        img.IsPrimary = false;
-                    }
-                }
-
-                hotelImage.IsPrimary = model.IsPrimary;
                 hotelImage.Caption = model.Caption;
 
                 _context.Update(hotelImage);

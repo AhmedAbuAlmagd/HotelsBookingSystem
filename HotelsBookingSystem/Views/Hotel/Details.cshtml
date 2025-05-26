@@ -106,14 +106,12 @@
                             <input type="hidden" id="hotelId" name="HotelId" value="@Model.Hotel.Id">
 
                             <div class="form-group">
-                                <label for="hotelImage">Hotel Image</label>
                                 <input type="file" id="hotelImage" name="Image" class="form-control" required>
                                 <span id="hotelImageValidation" class="text-danger validation-message"></span>
                             </div>
 
                             <div class="form-group checkbox-group">
-                                <input type="checkbox" id="isPrimary" name="IsPrimary">
-                                <label for="isPrimary">Set as primary image</label>
+                                <input type="checkbox" id="isPrimary" name="IsPrimary" hidden>
                             </div>
 
                             <div class="form-group">

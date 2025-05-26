@@ -97,6 +97,7 @@ namespace HotelsBookingSystem.Repository
                     RoomCount = h.Rooms.Count,
                     ImageUrl = h.HotelImages.FirstOrDefault(x => x.IsPrimary == true).ImageUrl,
                     Status = h.Status
+                  
                 })
                 .ToListAsync();
         }
@@ -125,12 +126,15 @@ namespace HotelsBookingSystem.Repository
                 .Take(count)
                 .Select(h => new ViewModels.AdminViewModels.HotelViewModel
                 {
+                    Id = h.Id,
                     Name = h.Name,
                     Location = h.Address,
                     RoomCount = h.Rooms.Count,
                     ImageUrl = h.HotelImages.FirstOrDefault(x => x.IsPrimary == true).ImageUrl,
                     Status = h.Status,
-                    Rating = h.Reviews.Any() ? h.Reviews.Average(r => r.Rating ?? 0) : 0
+                    Rating = (int)h.rating,
+                    City = h.City,
+                    Description = h.Description
                 })
                 .ToListAsync();
         }

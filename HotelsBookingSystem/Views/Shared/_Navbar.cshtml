@@ -1,4 +1,9 @@
-﻿<div class="container-fluid bg-dark px-0">
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<div class="container-fluid bg-dark px-0 fixed-top">
     <div class="row gx-0">
         <div class="col-lg-3 bg-dark d-none d-lg-block">
             <a asp-controller="Home" asp-action="Index" class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
@@ -17,12 +22,11 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
-                        <a asp-controller="Home" asp-action="Index" class="nav-item nav-link active">Home</a>
-                        <a asp-controller="About" asp-action="Index" class="nav-item nav-link">About</a>
-                        <a asp-controller="Hotel" asp-action="Index" class="nav-item nav-link">Hotels</a>
-                        <a asp-controller="Room" asp-action="Index" class="nav-item nav-link">Rooms</a>
-
-                        <a asp-controller="Reviews" asp-action="Index" class="nav-item nav-link">Contact</a>
+                       <a asp-controller="Home" asp-action="Index" class="nav-item nav-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")">Home</a>
+                       <a asp-controller="Hotel" asp-action="Index" class="nav-item nav-link @(currentController == "Hotel" && currentAction == "Index" ? "active" : "")">Hotels</a>
+                       <a asp-controller="Room" asp-action="Index" class="nav-item nav-link  @(currentController == "Room" && currentAction == "Index" ? "active" : "")">Rooms</a>
+                        <a asp-controller="About" asp-action="Index" class="nav-item nav-link @(currentController == "About" && currentAction == "Index" ? "active" : "")">About</a>
+                       <a asp-controller="Reviews" asp-action="Index" class="nav-item nav-link @(currentController == "Reviews" && currentAction == "Index" ? "active" : "")">Contact</a>
 
                     </div>
                     <div class="d-inline-flex align-items-center py-2 me-3">
